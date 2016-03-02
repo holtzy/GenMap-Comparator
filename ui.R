@@ -55,13 +55,13 @@ shinyUI(fluidPage(
  			tabPanel("All chromo",
               	# Graphique avec tous les chromosomes:
               	br(""),
-				plotlyOutput("plot1" ,  height = "1000px")
+				plotlyOutput("plot1" ,  height = "700px")
       	        ),
 
-			# --- Sheet 2 for summary statistics
+			# --- Sheet 2 : summary statistics
  			tabPanel("Summary statistics",
               	br(""),
-				dataTableOutput('my_table_1')
+				dataTableOutput('my_table_1',width="800px")
 				),
 
 			# --- Sheet 3 for inter-chromosomal analysis
@@ -70,7 +70,13 @@ shinyUI(fluidPage(
 				plotlyOutput("plot2" ,  height = "600px")
       	        ),
 
-			# --- Sheet 4 for documentation
+			# --- Sheet 4 : vizualize your rough map
+ 			tabPanel("Rough Map",
+              	br(""),
+				dataTableOutput('my_table_2' , width="600px")
+				),
+
+			# --- Sheet 5 for documentation
  			tabPanel("Documentation",
               	br(""),
               	helpText("This is an application developped by.... \n If you use it in your studies, please cite blablabla"),

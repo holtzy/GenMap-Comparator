@@ -50,58 +50,37 @@ if(nb_de_carte>2){
 
 
 
-
-
-
-
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------#
 
 #-----------------------------------------------------------------------------
-# --- A FUNCTION THAT PLOTS MARKERS RELATIONSHIPS FOR ONE CHROMOSOME
+# --- FUNCTIONS USED IN THE SCRIPT
 #-----------------------------------------------------------------------------
 
-
-# --- Création d'une fonction qui a partir d'une partie de data fait le graph
-my_function=function(data , nb_de_carte , chromo){
-	
-	#Initialiation de la carte
-	par(mar=c(2,4,1,1))
-	my_ylim=max(data[ , c(seq(3,ncol(data),2))] , na.rm=T) + 10
-	plot(c(1:nb_de_carte) , data[1 , c(seq(3,ncol(data),2))] , type="l" , ylim=rev(c(-1,my_ylim)) , xlab="" , col=rgb(0.3,0.4,0.8,0.4) , axes=F , ylab="position en cM" , col.lab="grey" , xlim=c(0.75,nb_de_carte+0.25) )			
-	axis(2 , las=2 , col="grey" , col.axis="grey"  )
-	
-	#J'ajoute un trait par carte
-	for(i in c(1:nb_de_carte)){
-		segments(i,0,i,max(data[,c((i-1)*2+3)],na.rm=T) , lwd=4)
-		}
-		
-	#J'ajoute un trait par marqueur sur le chromosome
-	for(i in c(1:nb_de_carte)){
-		for(j in c(1:nrow(data))){
-			segments(i-0.02 , data[j,c((i-1)*2+3)] , i+0.02 , data[j,c((i-1)*2+3)] )
-		}}
-
-	#Je relie les marqueurs communs
-	for( i in c(2:nrow(data))){
-		points(c(1:nb_de_carte) , data[i , c(seq(3,ncol(data),2)) ] , type="l" , col=rgb(0.3,0.4,0.8,0.4) )
-		}
-
-	#J'ajoute le nom des carte en dessous :
-	for(i in c(1:nb_de_carte)){
-		text(i,my_ylim+2,map_files[i] , col="orange" )
-		}
-		
-	# J'ajoute le nom du chromosome + le nombre de marqueur
-	nb_mark=
-	text(ifelse(nb_de_carte==2,0.9,0.7) ,-4,chromo, col="orange" )
-
+# Function 1 : give it a piece of map, it calculates some statistics and add it to a bilan data frame.
+my_fun=function(my_map, bilan, i){
+	num=nrow(bilan)
+	num=num+1
+	bilan[num,1]=i
+	bilan[num,2]=nrow(my_map)
+	bilan[num,3]=max(my_map[,3])
+	gaps= sort(my_map[,3])[-1] - sort(my_map[,3])[-length(my_map[,3])] 
+	bilan[num,4]=mean(gaps)
+	bilan[num,5]=max(gaps)
+	bilan[num,6]=nrow(unique(my_map[,c(1,3)]))
+	return(bilan)
 	}
+
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------#
 
 
 
 
 
+
+
+
+# OPEN THE SHINY SERVER
+shinyServer(function(input, output) {
 
 
 
@@ -111,7 +90,6 @@ my_function=function(data , nb_de_carte , chromo){
 # --- SHEET 1 : MAP COMPARISON FOR THE CHOSEN CHROMOSOME
 #-----------------------------------------------------------------------------
 
-shinyServer(function(input, output) {
 	
   	output$plot1 <- renderPlotly({ 
   	
@@ -128,10 +106,8 @@ shinyServer(function(input, output) {
 		# --- Change Matrix format :
 		mat=data.frame(marker=don[,1] , carte=1 , position=don[ , 3])
 		for(i in c(2:nb_de_carte)){
-			print(i)
 			to_add=data.frame(marker=don[,1] , carte=i , position=don[ , c((i-1)*2+3)])
 			mat=rbind(mat,to_add)
-			print(summary(mat))
 		}
 		
 		
@@ -152,7 +128,7 @@ shinyServer(function(input, output) {
 		if(nb_de_carte>6){p=add_trace(x = c(7,7), y = c(0, max(mat$position[mat$carte==7] , na.rm=T)) , line=list(width=4, color="black"))}
 		
 		# Ajout du nom des cartes
-		p=add_trace(x=seq(1:nb_de_carte) , y=rep(-10,nb_de_carte) , text=unlist(map_files) , mode="text" , textfont=list(size=30 , color="orange") )
+		p=add_trace(x=seq(1:nb_de_carte) , y=rep(-10,nb_de_carte) , text=unlist(map_files) , mode="text" , textfont=list(size=20 , color="orange") )
 		
 		# Custom the layout
 		p=layout( 
@@ -170,9 +146,6 @@ shinyServer(function(input, output) {
   	#Je ferme le outpuPlot1
   	})
   	
-  	
-#Je ferme le shinyServer
-})
 
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------#
@@ -188,17 +161,31 @@ shinyServer(function(input, output) {
 # --- SHEET 2 : SUMMARY STATISTICS
 #-----------------------------------------------------------------------------
 
-shinyServer(function(input, output) {
-
-	output$my_table_1 <- renderDataTable(
-		iris , filter="none", selection="none", escape=FALSE, options = list(sDom  = '<"top"><"bottom">')
+	# Which map do we want to summarize ?
+	map=my_maps[[1]]
+			
+	# Make calculations
+	bilan=data.frame(matrix(0,0,6)) ; num=0
+	colnames(bilan)=c("Chromo","nbr marker","size","average gap","biggest gap","Nb uniq pos")
 	
+	# Apply to each chromosome one by one
+	for(i in levels(map[,1])){
+		map_K=map[map[,1]==i,]
+		bilan=my_fun(map_K , bilan , i)
+		}
 
+	# And then to the whole map
+	i="tot"
+	bilan=my_fun(map , bilan , "all")
+	print(bilan)
+	
+	#Make the output
+	output$my_table_1 <- renderDataTable(
+		bilan , filter="none", selection="none", escape=FALSE, options = list(sDom  = '<"top"><"bottom">' , pageLength = 40), rownames = FALSE
 	#Close the output
 	)
 
-#Je ferme le shinyServer
-})
+
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------#
 
@@ -212,7 +199,6 @@ shinyServer(function(input, output) {
 # --- SHEET 3 : INTER CHROMOSOME ANALYSIS
 #-----------------------------------------------------------------------------
 
-shinyServer(function(input, output) {
 
   	output$plot2 <- renderPlotly({ 
 
@@ -287,8 +273,6 @@ shinyServer(function(input, output) {
   	})
 
 
-#Je ferme le shinyServer
-})
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------#
 
@@ -301,8 +285,30 @@ shinyServer(function(input, output) {
 
 
 
+#-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------#
+
+#-----------------------------------------------------------------------------
+# --- SHEET 4 : ROUGH MAP VIZUALIZATION
+#-----------------------------------------------------------------------------
+
+
+	output$my_table_2 <- renderDataTable(
+		
+		#See https://rstudio.github.io/DT/options.html for options in printing table
+		my_maps[[1]] , escape = F , rownames = FALSE , options = list(pageLength = 40)
+		
+	#Close the output
+	)
+
+
+
+#-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------#
 
 
 
 
+
+
+#Je ferme le shinyServer
+})
 
