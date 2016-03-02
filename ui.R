@@ -12,14 +12,24 @@
 library(shiny)
 library(plotly)
 library(shinythemes) 
+library("DT")
+
+#Set the size of the logo of partners
+my_height=70
+my_width=100
 
 
-
-# Let's start the UI file!
+# Let's start the UI file --> it codes for he design of the app!
 shinyUI(fluidPage(
+
+  # Choose a theme !
+  theme = shinytheme("Journal"),
   
-  # Application title
-  titlePanel(paste("\t\t\t\t\t\t","An application to compare genetic maps","\n")),
+  # Application title (logo + text) #TODO
+  titlePanel(
+  	img(src="http://www.r-graph-gallery.com/wp-content/uploads/2015/10/logo3-300x225.jpg" ,  height = my_height, width = my_width)
+  	#My title
+  	),
   
   # ------------------------------    SIDEBAR PANNEL FOR OPTIONS -----------------------------------
   sidebarLayout(
@@ -31,7 +41,7 @@ shinyUI(fluidPage(
       br(""),
     
       # CHOIX DU chromosome d'étude
-	  selectInput( "chromo", "Choose a chromosome for deep exploration?", choices = c("1A","1B","2A","2B","3A","3B","4A","4B","5A","5B","6A","6B","7A","7B"), selected =c("1A") )
+	  selectInput( "chromo", "Choose a chromosome for deep exploration?", choices = c("all","1A","1B","2A","2B","3A","3B","4A","4B","5A","5B","6A","6B","7A","7B"), selected =c("1A") )
 	  
     ),
     
@@ -41,11 +51,37 @@ shinyUI(fluidPage(
     
     	tabsetPanel(
  
-			# --- Onglet 1 avec tous les chromosomes
+			# --- Sheet 1 to make a deep inspection of 1 chromosome
  			tabPanel("All chromo",
               	# Graphique avec tous les chromosomes:
               	br(""),
 				plotlyOutput("plot1" ,  height = "1000px")
+      	        ),
+
+			# --- Sheet 2 for summary statistics
+ 			tabPanel("Summary statistics",
+              	br(""),
+				dataTableOutput('my_table_1')
+				),
+
+			# --- Sheet 3 for inter-chromosomal analysis
+ 			tabPanel("Inter chromosomal analysis",
+              	br(""),
+				plotlyOutput("plot2" ,  height = "600px")
+      	        ),
+
+			# --- Sheet 4 for documentation
+ 			tabPanel("Documentation",
+              	br(""),
+              	helpText("This is an application developped by.... \n If you use it in your studies, please cite blablabla"),
+              	a("www.r-graph-gallery.com"),
+              	br(""),	br(""),
+              	#TODO: écarter les logos
+              	img(src="http://www.r-graph-gallery.com/wp-content/uploads/2015/10/logo3-300x225.jpg" ,  height = my_height, width = my_width),
+              	img(src="https://upload.wikimedia.org/wikipedia/fr/thumb/d/d4/INRA_logo.jpg/800px-INRA_logo.jpg" ,  height = my_height, width = my_width),
+              	img(src="http://www.fiches.arvalis-infos.fr/fiche_variete/css/images/logo_arvalis.png" ,  height = my_height, width = my_width),
+             	img(src="http://www.supagro.fr/capeye/wp-content/uploads/2015/02/Logo-Montpellier-SupAgro-Vert-Web.jpg" ,  height = my_height, width = my_width)           	
+				#plotlyOutput("plot1" ,  height = "1000px")
       	        )
       	    
       	    #close the tabsetPanel
