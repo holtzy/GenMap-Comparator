@@ -102,7 +102,7 @@ shinyServer(function(input, output) {
   output$choose_maps<- renderUI({
   
     # Create the checkboxes and select the first one by default
-    checkboxGroupInput("selected_maps", "Choose maps (Select in the desired order (left to right)", choices=map_files, selected=map_files[1] )
+    checkboxGroupInput("selected_maps", "Choose maps (Select in the desired order (left to right)", choices=map_files, selected=c(map_files[1],map_files[2]) )
     
   })
   
@@ -335,10 +335,12 @@ shinyServer(function(input, output) {
 #-----------------------------------------------------------------------------
 
 
-	output$my_table_2 <- renderDataTable(
+		output$my_table_2 <- renderDataTable(
+
+			# Which maps have been selected --> I take the first one of the ones that have been selected
 		
-		#See https://rstudio.github.io/DT/options.html for options in printing table
-		my_maps[[1]] , escape = F , rownames = FALSE , options = list(pageLength = 40)
+			#See https://rstudio.github.io/DT/options.html for options in printing table
+			my_maps[[which(map_files%in%input$selected_maps)[1]]] , escape = F , rownames = FALSE , options = list(pageLength = 40)
 		
 	#Close the output
 	)
