@@ -50,6 +50,9 @@ if(nb_de_carte>2){
 
 
 
+
+
+
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------#
 
 #-----------------------------------------------------------------------------
@@ -79,8 +82,39 @@ my_fun=function(my_map, bilan, i){
 
 
 
+
+
+
+
 # OPEN THE SHINY SERVER
 shinyServer(function(input, output) {
+
+
+
+
+#-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------#
+
+# --------------------------------------------------------------------------------
+# 	CREATION OF THE DYNAMICS BUTTONS FOR THE UI SCRIPT
+#--------------------------------------------------------------------------------
+
+  # --- Dynamic UI for the VARIABLE to study
+  output$choose_maps<- renderUI({
+  
+    # Create the checkboxes and select the first one by default
+    checkboxGroupInput("selected_maps", "Choose maps (Select in the desired order (left to right)", choices=map_files, selected=map_files[1] )
+    
+  })
+  
+
+#-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------#
+
+
+
+
+
+
+
 
 
 
@@ -94,10 +128,16 @@ shinyServer(function(input, output) {
   	output$plot1 <- renderPlotly({ 
   	
   	
+		# Which maps have been selected ?
+		selected_maps=which(map_files%in%input$selected_maps)
+		selected_col=sort(c(1 , 2+(selected_maps-1)*2 , 3+(selected_maps-1)*2))
+		dat=data[ , selected_col ]
+		nb_selected_maps=length(selected_maps)
+		
 		# --- Subset of the dataset with only the good chromosome :
-		don=data[data[,2]==input$chromo & !is.na(data[,2]) , ]
-		for(j in c(2:nb_de_carte)){
-			temp=data[data[,c((j-1)*2+2)]==input$chromo & !is.na(data[,c((j-1)*2+2)]) , ]
+		don=dat[dat[,2]==input$chromo & !is.na(dat[,2]) , ]
+		for(j in c(2:nb_selected_maps)){
+			temp=dat[dat[,c((j-1)*2+2)]==input$chromo & !is.na(dat[,c((j-1)*2+2)]) , ]
 			don=rbind(don,temp)
 		}
 		don=unique(don)
@@ -105,18 +145,22 @@ shinyServer(function(input, output) {
 
 		# --- Change Matrix format :
 		mat=data.frame(marker=don[,1] , carte=1 , position=don[ , 3])
-		for(i in c(2:nb_de_carte)){
-			to_add=data.frame(marker=don[,1] , carte=i , position=don[ , c((i-1)*2+3)])
-			mat=rbind(mat,to_add)
-		}
+		print(length(nb_selected_maps))
+		if(nb_selected_maps>1){
+			for(i in c(2:nb_selected_maps)){
+				to_add=data.frame(marker=don[,1] , carte=i , position=don[ , c((i-1)*2+3)])
+				mat=rbind(mat,to_add)
+		}}
 		
 		
 		# --- Add a text column for plotly and compute some useful values for the plot drawing
 		mat$text=paste(mat[,1],"\npos: ",round(mat[,3],2),sep="")
 		my_ylim=max(mat$position, na.rm=T)
 
+		
 		# --- Start the plotly graph
-		p=plot_ly(mat , x=carte , y=position , text=text , hoverinfo="text" , mode="markers+lines" , group=marker , marker=list(color="black" , size=10 , opacity=0.5,symbol=24) , line=list(width=0.4, color="purple" , opacity=0.1) , showlegend=F , evaluation = FALSE )
+		p=plot_ly(mat , x=carte , y=position , text=text , hoverinfo="text" , mode="markers+lines"  , marker=list(color="black" , size=10 , opacity=0.5,symbol=24) , line=list(width=0.4, color="purple" , opacity=0.1) , showlegend=F , evaluation = FALSE )
+		#, group=marker
 		
 		# Ajout d'un trait vertical pour chaque graph
 		p=add_trace(x = c(1,1), y = c(0, my_ylim) , line=list(width=4, color="black"))
@@ -128,7 +172,7 @@ shinyServer(function(input, output) {
 		if(nb_de_carte>6){p=add_trace(x = c(7,7), y = c(0, max(mat$position[mat$carte==7] , na.rm=T)) , line=list(width=4, color="black"))}
 		
 		# Ajout du nom des cartes
-		p=add_trace(x=seq(1:nb_de_carte) , y=rep(-10,nb_de_carte) , text=unlist(map_files) , mode="text" , textfont=list(size=20 , color="orange") )
+		p=add_trace(x=seq(1:nb_selected_maps) , y=rep(-10,nb_selected_maps) , text=unlist(input$selected_maps) , mode="text" , textfont=list(size=20 , color="orange") )
 		
 		# Custom the layout
 		p=layout( 
@@ -137,7 +181,7 @@ shinyServer(function(input, output) {
 			hovermode="closest"  ,
 			
 			# Gestion des axes
-			xaxis=list(title = "", zeroline = FALSE, showline = FALSE, showticklabels = FALSE, showgrid = FALSE , range=c(0.5,nb_de_carte+0.5) ),
+			xaxis=list(title = "", zeroline = FALSE, showline = FALSE, showticklabels = FALSE, showgrid = FALSE , range=c(0.5,nb_selected_maps+0.5) ),
 			yaxis=list(autorange = "reversed", title = "Position (cM)", zeroline = F, showline = T, showticklabels = T, showgrid = FALSE ,  tickfont=list(color="grey") , titlefont=list(color="grey") , tickcolor="grey" , linecolor="grey"),
 			
 			)
@@ -177,7 +221,6 @@ shinyServer(function(input, output) {
 	# And then to the whole map
 	i="tot"
 	bilan=my_fun(map , bilan , "all")
-	print(bilan)
 	
 	#Make the output
 	output$my_table_1 <- renderDataTable(

@@ -1,3 +1,8 @@
+
+
+
+
+
 #####################
 #
 #	DEVELOPPEMENT D'UNE APPLI SHINY POUR LA VISUALISATION DES QTLS MOSAIQUES ET FUSA
@@ -19,7 +24,7 @@ my_height=70
 my_width=100
 
 
-# Let's start the UI file --> it codes for he design of the app!
+# Let's start the UI file --> it codes for the design of the app!
 shinyUI(fluidPage(
 
   # Choose a theme !
@@ -41,7 +46,12 @@ shinyUI(fluidPage(
       br(""),
     
       # CHOIX DU chromosome d'étude
-	  selectInput( "chromo", "Choose a chromosome for deep exploration?", choices = c("all","1A","1B","2A","2B","3A","3B","4A","4B","5A","5B","6A","6B","7A","7B"), selected =c("1A") )
+	  selectInput( "chromo", "Choose a chromosome for deep exploration?", choices = c("all","1A","1B","2A","2B","3A","3B","4A","4B","5A","5B","6A","6B","7A","7B"), selected =c("1A") ),
+	  
+	  # Choix de la map
+	  uiOutput("choose_maps")
+	  
+
 	  
     ),
     
@@ -100,3 +110,13 @@ shinyUI(fluidPage(
   
 #Close the shiny fluidPage
 ))
+
+
+
+
+
+
+  
+  
+  
+  
