@@ -28,4 +28,8 @@ GenMap-Comparator is a shiny application dedicated to the comparison of genetic 
 # - un package matplotlib dans ce papier, mais outil non communiqué http://journal.frontiersin.org/article/10.3389/fpls.2015.00367/full#B16
 # - RQTL a une fonction de comparaison, mais c'est vraiment basique.
 # - MapDraw : une macro excel publiée en 2003 !
+# - Biomercator, mais plus pour dessiner une map et ajouter les QTLs.
+# - MapChart : idem, plus pour QTL via
+
+
 
