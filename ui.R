@@ -17,6 +17,7 @@ library(plotly)
 library(shinythemes) 
 library("DT")
 
+
 #Set the size of the logo of partners
 my_height=70
 my_width=100
@@ -26,12 +27,16 @@ my_width2=100
 
 # Let's start the UI file --> it codes for the design of the app!
 shinyUI(navbarPage(
+
 	
 	# Choose a theme !
-	theme = shinytheme("Journal"),
+	theme = shinytheme("United"),
+	
+	# And I custom it with additionnal CSS
+	includeCSS("www/genComp.css") ,
 
 	# Title of the app
-	"Gen Map Comparator",
+	("The Gen Map Comparator") ,
 	
 
 
@@ -105,8 +110,13 @@ shinyUI(navbarPage(
 			br(""),
 			br(""),
     
+			# CHOIX DU chromosome d'étude
+			wellPanel(checkboxGroupInput( "chromo_sheet2", "Choose chromosome !", choices = c("all","1A","1B","2A","2B","3A","3B","4A","4B","5A","5B","6A","6B","7A","7B"), selected =c("1A") , inline = TRUE )),
+			br(),
+			br(),
+
 			# Choix de la map
-			wellPanel(uiOutput("choose_maps2"))
+			wellPanel(uiOutput("choose_maps_sheet2"))
 
 			#Close column
 			),
@@ -115,7 +125,10 @@ shinyUI(navbarPage(
 		column(8, offset=1,
        		
        		br(""),
-			dataTableOutput('my_table_1',width="800px")
+			plotOutput("circular_plot" ,  height = "700px" ,  width = "700px" ),
+
+       		br(""),
+			dataTableOutput('my_table_1',width="400px",height="400px")
 			
 			#Close column
 			)
@@ -148,14 +161,15 @@ shinyUI(navbarPage(
 			br(""),
 			br(""),
 			
-			# CHOIX DU chromosome d'étude
-			wellPanel(selectInput( "chromo_sheet3", "Choose chromosome !", choices = c("all","1A","1B","2A","2B","3A","3B","4A","4B","5A","5B","6A","6B","7A","7B"), selected =c("1A") )),
+			# Choose the chromosome
+			wellPanel(selectInput( "chromo_sheet3", "Choose chromosome !", choices = c("all","1A","1B","2A","2B","3A","3B","4A","4B","5A","5B","6A","6B","7A","7B"), selected =c("all") )),
 			br(),
-			br(),
-
     
-			# Choix de la map
-			wellPanel(uiOutput("choose_maps3"))
+			# Choix de la map1
+			wellPanel(uiOutput("map1")),
+
+			# Choix de la map2
+			wellPanel(uiOutput("map2"))
 
 			#Close column
 			),
@@ -163,8 +177,8 @@ shinyUI(navbarPage(
 		# On the space left, I add the plot
 		column(8, offset=1,
        		
-       		br(""),
-			plotlyOutput("plot2" ,  height = "600px")
+       		br(""),br(""),br(""),
+			plotlyOutput("plot2" ,  height = "900px" ,  width = "1100px")
 			
 			#Close column
 			)
@@ -207,7 +221,7 @@ shinyUI(navbarPage(
 		column(8, offset=1,
        		
        		br(""),
-			dataTableOutput('my_table_2' , width="600px")
+			dataTableOutput('my_rough_map_viz' , width="600px")
 			
 			#Close column
 			)
@@ -224,7 +238,14 @@ shinyUI(navbarPage(
 
 
 
-		
+
+
+
+
+
+
+# --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 		
 	# ----------------------
 	# SHEET 5: DOCUMENTATION
@@ -253,6 +274,10 @@ shinyUI(navbarPage(
 		
 		#Close the tabPanel
 		)
+
+# --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
 
 
 

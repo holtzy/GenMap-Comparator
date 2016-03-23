@@ -10,6 +10,8 @@
 library(shiny)
 library(plotly)
 library(DT)
+library(circlize)
+library(RColorBrewer)
 
 #Test
 
@@ -21,10 +23,8 @@ library(DT)
 #-----------------------------------------------------------------------------
 
 # --- Catch the map we have to compare :
-print(getwd())
 map_files=list.files("DATA")
 nb_de_carte=length(map_files)
-print(nb_de_carte)
 
 # --- Load every maps and add their content in a list
 my_maps=list(read.table(paste("DATA/",map_files[1],sep="") , header=T , dec="." ))
@@ -108,10 +108,10 @@ shinyServer(function(input, output) {
 
 
   # --- Dynamic UI for the MAP to study
-  output$choose_maps2<- renderUI({
+  output$choose_maps_sheet2<- renderUI({
   
     # Create the checkboxes and select the first one by default
-    checkboxGroupInput("selected_maps", "Choose maps !", choices=map_files, selected=c(map_files[1],map_files[2]) )
+    checkboxGroupInput("selected_maps_sheet2", "Choose maps !", choices=map_files, selected=c(map_files[1],map_files[2]) )
     
   })
   
@@ -127,10 +127,25 @@ shinyServer(function(input, output) {
   output$choose_maps4<- renderUI({
   
     # Create the checkboxes and select the first one by default
-    radioButtons("selected_maps", "Choose maps !", choices=map_files, selected=map_files[1] )
+    radioButtons("selected_maps", "Choose the reference map!", choices=map_files, selected=map_files[1] )
     
   })
   
+  # --- Dynamic UI for the MAP to study
+  output$map1<- renderUI({
+  
+    # Create the checkboxes and select the first one by default
+    radioButtons("map1", "Choose a first map", choices=map_files, selected=map_files[1] )
+    
+  })
+
+  # --- Dynamic UI for the MAP to study
+  output$map2<- renderUI({
+  
+    # Create the checkboxes and select the first one by default
+    radioButtons("map2", "Choose a second map", choices=map_files, selected=map_files[2] )
+    
+  })
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------#
 
@@ -170,7 +185,6 @@ shinyServer(function(input, output) {
 
 		# --- Change Matrix format :
 		mat=data.frame(marker=don[,1] , carte=1 , position=don[ , 3])
-		print(length(nb_selected_maps))
 		if(nb_selected_maps>1){
 			for(i in c(2:nb_selected_maps)){
 				to_add=data.frame(marker=don[,1] , carte=i , position=don[ , c((i-1)*2+3)])
@@ -184,7 +198,7 @@ shinyServer(function(input, output) {
 
 		
 		# --- Start the plotly graph
-		p=plot_ly(mat , x=carte , y=position , text=text , hoverinfo="text" , mode="markers+lines"  , marker=list(color="black" , size=10 , opacity=0.5,symbol=24) , line=list(width=0.4, color="purple" , opacity=0.1) , showlegend=F , evaluation = FALSE , group=marker)
+		p=plot_ly(mat , x=carte , y=position , text=text , hoverinfo="text" , mode="markers+lines"  , marker=list(color="black" , size=10 , opacity=0.5,symbol=24) , line=list(width=0.4, color="purple" , opacity=0.1) , showlegend=F , evaluation = FALSE) # , group=marker)
 		
 		# Ajout d'un trait vertical pour chaque graph
 		p=add_trace(x = c(1,1), y = c(0, my_ylim) , line=list(width=4, color="black"))
@@ -246,14 +260,82 @@ shinyServer(function(input, output) {
 	i="tot"
 	bilan=my_fun(map , bilan , "all")
 	
-	#Make the output
+	# Make the output table
 	output$my_table_1 <- renderDataTable(
 		bilan , filter="none", selection="none", escape=FALSE, options = list(sDom  = '<"top"><"bottom">' , pageLength = 40), rownames = FALSE
-	#Close the output
-	)
+		)
+	
+#-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------#
 
 
 
+
+
+
+
+
+
+
+#-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------#
+
+#-----------------------------------------------------------------------------
+# --- SHEET 2 : CIRCULAR PLOT
+#-----------------------------------------------------------------------------
+
+	# Make the circular plot. See https://cran.r-project.org/web/packages/circlize/vignettes/circlize.pdf to understand how circular plot works.
+  	output$circular_plot <- renderPlot({ 
+  	
+		# Which maps have been selected ?
+		selected_maps=which(map_files%in%input$selected_maps_sheet2)
+		nb_selected_maps=length(selected_maps)
+		
+		# Fichier nécessaire
+		data_circ=data.frame()
+		for(i in selected_maps){
+				current_map=my_maps[[i]]
+				current_map$map_name=map_files[i] 
+				current_map$group_and_name=paste(map_files[i] , current_map$group , sep="_")
+				data_circ=rbind(data_circ , current_map)
+			}
+		
+		# If the "all" option is not selected, then I keep only the chose chromosomes
+		if(!("all"%in%input$chromo_sheet2)){
+			take=which(data_circ$group%in%input$chromo_sheet2)
+			data_circ=data_circ[take , ]
+			data_circ$group=droplevels(data_circ$group)
+			}		
+		
+		# General graphical parameters
+		par(mar =c(1, 1, 1, 1), lwd = 0.1, cex = 0.7)
+		circos.par(track.height = 0.7/nb_de_carte)
+		coul = brewer.pal(4, "Set3") 
+		coul = colorRampPalette(coul)(nlevels(data_circ$group))
+		num=0
+		
+		# Initialization of the circular plot
+		circos.initialize(factors = data_circ$group, x = data_circ$position)
+		
+		# Add chosen maps one by one
+		for( i in c(1:nb_selected_maps)){
+		
+			# Select one of the chosen map
+			don=data_circ[data_circ$map_name==levels(as.factor(data_circ$map_name))[i] , ]
+					
+			# add density curve
+			circos.trackHist(don$group, don$position, col="orange" , lwd=3 , draw.density=T, bg.col=coul)
+					
+			# add one black line for each marker
+			circos.trackLines(don$group, don$position, rep(0.005,nrow(don)), type = "h")
+		
+			}
+		
+		# add chromosome names
+		for(i in levels(data_circ$group)){
+			circos.text(max(data_circ$position[data_circ$group==i])/2, 1.5, i, sector.index = i, track.index = 1 , col="orange" , cex=1.4 , lwd=2)
+			}
+			
+		})
+	
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------#
 
 
@@ -269,19 +351,22 @@ shinyServer(function(input, output) {
 
   	output$plot2 <- renderPlotly({ 
 
-		# Select a subset of data concerning the chosen maps and keeping only the common markers
-		don=data[ , c(1:5)]
-		don=na.omit(data)
+		# Get the first selected map & order it
+		selected=which(map_files%in%input$map1)
+		map1=my_maps[[selected]]
+		map1=map1[order(map1[,1] , map1[,3] ) , ]
+		name1=map_files[selected]
 		
+		# Get the second selected map
+		selected=which(map_files%in%input$map2)
+		map2=my_maps[[selected]]
+		map2=map2[order(map2[,1] , map2[,3] ) , ]
+		name2=map_files[selected]
+
 		# Select the choosen chromosome, the user can choose "all" !
-		if(input$chromo_sheet3=="all"){don=don}else{don=don[don[,2]==input$chromo_sheet3 & don[,4]==input$chromo_sheet3 , ]}
-		
-		
-		map1=don[,c(1,2,3)]
-		map1=map1[order(map1[,2] , map1[,3] ) , ]
-		map2=don[,c(1,4,5)]
-		map2=map2[order(map2[,2] , map2[,3] ) , ]
-		
+		if(input$chromo_sheet3=="all"){map1=map1}else{map1=map1[map1[,1]==input$chromo_sheet3 , ]  ;  map2=map2[map2[,1]==input$chromo_sheet3 , ]}
+				
+		# a little function
 		my_fun=function(a){
 		last=0
 		to_add=0
@@ -297,7 +382,7 @@ shinyServer(function(input, output) {
 		
 		map1$pos_cum_map1=my_fun(map1[,3])
 		map2$pos_cum_map2=my_fun(map2[,3])
-		don=merge(map1,map2,by.x=1,by.y=1)
+		don=merge(map1,map2,by.x=2,by.y=2)
 		
 		#Calculation of max and min of every chromosome
 		map1max=aggregate(don[,4] , by=list(don[,2]) , max)
@@ -310,11 +395,11 @@ shinyServer(function(input, output) {
 		
 		#Prepare 2 layouts !
 		if(input$chromo_sheet3=="all"){
-			lay_x=list(title = "map1", tickmode="array", tickvals=map1max[,2] , ticktext="" , showticklabels = F )
-			lay_y=list(title = "map2", tickmode="array", tickvals=map2max[,2] , ticktext="" , showticklabels = F )
+			lay_x=list(title = name1, tickmode="array", tickvals=map1max[,2] , ticktext="" , showticklabels = F )
+			lay_y=list(title = name2, tickmode="array", tickvals=map2max[,2] , ticktext="" , showticklabels = F )
 		}else{
-			lay_x=list(title = "map1" )
-			lay_y=list(title = "map2" )	
+			lay_x=list(title = name1 )
+			lay_y=list(title = name2 )	
 		}
 		
 		# MAke the plot !
@@ -358,14 +443,18 @@ shinyServer(function(input, output) {
 # --- SHEET 4 : ROUGH MAP VIZUALIZATION
 #-----------------------------------------------------------------------------
 
-
+		#Faire une réactive pour pouvoir faire le tableau désiré 
+		don=data
+		
 		output$my_rough_map_viz <- renderDataTable(
 
 			# Which maps have been selected --> I take the first one of the ones that have been selected
 		
 			#See https://rstudio.github.io/DT/options.html for options in printing table
-			my_maps[[which(map_files%in%input$selected_maps)[1]]] , escape = F , rownames = FALSE , options = list(pageLength = 40)
-		
+			#my_maps[[which(map_files%in%input$selected_maps)[1]]] , escape = F , rownames = FALSE , options = list(pageLength = 40)
+			
+			don , escape = F , rownames = FALSE , options = list(pageLength = 40)
+			
 	#Close the output
 	)
 
