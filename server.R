@@ -26,7 +26,6 @@ map_files=list.files("DATA")
 nb_de_carte=length(map_files)
 print(nb_de_carte)
 
-
 # --- Load every maps and add their content in a list
 my_maps=list(read.table(paste("DATA/",map_files[1],sep="") , header=T , dec="." ))
 for(i in c(2:nb_de_carte)){
@@ -34,7 +33,6 @@ for(i in c(2:nb_de_carte)){
 }
 # If you want to see informations concerning the map number1 : nrow(my_maps[[1]])
 # If you want the name of the map number one : print(args[i])
-
 
 # --- Merge the maps together
 data=merge(my_maps[[1]] , my_maps[[2]], by.x=2 , by.y=2 , all=T)
@@ -45,6 +43,7 @@ if(nb_de_carte>2){
 		colnames(data)[c( ncol(data)-1 , ncol(data) )]= c( paste("chromo",map_files[i],sep="_") , paste("pos",map_files[i],sep="_") )
 	}}
 #---> I get a file summarizing the information for every markers present at least one time !
+
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------#
 
@@ -99,11 +98,36 @@ shinyServer(function(input, output) {
 # 	CREATION OF THE DYNAMICS BUTTONS FOR THE UI SCRIPT
 #--------------------------------------------------------------------------------
 
-  # --- Dynamic UI for the VARIABLE to study
+  # --- Dynamic UI for the MAP to study
   output$choose_maps<- renderUI({
   
     # Create the checkboxes and select the first one by default
-    checkboxGroupInput("selected_maps", "Choose maps (Select in the desired order (left to right)", choices=map_files, selected=c(map_files[1],map_files[2]) )
+    checkboxGroupInput("selected_maps", "Choose maps ! (from left to right)", choices=map_files, selected=c(map_files[1],map_files[2]) )
+    
+  })
+
+
+  # --- Dynamic UI for the MAP to study
+  output$choose_maps2<- renderUI({
+  
+    # Create the checkboxes and select the first one by default
+    checkboxGroupInput("selected_maps", "Choose maps !", choices=map_files, selected=c(map_files[1],map_files[2]) )
+    
+  })
+  
+  # --- Dynamic UI for the MAP to study
+  output$choose_maps3<- renderUI({
+  
+    # Create the checkboxes and select the first one by default
+    checkboxGroupInput("selected_maps", "Choose maps !", choices=map_files, selected=c(map_files[1],map_files[2]) )
+    
+  })
+
+  # --- Dynamic UI for the MAP to study
+  output$choose_maps4<- renderUI({
+  
+    # Create the checkboxes and select the first one by default
+    radioButtons("selected_maps", "Choose maps !", choices=map_files, selected=map_files[1] )
     
   })
   
@@ -160,8 +184,7 @@ shinyServer(function(input, output) {
 
 		
 		# --- Start the plotly graph
-		p=plot_ly(mat , x=carte , y=position , text=text , hoverinfo="text" , mode="markers+lines"  , marker=list(color="black" , size=10 , opacity=0.5,symbol=24) , line=list(width=0.4, color="purple" , opacity=0.1) , showlegend=F , evaluation = FALSE )
-		#, group=marker
+		p=plot_ly(mat , x=carte , y=position , text=text , hoverinfo="text" , mode="markers+lines"  , marker=list(color="black" , size=10 , opacity=0.5,symbol=24) , line=list(width=0.4, color="purple" , opacity=0.1) , showlegend=F , evaluation = FALSE , group=marker)
 		
 		# Ajout d'un trait vertical pour chaque graph
 		p=add_trace(x = c(1,1), y = c(0, my_ylim) , line=list(width=4, color="black"))
@@ -251,7 +274,7 @@ shinyServer(function(input, output) {
 		don=na.omit(data)
 		
 		# Select the choosen chromosome, the user can choose "all" !
-		if(input$chromo=="all"){don=don}else{don=don[don[,2]==input$chromo & don[,4]==input$chromo , ]}
+		if(input$chromo_sheet3=="all"){don=don}else{don=don[don[,2]==input$chromo_sheet3 & don[,4]==input$chromo_sheet3 , ]}
 		
 		
 		map1=don[,c(1,2,3)]
@@ -286,7 +309,7 @@ shinyServer(function(input, output) {
 		don$text=paste(don[,1],"\nmap1: position : ",round(don[,3],2)," | chromosome : ",don[,2],"\nmap2: position : ",round(don[,6],2)," | chromosome : ",don[,5],sep="")
 		
 		#Prepare 2 layouts !
-		if(input$chromo=="all"){
+		if(input$chromo_sheet3=="all"){
 			lay_x=list(title = "map1", tickmode="array", tickvals=map1max[,2] , ticktext="" , showticklabels = F )
 			lay_y=list(title = "map2", tickmode="array", tickvals=map2max[,2] , ticktext="" , showticklabels = F )
 		}else{
@@ -336,7 +359,7 @@ shinyServer(function(input, output) {
 #-----------------------------------------------------------------------------
 
 
-		output$my_table_2 <- renderDataTable(
+		output$my_rough_map_viz <- renderDataTable(
 
 			# Which maps have been selected --> I take the first one of the ones that have been selected
 		
