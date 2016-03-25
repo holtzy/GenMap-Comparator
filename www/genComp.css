@@ -1,5 +1,24 @@
-body {
-  background-image: url("IMAGE/INRA_logo.jpg");
-  background-position: left top;
-  background-color : #000000; 
+
+
+
+
+/* Couleur du bandeau */
+.navbar-static-top {
+    background-color: #CC9933;
+    border-color: #CC9933;
 }
+
+
+/* Taille du bandeau */
+.navbar {
+	min-height: 62px;
+	}
+	
+	
+/* Couleur du fond 
+body {
+	background-image: url( http://papillondamour.p.a.pic.centerblog.net/fb850229.jpg );
+	background-color : yellow;
+	background-attachment:fixed;
+	background-repeat:repeat;
+} */

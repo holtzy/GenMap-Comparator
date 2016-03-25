@@ -38,21 +38,94 @@ shinyUI(navbarPage(
 	# Title of the app
 	("The Gen Map Comparator") ,
 	
+	#Fabrication d'un style spécifique à la page de garde.
+	tags$body(
+    	tags$style(HTML(".homepage {
+				background-image: url( http://papillondamour.p.a.pic.centerblog.net/fb850229.jpg );
+				background-color : yellow;
+				background-attachment:fixed;
+				background-repeat:repeat;
+    	}"))),
+  		
+# --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+
+
+
+
+
+# --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+	# ----------------------
+	# SHEET 0 : HOME PAGE
+	# ----------------------
+	
+	tabPanel( 
+
+	
+		#Name
+		h4("Home") ,class = "homepage",
+		
+		# Left column to choose input
+		column(12, offset=0, align="center",
+			class = "homepage",
+			# INTRO 
+			br(""),
+			br(""),
+			br(""),
+			helpText(div("The Genetic Map Comparator" , style="color:blue ;font-family: 'times'; font-si116pt" ) ) ,
+			br(""),
+			helpText(h2("Welcome to a world of genetic map. If you need to compare and characterize maps, you are in the good place ! ")) ,
+			br(""),
+			br(""),
+			helpText(h3("Please select your data : ")) ,
+			fileInput("inputId", label=NULL , multiple = TRUE, accept = NULL, width = '200px'),
+			
+			br(""),
+			br(""),
+			br(""),
+			br(""),
+			br(""),
+			br(""),
+			br(""),
+			br(""),
+			br(""),
+			br(""),
+			br("")
+
+			
+			#Close column
+			)
+
+		
+		#Close the tabPanel
+		),
 
 # --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
 
 
+
+
+
+
+
+
+# --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 	# ----------------------
 	# SHEET 1 : COMPARISON OF MAPS
 	# ----------------------
 	
-	tabPanel(
+	tabPanel( class = "two",
+	
 		
 		#Name
-		"position comp.",
+		h4("position comp.") ,
+
+
+		
 		
 		# Left column to choose input
 		column(2, 
@@ -86,13 +159,13 @@ shinyUI(navbarPage(
 		#Close the tabPanel
 		),
 
-
-
-
 # --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
 
+
+
+# --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 	# ----------------------
 	# SHEET 2 : SUMMARY STATISTICS
@@ -100,7 +173,7 @@ shinyUI(navbarPage(
 	tabPanel(
 		
 		#Name
-		"Summary Statistics",
+		h4("Summary Statistics"),
 		
 		# Left column to choose input
 		column(2, 
@@ -151,7 +224,7 @@ shinyUI(navbarPage(
 	tabPanel(
 		
 		#Name
-		"Interchromosomal Analysis",
+		h4("Interchromosomal Analysis"),
 		
 		# Left column to choose input
 		column(2, 
@@ -201,7 +274,7 @@ shinyUI(navbarPage(
 	tabPanel(
 		
 		#Name
-		"Rough Map",
+		h4("Rough Map"),
 		
 		# Left column to choose input
 		column(2, 
@@ -253,7 +326,7 @@ shinyUI(navbarPage(
 	tabPanel(
 		
 		#Name
-		"Documentation",
+		h4("Documentation"),
 		
 		# Left column to choose input
 		column(8, offset=2, 
