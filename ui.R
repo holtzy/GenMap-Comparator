@@ -33,19 +33,19 @@ shinyUI(navbarPage(
 	theme = shinytheme("United"),
 	
 	# And I custom it with additionnal CSS
-	includeCSS("www/genComp.css") ,
+	#includeCSS("www/genComp.css") ,
 
 	# Title of the app
 	("The Gen Map Comparator") ,
 	
 	#Fabrication d'un style spécifique à la page de garde.
-	tags$body(
-    	tags$style(HTML(".homepage {
-				background-image: url( http://papillondamour.p.a.pic.centerblog.net/fb850229.jpg );
-				background-color : yellow;
-				background-attachment:fixed;
-				background-repeat:repeat;
-    	}"))),
+	#tags$head(
+    #	tags$style(HTML(".homepage {
+	#			background-image: url( http://papillondamour.p.a.pic.centerblog.net/fb850229.jpg );
+	#			background-color : yellow;
+	#			background-attachment:fixed;
+	#			background-repeat:repeat;
+    #	}"))),
   		
 # --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -62,13 +62,19 @@ shinyUI(navbarPage(
 	
 	tabPanel( 
 
-	
+		style = "background-image: url( http://papillondamour.p.a.pic.centerblog.net/fb850229.jpg )" ,
+		
+		
 		#Name
-		h4("Home") ,class = "homepage",
+		h4("Home") ,#class = "homepage",
+		
+ 
+		
+		helpText("totototo"), 
 		
 		# Left column to choose input
 		column(12, offset=0, align="center",
-			class = "homepage",
+			#class = "first_page",
 			# INTRO 
 			br(""),
 			br(""),
