@@ -33,14 +33,14 @@ shinyUI(navbarPage(
 	theme = shinytheme("United"),
 	
 	# And I custom it with additionnal CSS
-	#includeCSS("www/genComp.css") ,
+	includeCSS("www/genComp.css") ,
 
 	# Title of the app
 	("The Gen Map Comparator") ,
 	
 	#Fabrication d'un style spécifique à la page de garde.
 	#tags$head(
-    #	tags$style(HTML(".homepage {
+   # 	tags$style(HTML(".homepage {
 	#			background-image: url( http://papillondamour.p.a.pic.centerblog.net/fb850229.jpg );
 	#			background-color : yellow;
 	#			background-attachment:fixed;
@@ -62,18 +62,44 @@ shinyUI(navbarPage(
 	
 	tabPanel( 
 
-		style = "background-image: url( http://papillondamour.p.a.pic.centerblog.net/fb850229.jpg )" ,
+		#style = "background-image: url( http://papillondamour.p.a.pic.centerblog.net/fb850229.jpg )" ,
 		
 		
 		#Name
 		h4("Home") ,#class = "homepage",
-		
- 
-		
-		helpText("totototo"), 
-		
+			
 		# Left column to choose input
-		column(12, offset=0, align="center",
+		column(12, offset=0, align="center" ,
+			style="
+				background-image: url( http://papillondamour.p.a.pic.centerblog.net/fb850229.jpg );
+				margin-top: -20px;
+				width: 100%;
+				",
+
+			#class = "first_page",
+			# INTRO 
+			br(""),
+			br(""),
+			br(""),
+			helpText(div("The Genetic Map Comparator" , style="color:white ; font-family: 'times'; font-size:30pt" ) ) ,
+			br(""),
+			helpText(h2("Welcome to a world of genetic map. If you need to compare and characterize maps, you are in the good place ! ")) ,
+			br(""),
+			br(""),
+			helpText(h3("Please select your data : ")) ,
+			fileInput("inputId", label=NULL , multiple = TRUE, accept = NULL, width = '200px')
+					
+			#Close column
+			),
+
+		# Left column to choose input
+		column(12, offset=0, align="center" ,
+			style="
+				background-image: url( http://www.unesourisetmoi.info/data/images/photos/091/fond-ecran_tablette_01.jpg);
+				margin-top: -20px;
+				width: 100%;
+				",
+
 			#class = "first_page",
 			# INTRO 
 			br(""),
@@ -85,21 +111,8 @@ shinyUI(navbarPage(
 			br(""),
 			br(""),
 			helpText(h3("Please select your data : ")) ,
-			fileInput("inputId", label=NULL , multiple = TRUE, accept = NULL, width = '200px'),
-			
-			br(""),
-			br(""),
-			br(""),
-			br(""),
-			br(""),
-			br(""),
-			br(""),
-			br(""),
-			br(""),
-			br(""),
-			br("")
-
-			
+			fileInput("inputId", label=NULL , multiple = TRUE, accept = NULL, width = '200px')
+					
 			#Close column
 			)
 
