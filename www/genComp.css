@@ -18,7 +18,7 @@
 /* Couleur du fond
 body	 {
 	background-image: url( http://papillondamour.p.a.pic.centerblog.net/fb850229.jpg );
-	background-color : yellow;
+	background-color : white;
 	background-attachment:fixed;
 	background-repeat:repeat;
 } 
@@ -28,9 +28,12 @@ body	 {
 
 /* Couleur du fond */
 body	 {
-	background-color : yellow;
+	background-color : white;
 } 
 
 
 /* Juste pour le padding de la home-page */
 .container-fluid { padding-left: 0; padding-right: 0; }
+
+
+

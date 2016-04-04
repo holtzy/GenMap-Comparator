@@ -62,52 +62,30 @@ shinyUI(navbarPage(
 	
 	tabPanel( 
 
-		#style = "background-image: url( http://papillondamour.p.a.pic.centerblog.net/fb850229.jpg )" ,
-		
-		
 		#Name
 		h4("Home") ,#class = "homepage",
+		br(""),br(""),br(""),
+
+		
+		#img(src = "test.png", height = 472, width = 472),
+
 			
 		# Left column to choose input
 		column(12, offset=0, align="center" ,
 			style="
-				background-image: url( http://papillondamour.p.a.pic.centerblog.net/fb850229.jpg );
+				background-image: url( test.png);
+				background-color: red;
 				margin-top: -20px;
 				width: 100%;
 				",
 
 			#class = "first_page",
 			# INTRO 
+			br(""),br(""),br(""),
+			helpText(strong("The Genetic Map Comparator" , style="color:white ; font-family: 'times'; font-size:30pt ; font-type:bold" ) ) ,
 			br(""),
-			br(""),
-			br(""),
-			helpText(div("The Genetic Map Comparator" , style="color:white ; font-family: 'times'; font-size:30pt" ) ) ,
-			br(""),
-			helpText(h2("Welcome to a world of genetic map. If you need to compare and characterize maps, you are in the good place ! ")) ,
-			br(""),
-			br(""),
-			helpText(h3("Please select your data : ")) ,
-			fileInput("inputId", label=NULL , multiple = TRUE, accept = NULL, width = '200px')
-					
-			#Close column
-			),
-
-		# Left column to choose input
-		column(12, offset=0, align="center" ,
-			style="
-				background-image: url( http://www.unesourisetmoi.info/data/images/photos/091/fond-ecran_tablette_01.jpg);
-				margin-top: -20px;
-				width: 100%;
-				",
-
-			#class = "first_page",
-			# INTRO 
-			br(""),
-			br(""),
-			br(""),
-			helpText(div("The Genetic Map Comparator" , style="color:blue ;font-family: 'times'; font-si116pt" ) ) ,
-			br(""),
-			helpText(h2("Welcome to a world of genetic map. If you need to compare and characterize maps, you are in the good place ! ")) ,
+			helpText(strong(p("Welcome to a world of genetic map. If you need to compare and characterize maps, " , style="color:white ; font-family: 'times'; font-size:20pt"))) ,
+			helpText(strong(p("you are in the good place !" , style="color:white ; font-family: 'times'; font-size:20pt"))) ,
 			br(""),
 			br(""),
 			helpText(h3("Please select your data : ")) ,
@@ -116,7 +94,6 @@ shinyUI(navbarPage(
 			#Close column
 			)
 
-		
 		#Close the tabPanel
 		),
 
@@ -131,33 +108,93 @@ shinyUI(navbarPage(
 
 
 
+
 # --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 	# ----------------------
-	# SHEET 1 : COMPARISON OF MAPS
+	# SHEET 1 : SUMMARY STATISTICS
+	# ----------------------
+	tabPanel(
+		
+		#Name
+		h4("Summary Statistics"),
+		
+		# First Row : bar and pieplot whit corresponding widget
+		fluidRow(
+		
+			#Left column to choose input
+			column(2, 
+				
+				# chooser map
+				br(),br(),br(),
+				wellPanel(uiOutput("choose_maps_sheet2")),
+	
+				# choose variable for barplot
+				br(),
+				wellPanel(radioButtons( "var_for_barplot", "Show on barplot:", choices = c("nb. marker","size","average gap","biggest gap","Nb. uniq pos."), selected =c("nb. marker") , inline = TRUE ))
+				
+				#Close column
+				),
+
+			#Center column for PiePlot
+			column(3,  plotOutput("my_pieplot", height = "500px" ,  width = "500px" ) ),
+
+			#Right column for Barplot
+			column(7 , plotOutput("my_barplot" , height = "500px" ,  width = "900px")   )
+			
+		#Close first fluidRow
+		),
+		
+		# Second fluid row for the circular plot !
+		br(""),
+		fluidRow(
+		
+			column(2, 
+		
+				# Choose chromosome
+				wellPanel(checkboxGroupInput( "chromo_sheet2", "Choose chromosome !", choices = c("all","1A","1B","2A","2B","3A","3B","4A","4B","5A","5B","6A","6B","7A","7B"), selected =c("1A","1B") , inline = TRUE ))
+
+				#Close column
+				),
+
+			column(8, offset=2,
+				plotOutput("circular_plot" ,  height = "700px" ,  width = "700px" )
+
+			#Close column
+			)
+
+		#Close Second fluidRow
+		)
+		
+		#Close the tabPanel
+		),
+		
+		
+# --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	
+	
+	
+
+
+
+# --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+	# ----------------------
+	# SHEET 2 : COMPARISON OF MAPS
 	# ----------------------
 	
 	tabPanel( class = "two",
 	
-		
 		#Name
-		h4("position comp.") ,
-
-
-		
+		h4("Compare positions") ,
 		
 		# Left column to choose input
 		column(2, 
-			# INTRO 
-			#helpText("This is an application") ,
-			br(""),
-			br(""),
-			br(""),
-    
+
 			# CHOIX DU chromosome d'étude
+			br(""),	br(""),	br(""),
 			wellPanel(selectInput( "chromo", "Choose chromosome !", choices = c("all","1A","1B","2A","2B","3A","3B","4A","4B","5A","5B","6A","6B","7A","7B"), selected =c("1A") )),
-			br(),
-			br(),
+			br(),br(),
 			
 			# Choix de la map
 			wellPanel(uiOutput("choose_maps"))
@@ -169,11 +206,10 @@ shinyUI(navbarPage(
 		column(9, 
        		
        		br(""),
-			plotlyOutput("plot1" ,  height = "700px")
+			plotlyOutput("plot1" ,  height = "600px")
 			
 			#Close column
 			)
-
 		
 		#Close the tabPanel
 		),
@@ -184,58 +220,8 @@ shinyUI(navbarPage(
 
 
 
+
 # --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-	# ----------------------
-	# SHEET 2 : SUMMARY STATISTICS
-	# ----------------------
-	tabPanel(
-		
-		#Name
-		h4("Summary Statistics"),
-		
-		# Left column to choose input
-		column(2, 
-			
-			# Make som space
-			br(""),
-			br(""),
-			br(""),
-    
-			# CHOIX DU chromosome d'étude
-			wellPanel(checkboxGroupInput( "chromo_sheet2", "Choose chromosome !", choices = c("all","1A","1B","2A","2B","3A","3B","4A","4B","5A","5B","6A","6B","7A","7B"), selected =c("1A") , inline = TRUE )),
-			br(),
-			br(),
-
-			# Choix de la map
-			wellPanel(uiOutput("choose_maps_sheet2"))
-
-			#Close column
-			),
-		
-		# On the space left, I add the table
-		column(8, offset=1,
-       		
-       		br(""),
-			plotOutput("circular_plot" ,  height = "700px" ,  width = "700px" ),
-
-       		br(""),
-			dataTableOutput('my_table_1',width="400px",height="400px")
-			
-			#Close column
-			)
-
-		
-		#Close the tabPanel
-		),
-		
-		
-		
-	
-# --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-	
-	
-	
 	
 	# ----------------------
 	# SHEET 3 : INTERCHROMOSOMAL ANALYSIS
@@ -249,9 +235,7 @@ shinyUI(navbarPage(
 		column(2, 
 			
 			# Make som space
-			br(""),
-			br(""),
-			br(""),
+			br(""), br(""),
 			
 			# Choose the chromosome
 			wellPanel(selectInput( "chromo_sheet3", "Choose chromosome !", choices = c("all","1A","1B","2A","2B","3A","3B","4A","4B","5A","5B","6A","6B","7A","7B"), selected =c("all") )),
@@ -267,15 +251,13 @@ shinyUI(navbarPage(
 			),
 		
 		# On the space left, I add the plot
-		column(8, offset=1,
+		column(8, 
        		
-       		br(""),br(""),br(""),
-			plotlyOutput("plot2" ,  height = "900px" ,  width = "1100px")
+			plotlyOutput("plot2" ,  height = "700px" ,  width = "1100px")
 			
 			#Close column
 			)
 
-		
 		#Close the tabPanel
 		),
 		
@@ -299,21 +281,23 @@ shinyUI(navbarPage(
 		column(2, 
 			
 			# Make som space
-			br(""),
-			br(""),
-			br(""),
+			br(""),	br(""),	br(""),
 			
 			# Choix de la map
-			wellPanel(uiOutput("choose_maps4"))
+			wellPanel(uiOutput("choose_maps4")),
+			
+			# Choose chromosome
+			br(""),
+			wellPanel(checkboxGroupInput( "chromo_sheet4", "Choose chromosome !", choices = c("all","1A","1B","2A","2B","3A","3B","4A","4B","5A","5B","6A","6B","7A","7B"), selected =c("1A","1B") , inline = TRUE ))
 
 			#Close column
 			),
 		
 		# On the space left, I add the plot
-		column(8, offset=1,
+		column(8, offset=2,
        		
        		br(""),
-			dataTableOutput('my_rough_map_viz' , width="600px")
+			dataTableOutput('my_rough_map_viz' , width="500px")
 			
 			#Close column
 			)

@@ -16,6 +16,8 @@ GenMap-Comparator is a shiny application dedicated to the comparison of genetic 
 # - outil de synténie pour simplifier le graf quand beaucoup de marqueurs sont parrallèles
 # - Systeme de cash pour le graph plotly long a calculer?
 # - Taille des trait (lwd) dans le graphe circulaire (thales)
+# - Pie plot : mettre du blanc au milieu
+# - Mettre des titres aux graphe sous forme de question
 
 # POURQUOI faire un nouveau map viewer ?
 # - Permet de comparer des cartes plus denses (NGS)

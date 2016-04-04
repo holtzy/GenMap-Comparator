@@ -13,13 +13,16 @@ library(DT)
 library(circlize)
 library(RColorBrewer)
 
-#Test
+
+# Colors for the App :
+my_colors=brewer.pal( 12 , "Set3")[-2]
+
 
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------#
 
 #-----------------------------------------------------------------------------
-# --- FILE FORMATING
+# --- UPLOAD MAPS AND FILE FORMATING
 #-----------------------------------------------------------------------------
 
 # --- Catch the map we have to compare :
@@ -42,7 +45,7 @@ if(nb_de_carte>2){
 		data=merge(data , my_maps[[i]] , by.x=1 , by.y=2 , all=T)
 		colnames(data)[c( ncol(data)-1 , ncol(data) )]= c( paste("chromo",map_files[i],sep="_") , paste("pos",map_files[i],sep="_") )
 	}}
-#---> I get a file summarizing the information for every markers present at least one time !
+# ---> I get a file summarizing the information for every markers present at least one time !
 
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------#
@@ -56,7 +59,7 @@ if(nb_de_carte>2){
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------#
 
 #-----------------------------------------------------------------------------
-# --- FUNCTIONS USED IN THE SCRIPT
+# --- COMPUTE SUMMARY STATISTICS FOR EVERY MAPS
 #-----------------------------------------------------------------------------
 
 # Function 1 : give it a piece of map, it calculates some statistics and add it to a bilan data frame.
@@ -72,6 +75,26 @@ my_fun=function(my_map, bilan, i){
 	bilan[num,6]=nrow(unique(my_map[,c(1,3)]))
 	return(bilan)
 	}
+
+# Compute summary statistics for every maps applying this function !
+summary_stat=list()
+for(j in 1:nb_de_carte){
+	# Make an emty matrix
+	map=my_maps[[j]]			
+	bilan=data.frame(matrix(0,0,6)) ; num=0
+	colnames(bilan)=c("Chromo","nbr marker","size","average gap","biggest gap","Nb uniq pos")
+	# Apply the my_fun function to each chromosome one by one
+	for(i in levels(map[,1])){
+		map_K=map[map[,1]==i,]
+		bilan=my_fun(map_K , bilan , i)
+		}
+	# And then to the whole map
+	i="tot"
+	bilan=my_fun(map , bilan , "all")
+	#Add the result to the list containing all the map summaries
+	summary_stat[[length(summary_stat)+1]]=bilan
+	}
+# If I want the summary of the first map : summary_stat[[1]]
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------#
 
@@ -127,7 +150,7 @@ shinyServer(function(input, output) {
   output$choose_maps4<- renderUI({
   
     # Create the checkboxes and select the first one by default
-    radioButtons("selected_maps", "Choose the reference map!", choices=map_files, selected=map_files[1] )
+    radioButtons("selected_maps_sheet4", "Choose the reference map!", choices=map_files, selected=map_files[1] )
     
   })
   
@@ -157,78 +180,36 @@ shinyServer(function(input, output) {
 
 
 
-
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------#
 
 #-----------------------------------------------------------------------------
-# --- SHEET 1 : MAP COMPARISON FOR THE CHOSEN CHROMOSOME
+# --- SHEET 1 : SUMMARY STATISTICS PAGE - BARPLOT !
 #-----------------------------------------------------------------------------
 
+	output$my_barplot=renderPlot({
 	
-  	output$plot1 <- renderPlotly({ 
-  	
-  	
-		# Which maps have been selected ?
-		selected_maps=which(map_files%in%input$selected_maps)
-		selected_col=sort(c(1 , 2+(selected_maps-1)*2 , 3+(selected_maps-1)*2))
-		dat=data[ , selected_col ]
+		# Selected variable ?
+		selected_var=which(c("nb. marker","size","average gap","biggest gap","Nb. uniq pos.")%in%input$var_for_barplot)
+
+		# Selected Maps ?
+		selected_maps=which(map_files%in%input$selected_maps_sheet2)
 		nb_selected_maps=length(selected_maps)
 		
-		# --- Subset of the dataset with only the good chromosome :
-		don=dat[dat[,2]==input$chromo & !is.na(dat[,2]) , ]
-		for(j in c(2:nb_selected_maps)){
-			temp=dat[dat[,c((j-1)*2+2)]==input$chromo & !is.na(dat[,c((j-1)*2+2)]) , ]
-			don=rbind(don,temp)
-		}
-		don=unique(don)
-
-
-		# --- Change Matrix format :
-		mat=data.frame(marker=don[,1] , carte=1 , position=don[ , 3])
-		if(nb_selected_maps>1){
-			for(i in c(2:nb_selected_maps)){
-				to_add=data.frame(marker=don[,1] , carte=i , position=don[ , c((i-1)*2+3)])
-				mat=rbind(mat,to_add)
-		}}
+		# Create a table which gives this selected_variable for every selected maps and every chromosomes.
+		barplot_table=summary_stat[[selected_maps[1]]] [,c(1,selected_var+1)]
+		for(i in selected_maps[-1]){
+			barplot_table=merge(barplot_table , summary_stat[[i]] [,c(1,selected_var+1)] , by.x=1 , by.y=1 , all=T)
+			}
+		rownames(barplot_table)=barplot_table[,1]
+		barplot_table=barplot_table[-nrow(barplot_table) , ]
+		barplot_table=t(as.matrix(barplot_table[,-1]))
 		
+		# Make the barplot !
+		par(mar=c(3,3,3,3))
+		barplot(barplot_table , beside=T , col=my_colors[1:length(selected_maps)]) 
 		
-		# --- Add a text column for plotly and compute some useful values for the plot drawing
-		mat$text=paste(mat[,1],"\npos: ",round(mat[,3],2),sep="")
-		my_ylim=max(mat$position, na.rm=T)
-
-		
-		# --- Start the plotly graph
-		p=plot_ly(mat , x=carte , y=position , text=text , hoverinfo="text" , mode="markers+lines"  , marker=list(color="black" , size=10 , opacity=0.5,symbol=24) , line=list(width=0.4, color="purple" , opacity=0.1) , showlegend=F , evaluation = FALSE) # , group=marker)
-		
-		# Ajout d'un trait vertical pour chaque graph
-		p=add_trace(x = c(1,1), y = c(0, my_ylim) , line=list(width=4, color="black"))
-		if(nb_de_carte>2){p=add_trace(x = c(2,2), y = c(0, max(mat$position[mat$carte==2] , na.rm=T)) , line=list(width=4, color="black"))}
-		if(nb_de_carte>2){p=add_trace(x = c(3,3), y = c(0, max(mat$position[mat$carte==3] , na.rm=T)) , line=list(width=4, color="black"))}
-		if(nb_de_carte>3){p=add_trace(x = c(4,4), y = c(0, max(mat$position[mat$carte==4] , na.rm=T)) , line=list(width=4, color="black"))}
-		if(nb_de_carte>4){p=add_trace(x = c(5,5), y = c(0, max(mat$position[mat$carte==5] , na.rm=T)) , line=list(width=4, color="black"))}
-		if(nb_de_carte>5){p=add_trace(x = c(6,6), y = c(0, max(mat$position[mat$carte==6] , na.rm=T)) , line=list(width=4, color="black"))}
-		if(nb_de_carte>6){p=add_trace(x = c(7,7), y = c(0, max(mat$position[mat$carte==7] , na.rm=T)) , line=list(width=4, color="black"))}
-		
-		# Ajout du nom des cartes
-		p=add_trace(x=seq(1:nb_selected_maps) , y=rep(-10,nb_selected_maps) , text=unlist(input$selected_maps) , mode="text" , textfont=list(size=20 , color="orange") )
-		
-		# Custom the layout
-		p=layout( 
-			
-			#Gestion du hovermode
-			hovermode="closest"  ,
-			
-			# Gestion des axes
-			xaxis=list(title = "", zeroline = FALSE, showline = FALSE, showticklabels = FALSE, showgrid = FALSE , range=c(0.5,nb_selected_maps+0.5) ),
-			yaxis=list(autorange = "reversed", title = "Position (cM)", zeroline = F, showline = T, showticklabels = T, showgrid = FALSE ,  tickfont=list(color="grey") , titlefont=list(color="grey") , tickcolor="grey" , linecolor="grey"),
-			
-			)
-		p
-  	
-  	#Je ferme le outpuPlot1
-  	})
-  	
-
+	#Close the render-barplot 
+	})
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------#
 
@@ -240,46 +221,49 @@ shinyServer(function(input, output) {
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------#
 
 #-----------------------------------------------------------------------------
-# --- SHEET 2 : SUMMARY STATISTICS
+# --- SHEET 1 : SUMMARY STATISTICS PAGE - PIEPLOT !
 #-----------------------------------------------------------------------------
 
-	# Which map do we want to summarize ?
-	map=my_maps[[1]]
-			
-	# Make calculations
-	bilan=data.frame(matrix(0,0,6)) ; num=0
-	colnames(bilan)=c("Chromo","nbr marker","size","average gap","biggest gap","Nb uniq pos")
+	output$my_pieplot=renderPlot({
 	
-	# Apply to each chromosome one by one
-	for(i in levels(map[,1])){
-		map_K=map[map[,1]==i,]
-		bilan=my_fun(map_K , bilan , i)
-		}
+		# Selected variable ?
+		all_var=c("nb. marker","size","average gap","biggest gap","Nb. uniq pos.")
+		selected_var=which(all_var%in%input$var_for_barplot)
 
-	# And then to the whole map
-	i="tot"
-	bilan=my_fun(map , bilan , "all")
-	
-	# Make the output table
-	output$my_table_1 <- renderDataTable(
-		bilan , filter="none", selection="none", escape=FALSE, options = list(sDom  = '<"top"><"bottom">' , pageLength = 40), rownames = FALSE
-		)
-	
+		# Selected Maps ?
+		selected_maps=which(map_files%in%input$selected_maps_sheet2)
+		nb_selected_maps=length(selected_maps)
+		print("ok")
+		print(selected_maps)
+		
+		# Create a table which gives this selected_variable for every selected maps and every chromosomes.
+		barplot_table=summary_stat[[selected_maps[1]]] [,c(1,selected_var+1)]
+		for(i in selected_maps[-1]){
+			barplot_table=merge(barplot_table , summary_stat[[i]] [,c(1,selected_var+1)] , by.x=1 , by.y=1 , all=T)
+			}
+		rownames(barplot_table)=barplot_table[,1]
+		barplot_table=barplot_table[nrow(barplot_table) , ]
+		barplot_table=t(as.matrix(barplot_table[,-1]))
+		
+		# Make the barplot !
+		par(mar=c(3,3,3,10))
+		my_colors=brewer.pal( 10 , "Set3")[1:length(selected_maps)]
+		pie(barplot_table , col=my_colors , labels=paste(map_files[selected_maps],"\n",all_var[selected_var]," : ",barplot_table,sep="") )
+		
+	#Close the render-barplot 
+	})
+
+
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------#
 
 
 
 
 
-
-
-
-
-
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------#
 
 #-----------------------------------------------------------------------------
-# --- SHEET 2 : CIRCULAR PLOT
+# --- SHEET 1 : SUMMARY STATISTICS PAGE - CIRCULAR PLOT FOR DENSITY !
 #-----------------------------------------------------------------------------
 
 	# Make the circular plot. See https://cran.r-project.org/web/packages/circlize/vignettes/circlize.pdf to understand how circular plot works.
@@ -298,7 +282,7 @@ shinyServer(function(input, output) {
 				data_circ=rbind(data_circ , current_map)
 			}
 		
-		# If the "all" option is not selected, then I keep only the chose chromosomes
+		# If the "all" option is not selected, then I keep only the chosen chromosomes
 		if(!("all"%in%input$chromo_sheet2)){
 			take=which(data_circ$group%in%input$chromo_sheet2)
 			data_circ=data_circ[take , ]
@@ -337,6 +321,104 @@ shinyServer(function(input, output) {
 		})
 	
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------#
+
+
+
+
+
+
+
+
+
+
+
+#-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------#
+
+#-----------------------------------------------------------------------------
+# --- SHEET 2 : MAP COMPARISON FOR A CHOSEN CHROMOSOME
+#-----------------------------------------------------------------------------
+
+	
+  	output$plot1 <- renderPlotly({ 
+  	
+  	
+		# Which maps have been selected ?
+		selected_maps=which(map_files%in%input$selected_maps)
+		selected_col=sort(c(1 , 2+(selected_maps-1)*2 , 3+(selected_maps-1)*2))
+		dat=data[ , selected_col ]
+		nb_selected_maps=length(selected_maps)
+		
+		# --- Subset of the dataset with only the good chromosome :
+		don=dat[dat[,2]==input$chromo & !is.na(dat[,2]) , ]
+		for(j in c(2:nb_selected_maps)){
+			temp=dat[dat[,c((j-1)*2+2)]==input$chromo & !is.na(dat[,c((j-1)*2+2)]) , ]
+			don=rbind(don,temp)
+		}
+		don=unique(don)
+
+
+		# --- Change Matrix format :
+		mat=data.frame(marker=don[,1] , carte=1 , position=don[ , 3])
+		if(nb_selected_maps>1){
+			for(i in c(2:nb_selected_maps)){
+				to_add=data.frame(marker=don[,1] , carte=i , position=don[ , c((i-1)*2+3)])
+				mat=rbind(mat,to_add)
+		}}
+		
+		
+		# --- Add a text column for plotly and compute some useful values for the plot drawing
+		mat$text=paste(mat[,1],"\npos: ",round(mat[,3],2),sep="")
+		my_ylim=max(mat$position, na.rm=T)
+		
+		print(head(mat))
+		
+		# --- Start the plotly graph
+		p=plot_ly(mat , x=carte , y=position , text=text , hoverinfo="text" , mode="markers+lines"  , marker=list(color="black" , size=10 , opacity=0.5,symbol=24) , line=list(width=0.4, color="purple" , opacity=0.1) , showlegend=F  , group=marker)
+		
+		# Ajout d'un trait vertical pour chaque graph
+		p=add_trace(x = c(1,1), y = c(0, my_ylim) , line=list(width=4, color="black"))
+		if(nb_de_carte>2){p=add_trace(x = c(2,2), y = c(0, max(mat$position[mat$carte==2] , na.rm=T)) , line=list(width=4, color="black"))}
+		if(nb_de_carte>2){p=add_trace(x = c(3,3), y = c(0, max(mat$position[mat$carte==3] , na.rm=T)) , line=list(width=4, color="black"))}
+		if(nb_de_carte>3){p=add_trace(x = c(4,4), y = c(0, max(mat$position[mat$carte==4] , na.rm=T)) , line=list(width=4, color="black"))}
+		if(nb_de_carte>4){p=add_trace(x = c(5,5), y = c(0, max(mat$position[mat$carte==5] , na.rm=T)) , line=list(width=4, color="black"))}
+		if(nb_de_carte>5){p=add_trace(x = c(6,6), y = c(0, max(mat$position[mat$carte==6] , na.rm=T)) , line=list(width=4, color="black"))}
+		if(nb_de_carte>6){p=add_trace(x = c(7,7), y = c(0, max(mat$position[mat$carte==7] , na.rm=T)) , line=list(width=4, color="black"))}
+		
+		# Ajout du nom des cartes
+		p=add_trace(x=seq(1:nb_selected_maps) , y=rep(-10,nb_selected_maps) , text=unlist(input$selected_maps) , mode="text" , textfont=list(size=20 , color="orange") )
+		
+		# Custom the layout
+		p=layout( 
+			
+			#Gestion du hovermode
+			hovermode="closest"  ,
+			
+			# Gestion des axes
+			xaxis=list(title = "", zeroline = FALSE, showline = FALSE, showticklabels = FALSE, showgrid = FALSE , range=c(0.5,nb_selected_maps+0.5) ),
+			yaxis=list(autorange = "reversed", title = "Position (cM)", zeroline = F, showline = T, showticklabels = T, showgrid = FALSE ,  tickfont=list(color="grey") , titlefont=list(color="grey") , tickcolor="grey" , linecolor="grey"),
+			
+			)
+		p
+  	
+  	#Je ferme le outpuPlot1
+  	})
+  	
+
+
+#-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------#
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -443,22 +525,41 @@ shinyServer(function(input, output) {
 # --- SHEET 4 : ROUGH MAP VIZUALIZATION
 #-----------------------------------------------------------------------------
 
+
+		# TODO --> Fout le bordel sur sheet 2...
+
+
 		#Faire une réactive pour pouvoir faire le tableau désiré 
-		don=data
 		
-		output$my_rough_map_viz <- renderDataTable(
+		observe({
+			
+			#Get the selected map
+			selected=which(map_files%in%input$selected_maps_sheet4)
+			if(length(selected==1)){
 
-			# Which maps have been selected --> I take the first one of the ones that have been selected
+				#Get the selected map
+				data_for_map_table=my_maps[[selected]]
 		
-			#See https://rstudio.github.io/DT/options.html for options in printing table
-			#my_maps[[which(map_files%in%input$selected_maps)[1]]] , escape = F , rownames = FALSE , options = list(pageLength = 40)
-			
-			don , escape = F , rownames = FALSE , options = list(pageLength = 40)
-			
-	#Close the output
-	)
+				#Get the selected chromosomes
+				if(!("all"%in%input$chromo_sheet4)){
+					selected_chromosomes=input$chromo_sheet4
+					data_for_map_table=data_for_map_table[which(data_for_map_table$group%in%selected_chromosomes),]
+					}
 
+				#Close the if statement
+				}		
+			
+				#Make the graph
+				output$my_rough_map_viz <- renderDataTable(
 
+					#See https://rstudio.github.io/DT/options.html for options in printing table
+					data_for_map_table , escape = F , rownames = FALSE , options = list(pageLength = 40)
+			
+					#Close the output
+					)
+	
+		#Close the observe
+		})
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------#
 
