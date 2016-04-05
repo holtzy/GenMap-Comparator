@@ -19,6 +19,11 @@ my_colors=brewer.pal( 12 , "Set3")[-2]
 
 
 
+
+
+
+
+
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------#
 
 #-----------------------------------------------------------------------------
@@ -203,10 +208,13 @@ shinyServer(function(input, output) {
 		rownames(barplot_table)=barplot_table[,1]
 		barplot_table=barplot_table[-nrow(barplot_table) , ]
 		barplot_table=t(as.matrix(barplot_table[,-1]))
+		print(barplot_table)
 		
 		# Make the barplot !
-		par(mar=c(3,3,3,3))
+		par(mar=c(3,3,3,8))
 		barplot(barplot_table , beside=T , col=my_colors[1:length(selected_maps)]) 
+		mtext(expression(italic("Fig. 2: Distribution of the requested \nfeature per maps.Values are given \nchromosome per chromosome")) , col="#3C3C3C" , line=-3 , at=ncol(barplot_table)*nb_selected_maps+8)
+
 		
 	#Close the render-barplot 
 	})
@@ -249,7 +257,7 @@ shinyServer(function(input, output) {
 		par(mar=c(3,3,3,10))
 		my_colors=brewer.pal( 10 , "Set3")[1:length(selected_maps)]
 		pie(barplot_table , col=my_colors , labels=paste(map_files[selected_maps],"\n",all_var[selected_var]," : ",barplot_table,sep="") )
-		
+		mtext(expression(italic("Fig. 1: Distribution of the requested \nfeature per maps.Calculations are \nmade considering the whole maps")) , col="#3C3C3C" , line=-5)
 	#Close the render-barplot 
 	})
 
