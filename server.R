@@ -34,11 +34,15 @@ my_colors=brewer.pal( 12 , "Set3")[-2]
 map_files=list.files("DATA")
 nb_de_carte=length(map_files)
 
-# --- Load every maps and add their content in a list
-my_maps=list(read.table(paste("DATA/",map_files[1],sep="") , header=T , dec="." ))
-for(i in c(2:nb_de_carte)){
-	my_maps[[length(my_maps)+1]]=read.table(paste("DATA/",map_files[i],sep="") , header=T , dec="." )
+# --- Load every maps and add their content in a list. (I keep only the first 3 columns, and I order the maps by LG and positions)
+my_maps=list()
+for(i in c(1:nb_de_carte)){
+	map_tmp=read.table(paste("DATA/",map_files[i],sep="") , header=T , dec="." ,na.strings="NA")[,c(1:3)]
+	map_tmp=map_tmp[order(map_tmp[,1] , map_tmp[,3] ) , ]
+	my_maps[[length(my_maps)+1]]=map_tmp
 }
+head(my_maps)
+
 # If you want to see informations concerning the map number1 : nrow(my_maps[[1]])
 # If you want the name of the map number one : print(args[i])
 
@@ -255,7 +259,6 @@ shinyServer(function(input, output) {
 		
 		# Make the barplot !
 		par(mar=c(3,3,3,10))
-		my_colors=brewer.pal( 10 , "Set3")[1:length(selected_maps)]
 		pie(barplot_table , col=my_colors , labels=paste(map_files[selected_maps],"\n",all_var[selected_var]," : ",barplot_table,sep="") )
 		mtext(expression(italic("Fig. 1: Distribution of the requested \nfeature per maps.Calculations are \nmade considering the whole maps")) , col="#3C3C3C" , line=-5)
 	#Close the render-barplot 
@@ -378,8 +381,6 @@ shinyServer(function(input, output) {
 		mat$text=paste(mat[,1],"\npos: ",round(mat[,3],2),sep="")
 		my_ylim=max(mat$position, na.rm=T)
 		
-		print(head(mat))
-		
 		# --- Start the plotly graph
 		p=plot_ly(mat , x=carte , y=position , text=text , hoverinfo="text" , mode="markers+lines"  , marker=list(color="black" , size=10 , opacity=0.5,symbol=24) , line=list(width=0.4, color="purple" , opacity=0.1) , showlegend=F  , group=marker)
 		
@@ -441,16 +442,14 @@ shinyServer(function(input, output) {
 
   	output$plot2 <- renderPlotly({ 
 
-		# Get the first selected map & order it
+		# Get the first selected map
 		selected=which(map_files%in%input$map1)
 		map1=my_maps[[selected]]
-		map1=map1[order(map1[,1] , map1[,3] ) , ]
 		name1=map_files[selected]
 		
 		# Get the second selected map
 		selected=which(map_files%in%input$map2)
 		map2=my_maps[[selected]]
-		map2=map2[order(map2[,1] , map2[,3] ) , ]
 		name2=map_files[selected]
 
 		# Select the choosen chromosome, the user can choose "all" !
@@ -534,11 +533,7 @@ shinyServer(function(input, output) {
 #-----------------------------------------------------------------------------
 
 
-		# TODO --> Fout le bordel sur sheet 2...
-
-
 		#Faire une réactive pour pouvoir faire le tableau désiré 
-		
 		observe({
 			
 			#Get the selected map

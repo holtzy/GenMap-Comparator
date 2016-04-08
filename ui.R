@@ -10,6 +10,15 @@
 ####################
 
 
+#  Pour se connecter au server Shiny de AGAP:
+#		ssh holtz@147.100.164.72
+#		?LOF@L~$QPt=diTIhXg5u<EA3
+#  Pour mettre l'appli sur le webserveur de Agap (disponible sur le web: http://147.100.164.72/) :
+#		cd /Users/holtz/Dropbox
+#		scp -r  GenMap-Comparator/ holtz@147.100.164.72://srv/shiny-server/holtz-apps
+#  Pour accéder a l'appli en ligne
+#		147.100.164.72/holtz-apps/GenMap-Comparator
+
 
 # We need some Libraries
 library(shiny)
@@ -20,16 +29,16 @@ library(shinyAce)
 
 #Make the background Image of the homepage
 grand=60
-png("~/Dropbox/GenMap-Comparator/www/my_image.png" , width = 40*grand, height = 22*grand)
-par(bg="black" )
-my_colors=c(rgb(0.2,0.2,0.4,0.5), rgb(0.8,0.2,0.4,0.5), rgb(0.2,0.9,0.4,0.2) )
-library(MASS)
-par(mar=c(0,0,0,0))
-my_iris=iris[,c(1,2,3,4,1,3,2,4,5)]
-ze_colors=my_colors[as.numeric(my_iris$Species)]
-par(cex.axis=2 , col.lab="white" , col.axis="grey")
-parcoord(my_iris[,c(1:8)] , col= ze_colors , ylim=c(0.1,0.8) , xlim=c(3,7.5) )
-dev.off()
+#png("www/my_image.png" , width = 40*grand, height = 22*grand)
+#par(bg="black" )
+#my_colors=c(rgb(0.2,0.2,0.4,0.5), rgb(0.8,0.2,0.4,0.5), rgb(0.2,0.9,0.4,0.2) )
+#library(MASS)
+#par(mar=c(0,0,0,0))
+#my_iris=iris[,c(1,2,3,4,1,3,2,4,5)]
+#ze_colors=my_colors[as.numeric(my_iris$Species)]
+#par(cex.axis=2 , col.lab="white" , col.axis="grey")
+#parcoord(my_iris[,c(1:8)] , col= ze_colors , ylim=c(0.1,0.8) , xlim=c(3,7.5) )
+#dev.off()
 
 
 
@@ -42,7 +51,7 @@ shinyUI(navbarPage(
 
 	
 	# Choose a theme !
-	theme = shinytheme("United"),
+	theme = shinytheme("united"),
 	
 	# And I custom it with additionnal CSS
 	includeCSS("www/genComp.css") ,
@@ -84,19 +93,19 @@ shinyUI(navbarPage(
 			style="
 				background-image: url(my_image.png);
 				opacity: 0.8;
-				background-color: red;
+				background-color: black;
 				margin-top: -20px;
 				width: 100%;
 				",
 
 			# And write the welcome message
-			br(""),br(""),br(""),br(""),br(""),
-			helpText(strong("The Genetic Map Comparator" , style="color:white ; font-family: 'times'; font-size:80pt ; font-type:bold" ) ) ,
+			br(""),br(""),br(""),
+			helpText(strong("The Genetic Map Comparator" , style="color:white ; font-family: 'times'; font-size:50pt ; font-type:bold" ) ) ,
 			br(""),
-			helpText(strong(p("Welcome to a world of genetic map. If you need to compare and characterize maps, " , style="color:white ; font-family: 'times'; font-size:20pt"))) ,
-			helpText(strong(p("you are in the good place !" , style="color:white ; font-family: 'times'; font-size:20pt"))) ,
+			helpText(strong(p("Welcome to a world of genetic map. If you need to compare and characterize maps, " , style="color:white ; font-family: 'times'; font-size:18pt"))) ,
+			helpText(strong(p("you are in the right place!" , style="color:white ; font-family: 'times'; font-size:18pt"))) ,
 			br(""),
-			helpText(strong(p("Please select your data : " , style="color:orange ; font-family: 'times'; font-size:20pt"))) ,
+			helpText(strong(p("Please select your data: " , style="color:orange ; font-family: 'times'; font-size:18pt"))) ,
 			fileInput("inputId", label=NULL , multiple = TRUE, accept = NULL, width = '200px'),
 			br(""),
 			p(
@@ -230,7 +239,7 @@ shinyUI(navbarPage(
 		column(9, 
        		
        		br(""),
-			plotlyOutput("plot1" ,  height = "600px")
+			plotlyOutput("plot1" ,  height = "800px")
 			
 			#Close column
 			)
