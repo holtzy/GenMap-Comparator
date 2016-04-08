@@ -117,7 +117,6 @@ for(j in 1:nb_de_carte){
 
 
 
-
 # OPEN THE SHINY SERVER
 shinyServer(function(input, output) {
 
@@ -212,13 +211,11 @@ shinyServer(function(input, output) {
 		rownames(barplot_table)=barplot_table[,1]
 		barplot_table=barplot_table[-nrow(barplot_table) , ]
 		barplot_table=t(as.matrix(barplot_table[,-1]))
-		print(barplot_table)
 		
 		# Make the barplot !
 		par(mar=c(3,3,3,8))
 		barplot(barplot_table , beside=T , col=my_colors[1:length(selected_maps)]) 
 		mtext(expression(italic("Fig. 2: Distribution of the requested \nfeature per maps.Values are given \nchromosome per chromosome")) , col="#3C3C3C" , line=-3 , at=ncol(barplot_table)*nb_selected_maps+8)
-
 		
 	#Close the render-barplot 
 	})
@@ -245,8 +242,6 @@ shinyServer(function(input, output) {
 		# Selected Maps ?
 		selected_maps=which(map_files%in%input$selected_maps_sheet2)
 		nb_selected_maps=length(selected_maps)
-		print("ok")
-		print(selected_maps)
 		
 		# Create a table which gives this selected_variable for every selected maps and every chromosomes.
 		barplot_table=summary_stat[[selected_maps[1]]] [,c(1,selected_var+1)]
@@ -353,7 +348,7 @@ shinyServer(function(input, output) {
   	output$plot1 <- renderPlotly({ 
   	
   	
-		# Which maps have been selected ?
+		# --- Which maps have been selected ?
 		selected_maps=which(map_files%in%input$selected_maps)
 		selected_col=sort(c(1 , 2+(selected_maps-1)*2 , 3+(selected_maps-1)*2))
 		dat=data[ , selected_col ]
@@ -366,48 +361,70 @@ shinyServer(function(input, output) {
 			don=rbind(don,temp)
 		}
 		don=unique(don)
+		
+		# --- OBJET 1 POUR LES LIAISONS ENRTE MARQUEURS
+		#Je fais une fonction qui me fait mon vecteur de position pour 2 cartes données : AXE des Y
+		function_pos=function(x,y){
+			#Récupération de 2 carte seulement:
+			pos=as.matrix(na.omit(don[,c(x,y)]))
+			#Il faut que je fasse un vecteur avec les valeur en cM dans l'ordre
+			my_vect=as.vector(t(pos))
+			correctif=seq(1:length(my_vect)) + rep(c(0,0,1,-1) , length(my_vect)/4)
+			my_vect=my_vect[correctif]
+			return(my_vect)
+			}
+			
+		# --- J applique a toutes les cartes sélectionnées, j obtiens un maxi vecteur.
+		pos_final=c()
+		for(v in c(1:(nb_selected_maps-1))){
+			col_x=v*2+1
+			col_y=v*2+3
+			a=function_pos( col_x , col_y)
+			pos_final=c(pos_final,a)
+			}
+			
+		#Et je dois faire le vecteur de l'axe des X !
+		xaxis=c()
+		num=0
+		for(i in c(1:(nb_selected_maps-1))){
+			num=num+1
+			my_nb=nrow(na.omit(don[,c(i*2+1,i*2+3)]))
+			to_add=rep(c(num,num+1,num+1,num),my_nb/2)
+			xaxis=c(xaxis,to_add)
+			}
 
+		# Start the plotly graph
+		p=plot_ly(x=xaxis , y=pos_final , hoverinfo="none" ,  line=list(width=0.4, color="purple" , opacity=0.1) , showlegend=F,  evaluate=TRUE)
 
-		# --- Change Matrix format :
-		mat=data.frame(marker=don[,1] , carte=1 , position=don[ , 3])
-		if(nb_selected_maps>1){
-			for(i in c(2:nb_selected_maps)){
-				to_add=data.frame(marker=don[,1] , carte=i , position=don[ , c((i-1)*2+3)])
-				mat=rbind(mat,to_add)
-		}}
-		
-		
-		# --- Add a text column for plotly and compute some useful values for the plot drawing
-		mat$text=paste(mat[,1],"\npos: ",round(mat[,3],2),sep="")
-		my_ylim=max(mat$position, na.rm=T)
-		
-		# --- Start the plotly graph
-		p=plot_ly(mat , x=carte , y=position , text=text , hoverinfo="text" , mode="markers+lines"  , marker=list(color="black" , size=10 , opacity=0.5,symbol=24) , line=list(width=0.4, color="purple" , opacity=0.1) , showlegend=F  , group=marker)
-		
-		# Ajout d'un trait vertical pour chaque graph
-		p=add_trace(x = c(1,1), y = c(0, my_ylim) , line=list(width=4, color="black"))
-		if(nb_de_carte>2){p=add_trace(x = c(2,2), y = c(0, max(mat$position[mat$carte==2] , na.rm=T)) , line=list(width=4, color="black"))}
-		if(nb_de_carte>2){p=add_trace(x = c(3,3), y = c(0, max(mat$position[mat$carte==3] , na.rm=T)) , line=list(width=4, color="black"))}
-		if(nb_de_carte>3){p=add_trace(x = c(4,4), y = c(0, max(mat$position[mat$carte==4] , na.rm=T)) , line=list(width=4, color="black"))}
-		if(nb_de_carte>4){p=add_trace(x = c(5,5), y = c(0, max(mat$position[mat$carte==5] , na.rm=T)) , line=list(width=4, color="black"))}
-		if(nb_de_carte>5){p=add_trace(x = c(6,6), y = c(0, max(mat$position[mat$carte==6] , na.rm=T)) , line=list(width=4, color="black"))}
-		if(nb_de_carte>6){p=add_trace(x = c(7,7), y = c(0, max(mat$position[mat$carte==7] , na.rm=T)) , line=list(width=4, color="black"))}
-		
-		# Ajout du nom des cartes
-		p=add_trace(x=seq(1:nb_selected_maps) , y=rep(-10,nb_selected_maps) , text=unlist(input$selected_maps) , mode="text" , textfont=list(size=20 , color="orange") )
-		
 		# Custom the layout
 		p=layout( 
-			
 			#Gestion du hovermode
 			hovermode="closest"  ,
-			
 			# Gestion des axes
 			xaxis=list(title = "", zeroline = FALSE, showline = FALSE, showticklabels = FALSE, showgrid = FALSE , range=c(0.5,nb_selected_maps+0.5) ),
-			yaxis=list(autorange = "reversed", title = "Position (cM)", zeroline = F, showline = T, showticklabels = T, showgrid = FALSE ,  tickfont=list(color="grey") , titlefont=list(color="grey") , tickcolor="grey" , linecolor="grey"),
-			
+			yaxis=list(range=c(0,500), autorange = "reversed", title = "Position (cM)", zeroline = F, showline = T, showticklabels = T, showgrid = FALSE ,  tickfont=list(color="grey") , titlefont=list(color="grey") , tickcolor="grey" , linecolor="grey"),
 			)
+
+		# Add vertical lines to represent chromosomes
+		for(m in c(1:nb_selected_maps)){
+			p=add_trace( x=c(m,m), y=c(0, max(don[,m*2+1],na.rm=T)) , evaluate=TRUE , line=list(width=4, color="black") )
+			p=layout( yaxis=list(range=c(0,max(pos_final))) )
+			}
+		
+		# Add markers
+		for(m in c(1:nb_selected_maps)){
+			obj2=don[,c(1,m*2+1)]
+			obj2$text=paste(obj2[,1],"\npos: ",obj2[,2],sep="")
+			p=add_trace(obj2, x=rep(m,nrow(obj2) ) , y=obj2[,2] , mode="markers" ,  evaluate=TRUE, marker=list(color="black" , size=10 , opacity=0.5,symbol=24) , text=text , hoverinfo="text")
+			p=layout( yaxis=list(range=c(0,max(pos_final))) )
+			}
+
+		# Add maps names			
+		p=add_trace(x=seq(1:nb_selected_maps) , y=rep(-10,nb_selected_maps) , text=unlist(input$selected_maps) , mode="text" , textfont=list(size=20 , color="orange") )
+
+			
 		p
+
   	
   	#Je ferme le outpuPlot1
   	})
