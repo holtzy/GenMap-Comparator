@@ -10,7 +10,7 @@
 ####################
 
 
-#  Pour se connecter au server Shiny de AGAP:
+# Pour se connecter au server Shiny de AGAP:
 #		ssh holtz@147.100.164.72
 #		?LOF@L~$QPt=diTIhXg5u<EA3
 #  Pour mettre l'appli sur le webserveur de Agap (disponible sur le web: http://147.100.164.72/) :

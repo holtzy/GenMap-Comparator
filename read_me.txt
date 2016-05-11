@@ -14,10 +14,10 @@ GenMap-Comparator is a shiny application dedicated to the comparison of genetic 
 # - Diagramme de Venn des marqueurs communs
 # - Faire un fichier de conf avec ls couleurs (au moins)
 # - outil de synténie pour simplifier le graf quand beaucoup de marqueurs sont parrallèles
-# - Systeme de cash pour le graph plotly long a calculer?
 # - Taille des trait (lwd) dans le graphe circulaire (thales)
 # - Pie plot : mettre du blanc au milieu
 # - Mettre des titres aux graphe sous forme de question
+# - Technique de vincent pour ordre des cartes: cash de l’ordre précédent.
 
 # POURQUOI faire un nouveau map viewer ?
 # - Permet de comparer des cartes plus denses (NGS)
