@@ -1,38 +1,54 @@
-GenMap-Comparator is a shiny application dedicated to the comparison of genetic maps.
 
 
-# TODO : la boite a idée
-# - Possibilité de retourner une carte
-# - Logo
-# - Comment mettre plusieurs images et un titre dans la barre du haut ?
-# - 2 modes de vision : High density / Low density avec les noms des marqueurs
-# - Aller les voir les formats de sortie des logiciels de carto classique : MapDisto, MapMaker, OneMap, Carthagene
-# - Circular plot avec le migest R package ? ou le circlize package ?
-# - Ajouter une possibilité d'ajouter des données d'annotations ? GFF?
-# - Ajouter positionnement des QTLs?
-# - Histogramme de densité de marqueur
-# - Diagramme de Venn des marqueurs communs
-# - Faire un fichier de conf avec ls couleurs (au moins)
-# - outil de synténie pour simplifier le graf quand beaucoup de marqueurs sont parrallèles
-# - Taille des trait (lwd) dans le graphe circulaire (thales)
-# - Pie plot : mettre du blanc au milieu
-# - Mettre des titres aux graphe sous forme de question
-# - Technique de vincent pour ordre des cartes: cash de l’ordre précédent.
+—— TODO for YAN —- 
 
-# POURQUOI faire un nouveau map viewer ?
-# - Permet de comparer des cartes plus denses (NGS)
-# - Permet des comparaisons inter-chromosomiques.
-# - Utilisation sur le WEB -> 0 installation.
-# - Utilisation des outils de visualisation interactive actuels !
+   - Logo
+   - Comment mettre plusieurs images et un titre dans la barre du haut ?
+   - Histogramme de densité de marqueur
+   - Diagramme de Venn des marqueurs communs
+   - Faire un fichier de conf avec ls couleurs (au moins)
+   - Pie plot : mettre du blanc au milieu (donut plot)
+   - Faire un fichier avec toutes les légendes.
+   - mettre en place le choix des fichiers d’entrée.
+   - transformation de format d’entrée automatique.
+   - possibilité d’export des figures en pdf.
+   - sheet comparison: bug lorsque une seule carte est affichée.
 
-# BIBLIO:
-# - Cmap
-# - Cmap3D
-# - un package matplotlib dans ce papier, mais outil non communiqué http://journal.frontiersin.org/article/10.3389/fpls.2015.00367/full#B16
-# - RQTL a une fonction de comparaison, mais c'est vraiment basique.
-# - MapDraw : une macro excel publiée en 2003 !
-# - Biomercator, mais plus pour dessiner une map et ajouter les QTLs.
-# - MapChart : idem, plus pour QTL via
+
+—— TODO for Yan OR Vincent —- 
+
+   - Aller les voir les formats de sortie des logiciels de carto classique : MapDisto, MapMaker, OneMap, Carthagene
+   - Essayer les logiciels existants: Cmap / Cmap 3D / MapDraw? / Biomercator / MapChart / autres?
+   - Améliorer les légendes des graphiques
+   - Correction anglais
+   - Faire la page de doc / explications (dernière sheet)   
+   - Rédaction
+   - Biblio: synthèse claire des différents format de carte. Décider lesquels on accepte comme format d’entrée.
+
+
+—— IDEES POTENTIELLES —- 
+ 
+   - Possibilité de retourner une carte
+   - Ajouter une possibilité d'ajouter des données d'annotations ? GFF?
+   - Ajouter positionnement des QTLs?
+   - outil de synténie pour simplifier le graf quand beaucoup de marqueurs sont parrallèles
+   - Rajouter une page pour les QTLs ?
+   - 2 modes de vision : High density / Low density avec les noms des marqueurs ?
+
+
+
+
+
+
+
+ BIBLIO:
+ - Cmap
+ - Cmap3D
+ - un package matplotlib dans ce papier, mais outil non communiqué http://journal.frontiersin.org/article/10.3389/fpls.2015.00367/fullB16
+ - RQTL a une fonction de comparaison, mais c'est vraiment basique.
+ - MapDraw : une macro excel publiée en 2003 !
+ - Biomercator, mais plus pour dessiner une map et ajouter les QTLs.
+ - MapChart : idem, plus pour QTL via
 
 
 
