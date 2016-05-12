@@ -196,6 +196,10 @@ shinyServer(function(input, output) {
 
 	output$my_barplot=renderPlot({
 	
+  		# Avoid bug when loading
+  		if (is.null(input$var_for_barplot) | is.null(input$selected_maps_sheet2) ) {return(NULL)}
+
+	
 		# Selected variable ?
 		selected_var=which(c("nb. marker","size","average gap","biggest gap","Nb. uniq pos.")%in%input$var_for_barplot)
 
@@ -235,6 +239,9 @@ shinyServer(function(input, output) {
 
 	output$my_pieplot=renderPlot({
 	
+		# Avoid bug when loading
+  		if (is.null(input$var_for_barplot) | is.null(input$selected_maps_sheet2) ) {return(NULL)}
+
 		# Selected variable ?
 		all_var=c("nb. marker","size","average gap","biggest gap","Nb. uniq pos.")
 		selected_var=which(all_var%in%input$var_for_barplot)
@@ -256,6 +263,7 @@ shinyServer(function(input, output) {
 		par(mar=c(3,3,3,10))
 		pie(barplot_table , col=my_colors , labels=paste(map_files[selected_maps],"\n",all_var[selected_var]," : ",barplot_table,sep="") )
 		mtext(expression(italic("Fig. 1: Distribution of the requested \nfeature per maps.Calculations are \nmade considering the whole maps")) , col="#3C3C3C" , line=-5)
+	
 	#Close the render-barplot 
 	})
 
@@ -275,6 +283,9 @@ shinyServer(function(input, output) {
 	# Make the circular plot. See https://cran.r-project.org/web/packages/circlize/vignettes/circlize.pdf to understand how circular plot works.
   	output$circular_plot <- renderPlot({ 
   	
+		# Avoid bug when loading
+  		if (is.null(input$var_for_barplot) | is.null(input$selected_maps_sheet2) ) {return(NULL)}
+
 		# Which maps have been selected ?
 		selected_maps=which(map_files%in%input$selected_maps_sheet2)
 		nb_selected_maps=length(selected_maps)
@@ -345,15 +356,52 @@ shinyServer(function(input, output) {
 #-----------------------------------------------------------------------------
 
 	
+
+	# liste_of_map_to_compare is an object with the genetic maps to compare, in the good order. I initialize it with the 2 first maps, like in the radiobutton.
+	liste_of_map_to_compare=c(map_files[1],map_files[2])
+	old_choice=NULL
+
+  	
+  	
   	output$plot1 <- renderPlotly({ 
   	
-  	
-		# --- Which maps have been selected ?
-		selected_maps=which(map_files%in%input$selected_maps)
-		selected_col=sort(c(1 , 2+(selected_maps-1)*2 , 3+(selected_maps-1)*2))
+  		# --- Avoid bug when page is loading
+  		if (is.null(input$selected_maps)) {return(NULL)}
+  		
+				
+		# --- First step : get the list of selected maps in the good order
+		# Old_choice represents the last choice of the user (before the current one). I initialize it with the value of the 2 maps to compare
+		if(is.null(old_choice)){ old_choice=liste_of_map_to_compare  }
+		
+		# I get the current choice :
+		current_choice=reactive({ input$selected_maps })
+		
+		# If the user has added a map, I determine which, and add it to the map to compare:
+		if(length(current_choice()) > length(old_choice)){
+			to_add= current_choice()[-which(current_choice()%in%old_choice)]
+			liste_of_map_to_compare<<-c(liste_of_map_to_compare,to_add)
+			}
+		
+		# If the user has removed a map, I determine which and remove it from the maps to compare:
+		if(length(current_choice()) < length(old_choice)){
+			to_del=old_choice[-which(old_choice%in%current_choice())]
+			liste_of_map_to_compare<<-liste_of_map_to_compare[ - which(liste_of_map_to_compare%in%to_del) ]
+			}
+					
+		# To avoid a bug, when only ONE map is selected, the map to compare is this map:
+		if(length(current_choice())==1){print("exception!") ;  liste_of_map_to_compare<<-current_choice() }
+			
+		# I save the current choice as old_choice for next change:
+		old_choice<<-isolate(current_choice())
+
+
+		# --- Make an input table with columns in the corresponding order: from mapB,mapA i keep column: 1, 4,5, 2,3:
+		selected_maps=match(liste_of_map_to_compare , map_files)  
+		selected_col=rep(selected_maps , each=2)*2
+		selected_col=c(1,selected_col+rep(c(0,1) , length(selected_col)/2))
 		dat=data[ , selected_col ]
 		nb_selected_maps=length(selected_maps)
-		
+ 		
 		# --- Subset of the dataset with only the good chromosome :
 		don=dat[dat[,2]==input$chromo & !is.na(dat[,2]) , ]
 		for(j in c(2:nb_selected_maps)){
@@ -420,16 +468,15 @@ shinyServer(function(input, output) {
 			}
 
 		# Add maps names			
-		p=add_trace(x=seq(1:nb_selected_maps) , y=rep(-10,nb_selected_maps) , text=unlist(input$selected_maps) , mode="text" , textfont=list(size=20 , color="orange") )
+		p=add_trace(x=seq(1:nb_selected_maps) , y=rep(-10,nb_selected_maps) , text=unlist(liste_of_map_to_compare) , mode="text" , textfont=list(size=20 , color="orange") )
 
-			
+		#Draw the plot
 		p
 
   	
-  	#Je ferme le outpuPlot1
+  	# Close outputPlot1
   	})
   	
-
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------#
 
@@ -458,6 +505,10 @@ shinyServer(function(input, output) {
 
 
   	output$plot2 <- renderPlotly({ 
+  	
+  		# Avoid bug when loading
+  		if (is.null(input$map1) | is.null(input$map2) | is.null(input$chromo_sheet3) ) {return(NULL)}
+
 
 		# Get the first selected map
 		selected=which(map_files%in%input$map1)
@@ -552,6 +603,11 @@ shinyServer(function(input, output) {
 
 		#Faire une réactive pour pouvoir faire le tableau désiré 
 		observe({
+		
+			  	
+  			# Avoid bug when loading
+  			if (is.null(input$selected_maps_sheet4) ) {return(NULL)}
+			
 			
 			#Get the selected map
 			selected=which(map_files%in%input$selected_maps_sheet4)
