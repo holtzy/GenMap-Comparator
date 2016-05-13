@@ -13,10 +13,11 @@ library(DT)
 library(circlize)
 library(RColorBrewer)
 
-
 # Colors for the App :
 my_colors=brewer.pal( 12 , "Set3")[-2]
 
+#Get the legends
+legend=read.table("LEGEND/all_legend.txt",sep="@")[,2]
 
 
 
@@ -219,7 +220,7 @@ shinyServer(function(input, output) {
 		# Make the barplot !
 		par(mar=c(3,3,3,8))
 		barplot(barplot_table , beside=T , col=my_colors[1:length(selected_maps)]) 
-		mtext(expression(italic("Fig. 2: Distribution of the requested \nfeature per maps.Values are given \nchromosome per chromosome")) , col="#3C3C3C" , line=-3 , at=ncol(barplot_table)*nb_selected_maps+8)
+		mtext(legend[23] , col="#3C3C3C" , line=-3 , at=ncol(barplot_table)*nb_selected_maps+8)
 		
 	#Close the render-barplot 
 	})
@@ -262,7 +263,7 @@ shinyServer(function(input, output) {
 		# Make the barplot !
 		par(mar=c(3,3,3,10))
 		pie(barplot_table , col=my_colors , labels=paste(map_files[selected_maps],"\n",all_var[selected_var]," : ",barplot_table,sep="") )
-		mtext(expression(italic("Fig. 1: Distribution of the requested \nfeature per maps.Calculations are \nmade considering the whole maps")) , col="#3C3C3C" , line=-5)
+		mtext(expression(italic(legend[24])) , col="#3C3C3C" , line=-5)
 	
 	#Close the render-barplot 
 	})
@@ -509,7 +510,6 @@ shinyServer(function(input, output) {
   		# Avoid bug when loading
   		if (is.null(input$map1) | is.null(input$map2) | is.null(input$chromo_sheet3) ) {return(NULL)}
 
-
 		# Get the first selected map
 		selected=which(map_files%in%input$map1)
 		map1=my_maps[[selected]]
@@ -523,7 +523,7 @@ shinyServer(function(input, output) {
 		# Select the choosen chromosome, the user can choose "all" !
 		if(input$chromo_sheet3=="all"){map1=map1}else{map1=map1[map1[,1]==input$chromo_sheet3 , ]  ;  map2=map2[map2[,1]==input$chromo_sheet3 , ]}
 				
-		# a little function
+		# a little function: I remake the x axis to add chromosomes beside each others.
 		my_fun=function(a){
 		last=0
 		to_add=0
@@ -571,17 +571,49 @@ shinyServer(function(input, output) {
 		
 		# Custom the layout
 		p=layout( 
-			
 			#Gestion du hovermode
 			hovermode="closest"  , xaxis=lay_x , yaxis=lay_y
-
-			)
+		)
 		p
 		
   	#Je ferme le outputPlot2
   	})
 
 
+  	output$key_numbers_sheet_3 <- renderPlot({ 
+  	
+  		# Avoid bug when loading
+  		if (is.null(input$map1) | is.null(input$map2) | is.null(input$chromo_sheet3) ) {return(NULL)}
+
+		# Get the first selected map
+		selected=which(map_files%in%input$map1)
+		map1=my_maps[[selected]]
+		name1=map_files[selected]
+		
+		# Get the second selected map
+		selected=which(map_files%in%input$map2)
+		map2=my_maps[[selected]]
+		name2=map_files[selected]
+
+		# Select the choosen chromosome, the user can choose "all" !
+		if(input$chromo_sheet3=="all"){map1=map1}else{map1=map1[map1[,1]==input$chromo_sheet3 , ]  ;  map2=map2[map2[,1]==input$chromo_sheet3 , ]}
+ 		
+ 		# Compute basic statistics:
+ 		nb_mark_map1=nrow(map1)
+ 		nb_mark_map2=nrow(map2)
+ 		nb_common_mark=length(which(map1$marker%in%map2$marker))
+ 		tmp=merge(map1,map2,by.x=2,by.y=2)[c(3,5)]
+ 		coeff_cor=round(cor(tmp[,1] , tmp[,2] , method="spearman"),2)
+ 		
+		# Then I make the "plot"
+		par(bg="transparent" , mar=c(0,0,0,0) )
+		plot(1,1,xaxt="n", yaxt="n",bty="n",xlab="",ylab="", col="transparent", xlim=c(0,4) , ylim=c(0.5,4.5) )
+ 		text(rep(1  ,4) , c(4,3,2,1) , c(nb_mark_map1, nb_mark_map2, nb_common_mark, coeff_cor),  col="orange" , cex=3 , adj=1 , font=2 )
+		text(rep(1.2,4) , c(4,3,2,1) , c(paste("markers in\n",name1,sep=""), paste("markers in\n",name2,sep=""), "common\nmarkers","Spearman\ncorrelation") ,  col="grey" , cex=1.3 , font=2 , adj=0 )
+
+ 	#Je ferme le output avec un fond transparent
+  	}, bg="transparent")
+				
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------#
 
