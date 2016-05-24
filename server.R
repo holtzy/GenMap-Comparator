@@ -1,9 +1,10 @@
 
-	#####################
-	#
-	#	DEVELOPPEMENT D'UNE APPLI SHINY POUR LA VISUALISATION DES QTLS MOSAIQUES ET FUSA
-	#
-	####################
+
+		################################################
+		#
+		#		THE GENETIC MAP COMPARATOR
+		#
+		###############################################
 
 
 # Libraries
@@ -35,6 +36,8 @@ legend=read.table("LEGEND/all_legend.txt",sep="@")[,2]
 map_files=list.files("DATA")
 nb_de_carte=length(map_files)
 
+
+
 # --- Load every maps and add their content in a list. (I keep only the first 3 columns, and I order the maps by LG and positions)
 my_maps=list()
 for(i in c(1:nb_de_carte)){
@@ -43,9 +46,10 @@ for(i in c(1:nb_de_carte)){
 	my_maps[[length(my_maps)+1]]=map_tmp
 }
 head(my_maps)
-
 # If you want to see informations concerning the map number1 : nrow(my_maps[[1]])
 # If you want the name of the map number one : print(args[i])
+
+
 
 # --- Merge the maps together
 data=merge(my_maps[[1]] , my_maps[[2]], by.x=2 , by.y=2 , all=T)
@@ -55,8 +59,12 @@ if(nb_de_carte>2){
 		data=merge(data , my_maps[[i]] , by.x=1 , by.y=2 , all=T)
 		colnames(data)[c( ncol(data)-1 , ncol(data) )]= c( paste("chromo",map_files[i],sep="_") , paste("pos",map_files[i],sep="_") )
 	}}
-# ---> I get a file summarizing the information for every markers present at least one time !
+# I have now a file summarizing the information for every markers present at least one time !
 
+
+# --- Get a list with the existing chromosomes:
+chromosome_list=unlist(data[ , seq(2,ncol(data),2) ])
+chromosome_list=as.character(unique(sort( chromosome_list[!is.na(chromosome_list)] )))
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------#
 
@@ -130,56 +138,42 @@ shinyServer(function(input, output) {
 # 	CREATION OF THE DYNAMICS BUTTONS FOR THE UI SCRIPT
 #--------------------------------------------------------------------------------
 
-  # --- Dynamic UI for the MAP to study
-  output$choose_maps<- renderUI({
-  
-    # Create the checkboxes and select the first one by default
-    checkboxGroupInput("selected_maps", "Choose maps ! (from left to right)", choices=map_files, selected=c(map_files[1],map_files[2]) )
-    
-  })
+
+  # ======== sheet2: Summary Statistics =========
+  # MAP to study
+  output$choose_maps_sheet2<- renderUI({ checkboxGroupInput("selected_maps_sheet2", "Choose maps !", choices=map_files, selected=c(map_files[1],map_files[2]) ) })
+  # Chromosomes to study
+  output$choose_chromo_sheet2<- renderUI({checkboxGroupInput( "chromo_sheet2", legend[5], choices=chromosome_list , selected =c(chromosome_list[1],chromosome_list[2]) , inline = TRUE ) })
 
 
-  # --- Dynamic UI for the MAP to study
-  output$choose_maps_sheet2<- renderUI({
-  
-    # Create the checkboxes and select the first one by default
-    checkboxGroupInput("selected_maps_sheet2", "Choose maps !", choices=map_files, selected=c(map_files[1],map_files[2]) )
-    
-  })
-  
-  # --- Dynamic UI for the MAP to study
-  output$choose_maps3<- renderUI({
-  
-    # Create the checkboxes and select the first one by default
-    checkboxGroupInput("selected_maps", "Choose maps !", choices=map_files, selected=c(map_files[1],map_files[2]) )
-    
-  })
+  # ======== sheet3: Compare Positions =========
+  # Map to study
+  output$choose_maps3<- renderUI({ checkboxGroupInput("selected_maps", "Choose maps !", choices=map_files, selected=c(map_files[1],map_files[2]) ) })
+  # Chromosomes to study
+  output$choose_chromo_sheet3<- renderUI({selectInput( "chromo", legend[5], choices=chromosome_list , selected =c(chromosome_list[1],chromosome_list[2]) ) })
 
-  # --- Dynamic UI for the MAP to study
-  output$choose_maps4<- renderUI({
-  
-    # Create the checkboxes and select the first one by default
-    radioButtons("selected_maps_sheet4", "Choose the reference map!", choices=map_files, selected=map_files[1] )
-    
-  })
-  
-  # --- Dynamic UI for the MAP to study
-  output$map1<- renderUI({
-  
-    # Create the checkboxes and select the first one by default
-    radioButtons("map1", "Choose a first map", choices=map_files, selected=map_files[1] )
-    
-  })
 
-  # --- Dynamic UI for the MAP to study
-  output$map2<- renderUI({
+  # ======== sheet4: Interchromosomal Analyse =========
+  # First map to study :
+  output$map1<- renderUI({ radioButtons("map1", "Choose a first map", choices=map_files, selected=map_files[1] ) })
+  # Second map to study :
+  output$map2<- renderUI({ radioButtons("map2", "Choose a second map", choices=map_files, selected=map_files[2] ) })
+  # Chromosomes to study
+  output$choose_chromo_sheet4<- renderUI({   selectInput( "chromo_sheet4", legend[10], choices=c("all", chromosome_list) , selected =c("all") )  })
+
+
+  # ======== sheet5: Rough Map vizualisation =========
+  # MAP to study
+  output$choose_maps5<- renderUI({ radioButtons("selected_maps_sheet5", "Choose the reference map!", choices=map_files, selected=map_files[1] ) })
+  # Chromosomes to study
+  output$choose_chromo_sheet5<- renderUI({   checkboxGroupInput( "chromo_sheet5", legend[13], choices=c("all", chromosome_list) , selected =c(chromosome_list[1],chromosome_list[2]) , inline = TRUE )     })
   
-    # Create the checkboxes and select the first one by default
-    radioButtons("map2", "Choose a second map", choices=map_files, selected=map_files[2] )
-    
-  })
+
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------#
+
+
+
 
 
 
@@ -192,7 +186,7 @@ shinyServer(function(input, output) {
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------#
 
 #-----------------------------------------------------------------------------
-# --- SHEET 1 : SUMMARY STATISTICS PAGE - BARPLOT !
+# --- SHEET 2 : SUMMARY STATISTICS PAGE - BARPLOT !
 #-----------------------------------------------------------------------------
 
 	output$my_barplot=renderPlot({
@@ -235,7 +229,7 @@ shinyServer(function(input, output) {
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------#
 
 #-----------------------------------------------------------------------------
-# --- SHEET 1 : SUMMARY STATISTICS PAGE - PIEPLOT !
+# --- SHEET 2 : SUMMARY STATISTICS PAGE - PIEPLOT !
 #-----------------------------------------------------------------------------
 
 	output$my_pieplot=renderPlot({
@@ -278,7 +272,7 @@ shinyServer(function(input, output) {
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------#
 
 #-----------------------------------------------------------------------------
-# --- SHEET 1 : SUMMARY STATISTICS PAGE - CIRCULAR PLOT FOR DENSITY !
+# --- SHEET 2 : SUMMARY STATISTICS PAGE - CIRCULAR PLOT FOR DENSITY !
 #-----------------------------------------------------------------------------
 
 	# Make the circular plot. See https://cran.r-project.org/web/packages/circlize/vignettes/circlize.pdf to understand how circular plot works.
@@ -353,7 +347,7 @@ shinyServer(function(input, output) {
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------#
 
 #-----------------------------------------------------------------------------
-# --- SHEET 2 : MAP COMPARISON FOR A CHOSEN CHROMOSOME
+# --- SHEET 3 : MAP COMPARISON FOR A CHOSEN CHROMOSOME
 #-----------------------------------------------------------------------------
 
 	
@@ -361,15 +355,14 @@ shinyServer(function(input, output) {
 	# liste_of_map_to_compare is an object with the genetic maps to compare, in the good order. I initialize it with the 2 first maps, like in the radiobutton.
 	liste_of_map_to_compare=c(map_files[1],map_files[2])
 	old_choice=NULL
-
-  	
-  	
+ 	
   	output$plot1 <- renderPlotly({ 
+  	
+
   	
   		# --- Avoid bug when page is loading
   		if (is.null(input$selected_maps)) {return(NULL)}
   		
-				
 		# --- First step : get the list of selected maps in the good order
 		# Old_choice represents the last choice of the user (before the current one). I initialize it with the value of the 2 maps to compare
 		if(is.null(old_choice)){ old_choice=liste_of_map_to_compare  }
@@ -501,14 +494,14 @@ shinyServer(function(input, output) {
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------#
 
 #-----------------------------------------------------------------------------
-# --- SHEET 3 : INTER CHROMOSOME ANALYSIS
+# --- SHEET 4 : INTER CHROMOSOME ANALYSIS
 #-----------------------------------------------------------------------------
 
 
   	output$plot2 <- renderPlotly({ 
   	
   		# Avoid bug when loading
-  		if (is.null(input$map1) | is.null(input$map2) | is.null(input$chromo_sheet3) ) {return(NULL)}
+  		if (is.null(input$map1) | is.null(input$map2) | is.null(input$chromo_sheet4) ) {return(NULL)}
 
 		# Get the first selected map
 		selected=which(map_files%in%input$map1)
@@ -521,7 +514,7 @@ shinyServer(function(input, output) {
 		name2=map_files[selected]
 
 		# Select the choosen chromosome, the user can choose "all" !
-		if(input$chromo_sheet3=="all"){map1=map1}else{map1=map1[map1[,1]==input$chromo_sheet3 , ]  ;  map2=map2[map2[,1]==input$chromo_sheet3 , ]}
+		if(input$chromo_sheet4=="all"){map1=map1}else{map1=map1[map1[,1]==input$chromo_sheet4 , ]  ;  map2=map2[map2[,1]==input$chromo_sheet4 , ]}
 				
 		# a little function: I remake the x axis to add chromosomes beside each others.
 		my_fun=function(a){
@@ -551,7 +544,7 @@ shinyServer(function(input, output) {
 		don$text=paste(don[,1],"\nmap1: position : ",round(don[,3],2)," | chromosome : ",don[,2],"\nmap2: position : ",round(don[,6],2)," | chromosome : ",don[,5],sep="")
 		
 		#Prepare 2 layouts !
-		if(input$chromo_sheet3=="all"){
+		if(input$chromo_sheet4=="all"){
 			lay_x=list(title = name1, tickmode="array", tickvals=map1max[,2] , ticktext="" , showticklabels = F )
 			lay_y=list(title = name2, tickmode="array", tickvals=map2max[,2] , ticktext="" , showticklabels = F )
 		}else{
@@ -583,7 +576,7 @@ shinyServer(function(input, output) {
   	output$key_numbers_sheet_3 <- renderPlot({ 
   	
   		# Avoid bug when loading
-  		if (is.null(input$map1) | is.null(input$map2) | is.null(input$chromo_sheet3) ) {return(NULL)}
+  		if (is.null(input$map1) | is.null(input$map2) | is.null(input$chromo_sheet4) ) {return(NULL)}
 
 		# Get the first selected map
 		selected=which(map_files%in%input$map1)
@@ -596,7 +589,7 @@ shinyServer(function(input, output) {
 		name2=map_files[selected]
 
 		# Select the choosen chromosome, the user can choose "all" !
-		if(input$chromo_sheet3=="all"){map1=map1}else{map1=map1[map1[,1]==input$chromo_sheet3 , ]  ;  map2=map2[map2[,1]==input$chromo_sheet3 , ]}
+		if(input$chromo_sheet4=="all"){map1=map1}else{map1=map1[map1[,1]==input$chromo_sheet4 , ]  ;  map2=map2[map2[,1]==input$chromo_sheet4 , ]}
  		
  		# Compute basic statistics:
  		nb_mark_map1=nrow(map1)
@@ -629,7 +622,7 @@ shinyServer(function(input, output) {
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------#
 
 #-----------------------------------------------------------------------------
-# --- SHEET 4 : ROUGH MAP VIZUALIZATION
+# --- SHEET 5 : ROUGH MAP VIZUALIZATION
 #-----------------------------------------------------------------------------
 
 
@@ -638,19 +631,19 @@ shinyServer(function(input, output) {
 		
 			  	
   			# Avoid bug when loading
-  			if (is.null(input$selected_maps_sheet4) ) {return(NULL)}
+  			if (is.null(input$selected_maps_sheet5) ) {return(NULL)}
 			
 			
 			#Get the selected map
-			selected=which(map_files%in%input$selected_maps_sheet4)
+			selected=which(map_files%in%input$selected_maps_sheet5)
 			if(length(selected==1)){
 
 				#Get the selected map
 				data_for_map_table=my_maps[[selected]]
 		
 				#Get the selected chromosomes
-				if(!("all"%in%input$chromo_sheet4)){
-					selected_chromosomes=input$chromo_sheet4
+				if(!("all"%in%input$chromo_sheet5)){
+					selected_chromosomes=input$chromo_sheet5
 					data_for_map_table=data_for_map_table[which(data_for_map_table$group%in%selected_chromosomes),]
 					}
 

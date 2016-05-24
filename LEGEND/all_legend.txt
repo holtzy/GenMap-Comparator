@@ -1,11 +1,11 @@
-1@Welcome to a world of genetic map. If you need to compare and characterize maps
+1@A user friendly tool to compare and characterize genetic maps.
 2@you are in the right place!
 3@Please select your data: 
 4@With contribution of
 5@Choose chromosome!
 6@Compare positions
 7@Choose chromosome!
-8@choose_maps
+8@rien, j’ai fait nimp
 9@Interchromosomal Analysis
 10@Choose chromosome!
 11@Fig. 5: Comparison of markers positions for 2 selected maps. Choosing 1 chromosome only, it permits to visualize evolution of recombination rates among maps. If you select all chromosomes, it permits to discover interchromosomal recombinations

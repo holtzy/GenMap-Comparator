@@ -1,13 +1,10 @@
 
 
-
-
-
-#####################
-#
-#	DEVELOPPEMENT D'UNE APPLI SHINY POUR LA VISUALISATION DES QTLS MOSAIQUES ET FUSA
-#
-####################
+		################################################
+		#
+		#		THE GENETIC MAP COMPARATOR
+		#
+		###############################################
 
 
 # Pour se connecter au server Shiny de AGAP:
@@ -56,7 +53,7 @@ shinyUI(navbarPage(
 # --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 	# ----------------------
-	# SHEET 0 : HOME PAGE
+	# SHEET 1 : HOME PAGE
 	# ----------------------
 	
 	tabPanel( 
@@ -123,7 +120,7 @@ shinyUI(navbarPage(
 # --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 	# ----------------------
-	# SHEET 1 : SUMMARY STATISTICS
+	# SHEET 2 : SUMMARY STATISTICS
 	# ----------------------
 	tabPanel(
 		
@@ -163,7 +160,7 @@ shinyUI(navbarPage(
 			column(2, 
 		
 				# Choose chromosome
-				wellPanel(checkboxGroupInput( "chromo_sheet2", legend[5], choices = c("all","1A","1B","2A","2B","3A","3B","4A","4B","5A","5B","6A","6B","7A","7B"), selected =c("1A","1B") , inline = TRUE ))
+				wellPanel(uiOutput("choose_chromo_sheet2"))
 
 				#Close column
 				),
@@ -191,7 +188,7 @@ shinyUI(navbarPage(
 # --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 	# ----------------------
-	# SHEET 2 : COMPARISON OF MAPS
+	# SHEET 3 : COMPARISON OF MAPS
 	# ----------------------
 	
 	tabPanel( class = "two",
@@ -204,11 +201,11 @@ shinyUI(navbarPage(
 
 			# CHOIX DU chromosome d'étude
 			br(""),	br(""),	br(""),
-			wellPanel(selectInput( "chromo", legend[7], choices = c("all","1A","1B","2A","2B","3A","3B","4A","4B","5A","5B","6A","6B","7A","7B"), selected =c("1A") )),
+			wellPanel(uiOutput("choose_chromo_sheet3")),
 			br(),br(),
 			
 			# Choix de la map
-			wellPanel(uiOutput(legend[8]))
+			wellPanel(uiOutput("choose_maps3"))
 
 			#Close column
 			),
@@ -235,7 +232,7 @@ shinyUI(navbarPage(
 # --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	
 	# ----------------------
-	# SHEET 3 : INTERCHROMOSOMAL ANALYSIS
+	# SHEET 4 : INTERCHROMOSOMAL ANALYSIS
 	# ----------------------
 	tabPanel(
 		
@@ -249,7 +246,7 @@ shinyUI(navbarPage(
 			br(""), br(""),
 			
 			# Choose the chromosome
-			wellPanel(selectInput( "chromo_sheet3", legend[10], choices = c("all","1A","1B","2A","2B","3A","3B","4A","4B","5A","5B","6A","6B","7A","7B"), selected =c("all") )),
+			wellPanel(uiOutput("choose_chromo_sheet4")),
 			br(),
     
 			# Choix de la map1
@@ -291,7 +288,7 @@ shinyUI(navbarPage(
 
 
 	# ----------------------
-	# SHEET 4 : ROUGH MAP
+	# SHEET 5 : ROUGH MAP
 	# ----------------------
 	tabPanel(
 		
@@ -305,11 +302,11 @@ shinyUI(navbarPage(
 			br(""),	br(""),	br(""),
 			
 			# Choix de la map
-			wellPanel(uiOutput("choose_maps4")),
+			wellPanel(uiOutput("choose_maps5")),
 			
 			# Choose chromosome
 			br(""),
-			wellPanel(checkboxGroupInput( "chromo_sheet4", legend[13], choices = c("all","1A","1B","2A","2B","3A","3B","4A","4B","5A","5B","6A","6B","7A","7B"), selected =c("1A","1B") , inline = TRUE ))
+			wellPanel(uiOutput("choose_chromo_sheet5"))
 
 			#Close column
 			),
@@ -353,7 +350,7 @@ shinyUI(navbarPage(
 
 		
 	# ----------------------
-	# SHEET 5: DOCUMENTATION
+	# SHEET 6: DOCUMENTATION
 	# ----------------------
 	tabPanel(
 		

@@ -13,7 +13,8 @@
    - transformation de format d’entrée automatique.
    - possibilité d’export des figures en pdf.
    - sheet comparison: bug lorsque une seule carte est affichée.
-
+   - nom des chromosomes est en dur dans certains endroits !!!!
+   - calcul de l’average gap
 
 —— TODO for Yan OR Vincent —- 
 
