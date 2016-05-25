@@ -82,8 +82,6 @@ if(nb_de_carte>2){
 # --- Get a list with the existing chromosomes:
 chromosome_list=unlist(data[ , seq(2,ncol(data),2) ])
 chromosome_list=as.character(unique(sort( chromosome_list[!is.na(chromosome_list)] )))
-print("liste des chromosomes:")
-print(chromosome_list)
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------#
 
@@ -215,7 +213,6 @@ shinyServer(function(input, output) {
   		# Avoid bug when loading
   		if (is.null(input$var_for_barplot) | is.null(input$selected_maps_sheet2) ) {return(NULL)}
 
-	
 		# Selected variable ?
 		selected_var=which(c("nb. marker","size","average gap","biggest gap","Nb. uniq pos.")%in%input$var_for_barplot)
 
@@ -250,7 +247,7 @@ shinyServer(function(input, output) {
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------#
 
 #-----------------------------------------------------------------------------
-# --- SHEET 2 : SUMMARY STATISTICS PAGE - PIEPLOT !
+# --- SHEET 2 : SUMMARY STATISTICS PAGE - CIRCULARPLOT !
 #-----------------------------------------------------------------------------
 
 	output$my_pieplot=renderPlot({
@@ -305,17 +302,13 @@ shinyServer(function(input, output) {
 		# Which maps have been selected ?
 		selected_maps=which(map_files%in%input$selected_maps_sheet2)
 		nb_selected_maps=length(selected_maps)
-		
-		print("carte selected : ")
-		print(selected_maps)
-		
+				
 		# Fichier nécessaire
 		data_circ=data.frame()
 		for(i in selected_maps){
 				current_map=my_maps[[i]]
 				current_map$map_name=map_files[i] 
 				current_map$group_and_name=paste(map_files[i] , current_map[,1] , sep="_")
-				print(head(current_map))
 				data_circ=rbind(data_circ , current_map)
 			}
 
@@ -326,9 +319,6 @@ shinyServer(function(input, output) {
 			data_circ=data_circ[take , ]
 			data_circ[,1]=droplevels(data_circ[,1])
 			}		
-		
-		
-		print(head(data_circ))
 		
 		# General graphical parameters
 		par(mar =c(1, 1, 1, 1), lwd = 0.1, cex = 0.7)
@@ -410,7 +400,7 @@ shinyServer(function(input, output) {
 			}
 					
 		# To avoid a bug, when only ONE map is selected, the map to compare is this map:
-		if(length(current_choice())==1){print("exception!") ;  liste_of_map_to_compare<<-current_choice() }
+		if(length(current_choice())==1){  liste_of_map_to_compare<<-current_choice() }
 			
 		# I save the current choice as old_choice for next change:
 		old_choice<<-isolate(current_choice())
@@ -422,9 +412,7 @@ shinyServer(function(input, output) {
 		selected_col=c(1,selected_col+rep(c(0,1) , length(selected_col)/2))
 		dat=data[ , selected_col ]
 		nb_selected_maps=length(selected_maps)
-		
- 		
- 		
+		 		
 		# --- Subset of the dataset with only the good chromosome :
 		don=dat[dat[,2]==input$chromo & !is.na(dat[,2]) , ]
 		for(j in c(2:nb_selected_maps)){
@@ -433,28 +421,20 @@ shinyServer(function(input, output) {
 		}
 		don=unique(don)
 		
-		print(" --------- le fichier don de base")
-		print(head(don))
-
-		
 		# --- OBJET 1 POUR LES LIAISONS ENRTE MARQUEURS
 		#Je fais une fonction qui me fait mon vecteur de position pour 2 cartes données : AXE des Y
 		function_pos=function(x,y){
 			#Récupération de 2 carte seulement:
 			pos=as.matrix(na.omit(don[,c(x,y)]))
 			
-			print("   ")
-			print(" ---------------le fichier pos : que les positions:")
-			print(pos)
-			
 			#Il faut que je fasse un vecteur avec les valeur en cM dans l'ordre
 			my_vect=as.vector(t(pos))
-			
-			print("----------------- fichier vect")
-			print(my_vect)
-			
-			correctif=seq(1:length(my_vect)) + rep(c(0,0,1,-1) , length(my_vect)/4)
+			correctif=seq(1:length(my_vect)) + rep(c(0,0,1,-1) , length.out=length(my_vect) )  
 			my_vect=my_vect[correctif]
+			
+			#Mais attention probleme! si je fini sur la carte de gauche, il faut que je revienne a la carte de droite avant de passer a la paire de carte suivante!
+			if(length(my_vect)%%4 == 0){ my_vect=c(my_vect , my_vect[length(my_vect)] , my_vect[length(my_vect)-1]) } 
+
 			return(my_vect)
 			}
 			
@@ -466,10 +446,7 @@ shinyServer(function(input, output) {
 			a=function_pos( col_x , col_y)
 			pos_final=c(pos_final,a)
 			}
-		
-		print("------- pos final")
-		print(pos_final)
-		
+				
 		#Et je dois faire le vecteur de l'axe des X !
 		xaxis=c()
 		num=0
@@ -477,6 +454,7 @@ shinyServer(function(input, output) {
 			num=num+1
 			my_nb=nrow(na.omit(don[,c(i*2+1,i*2+3)]))
 			to_add=rep(c(num,num+1,num+1,num),my_nb/2)
+			if(length(to_add)%%4 == 0){ to_add=c(to_add , to_add[length(to_add)] , to_add[length(to_add)-1]) } 
 			xaxis=c(xaxis,to_add)
 			}
 
@@ -574,7 +552,6 @@ shinyServer(function(input, output) {
 			}
 		return(out)
 		}
-		
 		map1$pos_cum_map1=my_fun(map1[,3])
 		map2$pos_cum_map2=my_fun(map2[,3])
 		don=merge(map1,map2,by.x=2,by.y=2)
@@ -597,12 +574,9 @@ shinyServer(function(input, output) {
 			lay_y=list(title = name2 )	
 		}
 		
-		# MAke the plot !
+		# Make the plot !
 		p=plot_ly(don , x=don[,4] , y=don[,7] , mode="markers" , color=don[,2] , text=don$text , hoverinfo="text"  , marker=list( size=15 , opacity=0.5)  , showlegend=F )
-		
-		# Add one line per chromosome
-		#p=add_trace(x = c(1,1), y = c(0, my_ylim) , line=list(width=4, color="black"))
-		
+				
 		# Add chromosome name on X and Y axis
 		p=add_trace(x=apply(cbind(map1max[,2],map1min[,2]) , 1 , mean) , y=rep(-0.1*max(map1max[,2]),nrow(map1max)) , text=map1max[,1] , mode="text" , textfont=list(size=13 , color="orange") )
 		p=add_trace(x=rep(-0.1*max(map2max[,2]),nrow(map2max)) , y=apply(cbind(map2max[,2],map2min[,2]) , 1 , mean) , text=map1max[,1] , mode="text" , textfont=list(size=13 , color="orange") )
