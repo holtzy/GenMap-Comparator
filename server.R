@@ -17,11 +17,11 @@ library(RColorBrewer)
 # Colors for the App :
 my_colors=brewer.pal( 12 , "Set3")[-2]
 
-#Get the legends
+# Get the legends
 legend=read.table("LEGEND/all_legend.txt",sep="@")[,2]
 
-
-
+# Functions
+source("RESSOURCES/donut_function.R")
 
 
 
@@ -247,7 +247,7 @@ shinyServer(function(input, output) {
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------#
 
 #-----------------------------------------------------------------------------
-# --- SHEET 2 : SUMMARY STATISTICS PAGE - CIRCULARPLOT !
+# --- SHEET 2 : SUMMARY STATISTICS PAGE - DONUT-PLOT !
 #-----------------------------------------------------------------------------
 
 	output$my_pieplot=renderPlot({
@@ -272,9 +272,9 @@ shinyServer(function(input, output) {
 		barplot_table=barplot_table[nrow(barplot_table) , ]
 		barplot_table=t(as.matrix(barplot_table[,-1]))
 		
-		# Make the barplot !
+		# Make the donut-plot !
 		par(mar=c(3,3,3,10))
-		pie(barplot_table , col=my_colors , labels=paste(map_files[selected_maps],"\n",all_var[selected_var]," : ",barplot_table,sep="") )
+		doughnut(barplot_table , col=my_colors , border="white" , inner.radius=0.5, labels=paste(map_files[selected_maps],"\n",all_var[selected_var]," : ",barplot_table,sep="") )
 		mtext(expression(italic(legend[24])) , col="#3C3C3C" , line=-5)
 	
 	#Close the render-barplot 
