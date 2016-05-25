@@ -7,7 +7,6 @@
    - Histogramme de densité de marqueur
    - Diagramme de Venn des marqueurs communs
    - Faire un fichier de conf avec ls couleurs (au moins)
-   - Pie plot : mettre du blanc au milieu (donut plot)
    - Faire un fichier avec toutes les légendes.
    - mettre en place le choix des fichiers d’entrée.
    - transformation de format d’entrée automatique.

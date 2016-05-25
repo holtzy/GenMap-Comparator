@@ -17,18 +17,6 @@
 #		147.100.164.72/holtz-apps/GenMap-Comparator
 
 
-# We need some Libraries
-library(shiny)
-library(plotly)
-library(shinythemes) 
-library("DT")
-library(shinyAce) 
-
-#Set the size of the logo of partners
-grand=1.7
-
-#Get the legends
-legend=read.table("LEGEND/all_legend.txt",sep="@")[,2]
 
 # Let's start the UI file --> it codes for the design of the app!
 shinyUI(navbarPage(
@@ -81,7 +69,13 @@ shinyUI(navbarPage(
 			helpText(strong(p(legend[2] , style="color:white ; font-family: 'times'; font-size:18pt"))) ,
 			br(""),
 			helpText(strong(p(legend[3] , style="color:orange ; font-family: 'times'; font-size:18pt"))) ,
-			fileInput("inputId", label=NULL , multiple = TRUE, accept = NULL, width = '200px'),
+			
+			
+			#widget to choose a directory
+			directoryInput('directory', label = 'select a directory with all maps', value = 'DATA/'),
+			
+			
+			#fileInput("inputId", label=NULL , multiple = TRUE, accept = NULL, width = '200px'),
 			br(""),
 			p(
 				"By", 
