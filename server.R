@@ -41,13 +41,30 @@ nb_de_carte=length(map_files)
 # --- Load every maps and add their content in a list. (I keep only the first 3 columns, and I order the maps by LG and positions)
 my_maps=list()
 for(i in c(1:nb_de_carte)){
+	
+	# Load the map
 	map_tmp=read.table(paste("DATA/",map_files[i],sep="") , header=T , dec="." ,na.strings="NA")[,c(1:3)]
-	map_tmp=map_tmp[order(map_tmp[,1] , map_tmp[,3] ) , ]
+	
+	# Columns must be in the good format:
+	map_tmp[,1]=as.factor(map_tmp[,1])
+	map_tmp[,2]=as.factor(map_tmp[,2])
+	map_tmp[,3]=as.numeric(as.character(map_tmp[,3]))
+	
+	# With the good names:
+	colnames(map_tmp)=c("group","marker","position")	
+	
+	# I remove positions where an information is missing:
+	map_tmp=na.omit(map_tmp)
+	
+	# And ordered
+	map_tmp=map_tmp[order(map_tmp$group , map_tmp$position ) , ]
+	
+	# Add it to the list
 	my_maps[[length(my_maps)+1]]=map_tmp
+
 }
-head(my_maps)
 # If you want to see informations concerning the map number1 : nrow(my_maps[[1]])
-# If you want the name of the map number one : print(args[i])
+# If you want the name of the map number one : print(map_files[1])
 
 
 
@@ -65,6 +82,8 @@ if(nb_de_carte>2){
 # --- Get a list with the existing chromosomes:
 chromosome_list=unlist(data[ , seq(2,ncol(data),2) ])
 chromosome_list=as.character(unique(sort( chromosome_list[!is.na(chromosome_list)] )))
+print("liste des chromosomes:")
+print(chromosome_list)
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------#
 
@@ -114,6 +133,8 @@ for(j in 1:nb_de_carte){
 	}
 # If I want the summary of the first map : summary_stat[[1]]
 
+
+
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------#
 
 
@@ -150,7 +171,7 @@ shinyServer(function(input, output) {
   # Map to study
   output$choose_maps3<- renderUI({ checkboxGroupInput("selected_maps", "Choose maps !", choices=map_files, selected=c(map_files[1],map_files[2]) ) })
   # Chromosomes to study
-  output$choose_chromo_sheet3<- renderUI({selectInput( "chromo", legend[5], choices=chromosome_list , selected =c(chromosome_list[1],chromosome_list[2]) ) })
+  output$choose_chromo_sheet3<- renderUI({selectInput( "chromo", legend[5], choices=chromosome_list , selected =chromosome_list[1] ) })
 
 
   # ======== sheet4: Interchromosomal Analyse =========
@@ -285,31 +306,39 @@ shinyServer(function(input, output) {
 		selected_maps=which(map_files%in%input$selected_maps_sheet2)
 		nb_selected_maps=length(selected_maps)
 		
+		print("carte selected : ")
+		print(selected_maps)
+		
 		# Fichier nécessaire
 		data_circ=data.frame()
 		for(i in selected_maps){
 				current_map=my_maps[[i]]
 				current_map$map_name=map_files[i] 
-				current_map$group_and_name=paste(map_files[i] , current_map$group , sep="_")
+				current_map$group_and_name=paste(map_files[i] , current_map[,1] , sep="_")
+				print(head(current_map))
 				data_circ=rbind(data_circ , current_map)
 			}
+
 		
 		# If the "all" option is not selected, then I keep only the chosen chromosomes
 		if(!("all"%in%input$chromo_sheet2)){
-			take=which(data_circ$group%in%input$chromo_sheet2)
+			take=which(data_circ[,1]%in%input$chromo_sheet2)
 			data_circ=data_circ[take , ]
-			data_circ$group=droplevels(data_circ$group)
+			data_circ[,1]=droplevels(data_circ[,1])
 			}		
+		
+		
+		print(head(data_circ))
 		
 		# General graphical parameters
 		par(mar =c(1, 1, 1, 1), lwd = 0.1, cex = 0.7)
 		circos.par(track.height = 0.7/nb_de_carte)
 		coul = brewer.pal(4, "Set3") 
-		coul = colorRampPalette(coul)(nlevels(data_circ$group))
+		coul = colorRampPalette(coul)(nlevels(data_circ[,1]))
 		num=0
 		
 		# Initialization of the circular plot
-		circos.initialize(factors = data_circ$group, x = data_circ$position)
+		circos.initialize(factors = data_circ[,1], x = data_circ$position)
 		
 		# Add chosen maps one by one
 		for( i in c(1:nb_selected_maps)){
@@ -318,16 +347,16 @@ shinyServer(function(input, output) {
 			don=data_circ[data_circ$map_name==levels(as.factor(data_circ$map_name))[i] , ]
 					
 			# add density curve
-			circos.trackHist(don$group, don$position, col="orange" , lwd=3 , draw.density=T, bg.col=coul)
+			circos.trackHist(don[,1], don$position, col="orange" , lwd=3 , draw.density=T, bg.col=coul)
 					
 			# add one black line for each marker
-			circos.trackLines(don$group, don$position, rep(0.005,nrow(don)), type = "h")
+			circos.trackLines(don[,1], don$position, rep(0.005,nrow(don)), type = "h")
 		
 			}
 		
 		# add chromosome names
-		for(i in levels(data_circ$group)){
-			circos.text(max(data_circ$position[data_circ$group==i])/2, 1.5, i, sector.index = i, track.index = 1 , col="orange" , cex=1.4 , lwd=2)
+		for(i in levels(data_circ[,1])){
+			circos.text(max(data_circ$position[data_circ[,1]==i])/2, 1.5, i, sector.index = i, track.index = 1 , col="orange" , cex=1.4 , lwd=2)
 			}
 			
 		})
@@ -357,9 +386,7 @@ shinyServer(function(input, output) {
 	old_choice=NULL
  	
   	output$plot1 <- renderPlotly({ 
-  	
-
-  	
+   	
   		# --- Avoid bug when page is loading
   		if (is.null(input$selected_maps)) {return(NULL)}
   		
@@ -395,6 +422,8 @@ shinyServer(function(input, output) {
 		selected_col=c(1,selected_col+rep(c(0,1) , length(selected_col)/2))
 		dat=data[ , selected_col ]
 		nb_selected_maps=length(selected_maps)
+		
+ 		
  		
 		# --- Subset of the dataset with only the good chromosome :
 		don=dat[dat[,2]==input$chromo & !is.na(dat[,2]) , ]
@@ -404,13 +433,26 @@ shinyServer(function(input, output) {
 		}
 		don=unique(don)
 		
+		print(" --------- le fichier don de base")
+		print(head(don))
+
+		
 		# --- OBJET 1 POUR LES LIAISONS ENRTE MARQUEURS
 		#Je fais une fonction qui me fait mon vecteur de position pour 2 cartes données : AXE des Y
 		function_pos=function(x,y){
 			#Récupération de 2 carte seulement:
 			pos=as.matrix(na.omit(don[,c(x,y)]))
+			
+			print("   ")
+			print(" ---------------le fichier pos : que les positions:")
+			print(pos)
+			
 			#Il faut que je fasse un vecteur avec les valeur en cM dans l'ordre
 			my_vect=as.vector(t(pos))
+			
+			print("----------------- fichier vect")
+			print(my_vect)
+			
 			correctif=seq(1:length(my_vect)) + rep(c(0,0,1,-1) , length(my_vect)/4)
 			my_vect=my_vect[correctif]
 			return(my_vect)
@@ -424,7 +466,10 @@ shinyServer(function(input, output) {
 			a=function_pos( col_x , col_y)
 			pos_final=c(pos_final,a)
 			}
-			
+		
+		print("------- pos final")
+		print(pos_final)
+		
 		#Et je dois faire le vecteur de l'axe des X !
 		xaxis=c()
 		num=0
@@ -644,7 +689,7 @@ shinyServer(function(input, output) {
 				#Get the selected chromosomes
 				if(!("all"%in%input$chromo_sheet5)){
 					selected_chromosomes=input$chromo_sheet5
-					data_for_map_table=data_for_map_table[which(data_for_map_table$group%in%selected_chromosomes),]
+					data_for_map_table=data_for_map_table[which(data_for_map_table[,1]%in%selected_chromosomes),]
 					}
 
 				#Close the if statement
