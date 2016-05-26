@@ -36,4 +36,8 @@ body	 {
 .container-fluid { padding-left: 0; padding-right: 0; }
 
 
-
+/* Petite boxe pour sélectionner les data
+.shiny-input-container:not(.shiny-input-container-inline) {
+    max-width: 13%;
+}
+*/

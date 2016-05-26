@@ -72,7 +72,7 @@ shinyUI(navbarPage(
 			
 			
 			#widget to choose a directory
-			directoryInput('directory', label = 'select a directory with all maps', value = 'DATA/'),
+			directoryInput('directory', label = '', value = 'DATA/'),
 			
 			
 			#fileInput("inputId", label=NULL , multiple = TRUE, accept = NULL, width = '200px'),
