@@ -13,7 +13,8 @@
    - possibilité d’export des figures en pdf.
    - sheet comparison: bug lorsque une seule carte est affichée.
    - nom des chromosomes est en dur dans certains endroits !!!!
-   - calcul de l’average gap
+   - Noms des cartes plus petit quand il y a beaucoup de carte dans sheet3
+   - Problème quand je change de chromosome dans sheet3, il remet 2 cartes seulement..
 
 —— TODO for Yan OR Vincent —- 
 

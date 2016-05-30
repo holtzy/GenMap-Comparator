@@ -6,6 +6,7 @@
 		#
 		###############################################
 
+library(shinyFiles)
 
 # Pour se connecter au server Shiny de AGAP:
 #		ssh holtz@147.100.164.72
@@ -14,7 +15,7 @@
 #		cd /Users/holtz/Dropbox
 #		scp -r  GenMap-Comparator/ holtz@147.100.164.72://srv/shiny-server/holtz-apps
 #  Pour accéder a l'appli en ligne
-#		147.100.164.72/holtz-apps/GenMap-Comparator
+#		http://www.agap-sunshine.inra.fr/holtz-apps/GenMap-Comparator/
 
 
 
@@ -74,6 +75,8 @@ shinyUI(navbarPage(
 			#widget to choose a directory
 			directoryInput('directory', label = '', value = 'DATA/'),
 			
+			# widget to propose 2 exemples
+			actionButton("button_for_ex1", "Wheat"),
 			
 			#fileInput("inputId", label=NULL , multiple = TRUE, accept = NULL, width = '200px'),
 			br(""),
@@ -126,6 +129,9 @@ shinyUI(navbarPage(
 		
 			#Left column to choose input
 			column(2, 
+				
+				parseDirPath("roots", "selection"),
+				
 				
 				# chooser map
 				br(),br(),br(),

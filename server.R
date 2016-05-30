@@ -20,11 +20,8 @@ shinyServer(function(input, output, session) {
 #-----------------------------------------------------------------------------
 
 	# I use a widget found on the web: https://github.com/wleepang/shiny-directory-input
-	observeEvent(
-	  ignoreNULL = TRUE,
-	  eventExpr = {
-		input$directory
-	  },
+	observeEvent( ignoreNULL = TRUE, 
+	  eventExpr = { input$directory},
 	  handlerExpr = {
 		if (input$directory > 0) {
 		  # condition prevents handler execution on initial app launch the directory selection dialog with initial path read from the widget
@@ -41,10 +38,23 @@ shinyServer(function(input, output, session) {
 		})
 	#I have to cal my_path() somewhere to have the current path
 
+
+
+	# If the user clicks on a exemple button, I change the path to the corresponding one!
+	observeEvent(input$button_for_ex1, { 
+		print("il a cliqué")
+		my_path="EXEMPLE_DATA_SET/WHEAT_MACAF/CLEAN/"  
+		})
+
 	observe({
 		print("mon path sélectionnés")
 		print(my_path() )
 		})
+
+
+
+
+
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------#
 
@@ -85,8 +95,26 @@ shinyServer(function(input, output, session) {
 		for(i in c(1:nb_de_carte)){
 			
 			# Load the map
-			map_tmp=read.table(paste(my_path,map_files[i],sep="") , header=T , dec="." ,na.strings="NA")[,c(1:3)]
-					
+			map_tmp=read.table(paste(my_path,map_files[i],sep="") , header=T , dec="." ,na.strings="NA")
+			print(head(map_tmp))
+
+			# If I have only 1 column, the separator was wrong, I try with ";":
+			if(ncol(map_tmp)==1){
+				print("une seule colonne")
+				map_tmp=read.table(paste(my_path,map_files[i],sep="") , header=T ,  dec="." ,na.strings="NA" , sep=";")
+			}
+			
+			# If I have 2 columns, It is the MapChart format --> I need to reformat it!
+			if(ncol(map_tmp)==2){
+				print("deux colonnes")
+				junctions=c(1, as.numeric(row.names(map_tmp[map_tmp[,1]=="group" , ])), nrow(map_tmp)+1 )
+				nb_rep=junctions[-1] - junctions[-length(junctions)]
+				LG_names=c(colnames(map_tmp)[2] , as.character(map_tmp[map_tmp[,1]=="group" , 2]) )
+				map_tmp$new=rep(LG_names , times=nb_rep)
+				map_tmp=map_tmp[map_tmp[,1]!="group" , ]
+				map_tmp=map_tmp[ , c(3,1,2)]
+				}
+		
 			# Columns must be in the good format:
 			map_tmp[,1]=as.factor(map_tmp[,1])
 			map_tmp[,2]=as.factor(map_tmp[,2])
@@ -95,6 +123,9 @@ shinyServer(function(input, output, session) {
 			# With the good names:
 			colnames(map_tmp)=c("group","marker","position")	
 			
+			# I keep only the first 3 columns (if they are more..)
+			map_tmp=map_tmp[,c(1:3)]
+						
 			# I remove positions where an information is missing:
 			map_tmp=na.omit(map_tmp)
 			
@@ -115,7 +146,7 @@ shinyServer(function(input, output, session) {
 	
 	observe({
 		print("summary de la carte 1:")
-		#print ( head(MY_maps()[1])  )
+		print ( head(MY_maps()[1])  )
 		})
 	
 	
