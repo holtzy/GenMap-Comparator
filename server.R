@@ -1,5 +1,4 @@
 
-#fregssthtrs
 
 		################################################
 		#
@@ -8,55 +7,15 @@
 		###############################################
 
 
-
 # OPEN THE SHINY SERVER
 shinyServer(function(input, output, session) {
 
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------#
 
-#-----------------------------------------------------------------------------
-# --- UNDERSTAND WHICH IS THE SELECTED FOLDER
-#-----------------------------------------------------------------------------
-
-	# I use a widget found on the web: https://github.com/wleepang/shiny-directory-input
-	observeEvent( ignoreNULL = TRUE, 
-	  eventExpr = { input$directory},
-	  handlerExpr = {
-		if (input$directory > 0) {
-		  # condition prevents handler execution on initial app launch the directory selection dialog with initial path read from the widget
-		  path = choose.dir(default = readDirectoryInput(session, 'directory'))
-		  # update the widget value
-		  updateDirectoryInput(session, 'directory', value = path)
-		}})
-	# Now I have the selected path! I can call it doing "readDirectoryInput(session, 'directory')" in a reactive environment!
-
-	# So I do a reactive variable containing the path:
-	my_path=reactive({
-		my_path=readDirectoryInput(session, 'directory')
-		return(my_path)
-		})
-	#I have to cal my_path() somewhere to have the current path
 
 
 
-	# If the user clicks on a exemple button, I change the path to the corresponding one!
-	observeEvent(input$button_for_ex1, { 
-		print("il a cliqué")
-		my_path="EXEMPLE_DATA_SET/WHEAT_MACAF/CLEAN/"  
-		})
-
-	observe({
-		print("mon path sélectionnés")
-		print(my_path() )
-		})
-
-
-
-
-
-
-#-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------#
 
 	
 	
@@ -69,96 +28,121 @@ shinyServer(function(input, output, session) {
 # --- UPLOAD MAPS AND FILE FORMATING
 #-----------------------------------------------------------------------------
 
+		#print("============== go button")
+		#toto=eventReactive( input$button_for_ex1 , { input$button_for_ex1 } )
+		#observe({ print("mon toto:") ; print ("4") ; print(  toto()  ) 	})
+
+
+
 	# 1/ --- Catch the map names we have to compare :
 	MY_map_files=reactive({
-		map_files=list.files( my_path() )
+	
+		# test exemp dataset
+		print("actionbbuton:")
+		a=input$button_for_ex1 
+		print(a)
+		print("ok")
+		
+		# I am reactive to the selection of input files !
+		inFile <- input$file1
+		
+		# If it is not empty, I get the map names:
+		if ( is.null(inFile)) { return(NULL)} else {map_files=as.list(inFile$name)}
+		
+		#returne the map names
 		return(map_files)
 		})
-		
-	observe({
-		print("mes maps selectionnées")
-		print ( MY_map_files()  )
-		})
 
-	
+	# Check it worked properly
+	#observe({ print("mes maps selectionnées") ; print ( MY_map_files()  ) 	})
+
 		
-	# 2/ --- Load every maps and add their content in a list. (I keep only the first 3 columns, and I order the maps by LG and positions)
+
+
+
+
+
+	# 2/ --- Load every maps and add their content in a list.
 	MY_maps=reactive({
+	
+		# I am reactive to the selection of input files !
+		inFile <- input$file1
 		
-		# Get back the reactive objects:
-		map_files=MY_map_files()
-		nb_de_carte=length(map_files)
-		my_path=my_path()
-		
-		# read and format maps one by one:
-		my_maps=list()
-		for(i in c(1:nb_de_carte)){
-			
-			# Load the map
-			map_tmp=read.table(paste(my_path,map_files[i],sep="") , header=T , dec="." ,na.strings="NA")
-			print(head(map_tmp))
+		# If it is not empty:
+		if (is.null(inFile)) { return(NULL)} else {
 
-			# If I have only 1 column, the separator was wrong, I try with ";":
-			if(ncol(map_tmp)==1){
-				print("une seule colonne")
-				map_tmp=read.table(paste(my_path,map_files[i],sep="") , header=T ,  dec="." ,na.strings="NA" , sep=";")
-			}
-			
-			# If I have 2 columns, It is the MapChart format --> I need to reformat it!
-			if(ncol(map_tmp)==2){
-				print("deux colonnes")
-				junctions=c(1, as.numeric(row.names(map_tmp[map_tmp[,1]=="group" , ])), nrow(map_tmp)+1 )
-				nb_rep=junctions[-1] - junctions[-length(junctions)]
-				LG_names=c(colnames(map_tmp)[2] , as.character(map_tmp[map_tmp[,1]=="group" , 2]) )
-				map_tmp$new=rep(LG_names , times=nb_rep)
-				map_tmp=map_tmp[map_tmp[,1]!="group" , ]
-				map_tmp=map_tmp[ , c(3,1,2)]
+			# how many maps do I have?
+			#nb_de_carte=length(inFile$datapath)
+
+			# Read and format maps one by one, and add them to a list:
+			my_maps=list()
+			for(i in inFile$datapath){
+							
+				# Load the map
+				map_tmp=read.table(i , header=T , dec="." ,na.strings="NA")
+		
+				# If I have only 1 column, the separator was wrong, I try with ";":
+				if(ncol(map_tmp)==1){
+					map_tmp=read.table(i , header=T ,  dec="." ,na.strings="NA" , sep=";")
 				}
-		
-			# Columns must be in the good format:
-			map_tmp[,1]=as.factor(map_tmp[,1])
-			map_tmp[,2]=as.factor(map_tmp[,2])
-			map_tmp[,3]=as.numeric(as.character(map_tmp[,3]))
+				
+				# If I have 2 columns, It is the MapChart format --> I need to reformat it!
+				if(ncol(map_tmp)==2){
+					junctions=c(1, as.numeric(row.names(map_tmp[map_tmp[,1]=="group" , ])), nrow(map_tmp)+1 )
+					nb_rep=junctions[-1] - junctions[-length(junctions)]
+					LG_names=c(colnames(map_tmp)[2] , as.character(map_tmp[map_tmp[,1]=="group" , 2]) )
+					map_tmp$new=rep(LG_names , times=nb_rep)
+					map_tmp=map_tmp[map_tmp[,1]!="group" , ]
+					map_tmp=map_tmp[ , c(3,1,2)]
+					}
 			
-			# With the good names:
-			colnames(map_tmp)=c("group","marker","position")	
+				# Columns must be in the good format:
+				map_tmp[,1]=as.factor(map_tmp[,1])
+				map_tmp[,2]=as.factor(map_tmp[,2])
+				map_tmp[,3]=as.numeric(as.character(map_tmp[,3]))
+				
+				# With the good names:
+				colnames(map_tmp)=c("group","marker","position")	
+				
+				# I keep only the first 3 columns (if they are more..)
+				map_tmp=map_tmp[,c(1:3)]
+							
+				# I remove positions where an information is missing:
+				map_tmp=na.omit(map_tmp)
+				
+				# And ordered
+				map_tmp=map_tmp[order(map_tmp$group , map_tmp$position ) , ]
+				
+				# Add it to the list
+				my_maps[[length(my_maps)+1]]=map_tmp
 			
-			# I keep only the first 3 columns (if they are more..)
-			map_tmp=map_tmp[,c(1:3)]
-						
-			# I remove positions where an information is missing:
-			map_tmp=na.omit(map_tmp)
-			
-			# And ordered
-			map_tmp=map_tmp[order(map_tmp$group , map_tmp$position ) , ]
-			
-			# Add it to the list
-			my_maps[[length(my_maps)+1]]=map_tmp
-		
-		}
+			}}
 		return(my_maps)
 		
-		# If you want to see informations concerning the map number1 : nrow(my_maps[[1]])
-		# If you want the name of the map number one : print(map_files[1])	
-		
 	})
+		
+	# Check everything worker properly
+	#observe({ print("summary de la carte 1:") ;	print ( head(MY_maps()[[1]])  ) 	})
 	
-	
-	observe({
-		print("summary de la carte 1:")
-		print ( head(MY_maps()[1])  )
-		})
-	
-	
+
+
+
+
+
+
+
 	# 3/ --- Merge the maps together
 	MY_data=reactive({
-		
-		#Get back the reactive objects needed:
+	
+		# Avoid mistake if no map is choosen:
+		if (is.null(input$file1)) { return(NULL)}
+				
+		# Get back the reactive objects needed:
 		my_maps=MY_maps()
 		nb_de_carte=length(my_maps)
 		map_files=MY_map_files()
 
-		#Do the Merge
+		# Merge the n maps together:
 		data=merge(my_maps[[1]] , my_maps[[2]], by.x=2 , by.y=2 , all=T)
 		colnames(data)=c("marker",paste("chromo",map_files[1],sep="_") , paste("pos",map_files[1],sep="_") , paste("chromo",map_files[2],sep="_") , paste("pos",map_files[2],sep="_"))
 		if(nb_de_carte>2){
@@ -171,17 +155,22 @@ shinyServer(function(input, output, session) {
 		return(data)
 	})
 		
-	observe({
-		print("summary du fichier mergé data:")
-		print ( head( MY_data() )  )
-		})
-		
-		
-		
+	# Check everything worked properly
+	#observe({ print("summary du fichier mergé data:") ; print ( head( MY_data() )  )  })
+
+
+
+
+
+
+
 	# 4/ --- List of chromosomes ?
 	MY_chromosome_list=reactive({
 
-		#Get back the reactive objects needed:
+		# Avoid mistake if no map is choosen:
+		if (is.null(input$file1)) { return(NULL)}
+
+		# Get back the reactive objects needed:
 		data=MY_data()
 
 		# --- Get a list with the existing chromosomes:
@@ -192,20 +181,12 @@ shinyServer(function(input, output, session) {
 		return(chromosome_list)
 		})
 
-	observe({
-		print("Liste des chromosomes:")
-		print ( head( MY_chromosome_list() )  )
-		})
+	# Did it work ?
+	#observe({ print("Liste des chromosomes:") ; print ( head( MY_chromosome_list() )  ) })
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------#
 		
 		
-
-
-
-
-
-
 
 
 
@@ -219,6 +200,9 @@ shinyServer(function(input, output, session) {
 #-----------------------------------------------------------------------------
 
 	MY_summary_stat=reactive({
+
+		# Avoid mistake if no map is choosen:
+		if (is.null(input$file1)) { return(NULL)}
 		
 		# Get the needed reactive objects:
 		my_maps=MY_maps()
@@ -264,16 +248,13 @@ shinyServer(function(input, output, session) {
 	
 	})
 		
-	observe({
-		print("fichier de summary statistique:")
-		for(u in MY_summary_stat()) {print ( u  )}
-		})
+	# Check if everything is all right
+	#observe({ print("fichier de summary statistique:") ; for(u in MY_summary_stat()) {print ( u  )}     })
 		
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------#
 
 		
 		
-
 
 
 
@@ -316,12 +297,7 @@ shinyServer(function(input, output, session) {
   # Chromosomes to study
   output$choose_chromo_sheet5<- renderUI({   checkboxGroupInput( "chromo_sheet5", legend[13], choices=c("all", MY_chromosome_list()) , selected =c(MY_chromosome_list()[1],MY_chromosome_list()[2]) , inline = TRUE )     })
   
-
-
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------#
-
-
-
 
 
 
@@ -869,7 +845,6 @@ shinyServer(function(input, output, session) {
 		})
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------#
-
 
 
 

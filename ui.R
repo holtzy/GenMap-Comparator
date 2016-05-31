@@ -6,7 +6,6 @@
 		#
 		###############################################
 
-library(shinyFiles)
 
 # Pour se connecter au server Shiny de AGAP:
 #		ssh holtz@147.100.164.72
@@ -69,17 +68,16 @@ shinyUI(navbarPage(
 			helpText(strong(p(legend[1] , style="color:white ; font-family: 'times'; font-size:18pt"))) ,
 			helpText(strong(p(legend[2] , style="color:white ; font-family: 'times'; font-size:18pt"))) ,
 			br(""),
-			helpText(strong(p(legend[3] , style="color:orange ; font-family: 'times'; font-size:18pt"))) ,
 			
-			
-			#widget to choose a directory
-			directoryInput('directory', label = '', value = 'DATA/'),
+			# Test of widget to choose several files:
+			fileInput("file1", strong(p(legend[3] , style="color:orange ; font-family: 'times'; font-size:18pt")) , multiple = TRUE, accept=NULL),
 			
 			# widget to propose 2 exemples
+			helpText(strong(p("Or an example dataset:" , style="color:orange ; font-family: 'times'; font-size:18pt"))) ,
 			actionButton("button_for_ex1", "Wheat"),
 			
 			#fileInput("inputId", label=NULL , multiple = TRUE, accept = NULL, width = '200px'),
-			br(""),
+			br(""),br(""),br(""),
 			p(
 				"By", 
 				a(em("Holtz Yan") , style="color:white ; font-family:'times'; font-size:15pt", href = "https://holtzyan.wordpress.com/" , target="_blank"),
@@ -130,7 +128,7 @@ shinyUI(navbarPage(
 			#Left column to choose input
 			column(2, 
 				
-				parseDirPath("roots", "selection"),
+				#parseDirPath("roots", "selection"),
 				
 				
 				# chooser map
@@ -205,7 +203,10 @@ shinyUI(navbarPage(
 			br(),br(),
 			
 			# Choix de la map
-			wellPanel(uiOutput("choose_maps3"))
+			wellPanel(uiOutput("choose_maps3")),
+			
+			#Submit button
+			submitButton("Submit")
 
 			#Close column
 			),
