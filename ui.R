@@ -76,7 +76,6 @@ shinyUI(navbarPage(
 			helpText(strong(p("Or an example dataset:" , style="color:orange ; font-family: 'times'; font-size:18pt"))) ,
 			actionButton("button_for_ex1", "Wheat"),
 			
-			#fileInput("inputId", label=NULL , multiple = TRUE, accept = NULL, width = '200px'),
 			br(""),br(""),br(""),
 			p(
 				"By", 
@@ -358,47 +357,120 @@ shinyUI(navbarPage(
 		#Name
 		h4("Documentation"),
 		
-		# Left column for logos:
-		column(2, offset=0, 
-               	br(""),br(""),
-            	img(src="http://www.r-graph-gallery.com/wp-content/uploads/2015/10/logo3-300x225.jpg" ,  height = 70*grand, width = 100*grand),
-              	br(""),br(""),
-              	img(src="https://upload.wikimedia.org/wikipedia/fr/thumb/d/d4/INRA_logo.jpg/800px-INRA_logo.jpg" ,  height = 70*grand, width = 120*grand),
-              	br(""),br(""),
-              	img(src="http://www.fiches.arvalis-infos.fr/fiche_variete/css/images/logo_arvalis.png" ,  height = 70*grand, width = 100*grand),
-             	br(""),br(""),
-             	img(src="http://www.supagro.fr/capeye/wp-content/uploads/2015/02/Logo-Montpellier-SupAgro-Vert-Web.jpg" ,  height = 70*grand, width = 110*grand),        	
-				br("")
-			#Close column
-			),
-
-
-		# Center for the text
-		column(6, offset=0, 
 			
-              	br(""),br(""),
-              	helpText(legend[15],br(""),legend[16],br(""),legend[17],br(""),legend[18],br(""),legend[19],br(""),legend[20],br(""),legend[21],  style="color:black ; font-family: 'times'; font-size:17pt ; font-type:bold" ), 
-              	br(""),	br(""),br("")
+		# ==== About section
+		fluidRow(align="center",
+			style="opacity:0.9; background-color: white ;margin-top: 0px; width: 100%;",
+			column(6,offset=3,
+				br(),
+				helpText( strong(" - About - " , style="color:Orange ; font-family: 'times'; font-size:30pt ; font-type:bold" )) ,
+				hr()
+		)),
+		fluidRow(
+			style="opacity:0.9; background-color: white ;margin-top: 0px; width: 100%;",
+			column(3,offset=3,
+				br(),
+				"The Genetic map comparators should permit to compare easily and quickly several genetic maps. The Genetic map comparators should permit to compare easily and quickly several genetic maps. The Genetic map comparators should permit to compare easily and quickly several genetic maps",
+				br()
+				),
+			column(3,offset=0,
+				br(),
+				"The Genetic map comparators should permit to compare easily and quickly several genetic maps. The Genetic map comparators should permit to compare easily and quickly several genetic maps. The Genetic map comparators should permit to compare easily and quickly several genetic maps",
+				br()
+		)), br(),br(),
 
-  			#Close column
+
+
+
+
+		# ==== Input files description
+		fluidRow(align="center",
+			style="opacity:0.9; background-color: white ;margin-top: 0px; width: 100%;",
+			column(6,offset=3,
+				br(),
+				helpText( strong(" - Input Files - " , style="color:Orange ; font-family: 'times'; font-size:30pt ; font-type:bold" )) ,
+				hr()
+		)),
+		fluidRow(align="center",
+			style="opacity:0.9; background-color: white ;margin-top: 0px; width: 100%;",
+			column(6,offset=3,
+				br(),
+				"The application imports linkage data from map files, produced by software for linkage analysis. Two formats are accepted:",
+				br(),
+				"- \"Carthagene format\", where map files are composed of 3 columns: linkage group, marker name and position in the map." ,
+				br(),
+				"- \"MapChart format\", where map files are composed of a sequence of linkage groups, each with a header line specifying the linkage group title, followed by a sequence of lines with locus names and map positions. Such map files are exported by JoinMap 3.0",
+				br(),
+				" The columns names of files does not matter. Columns must be separated by either \";\" or tabulation (\"\t\") ",
+				br()
+		)), br(),
+		fluidRow( 
+			style="opacity:0.9; background-color: white ;margin-top: 0px; width: 100%;",
+			column(3,offset=3,align="center",
+				br(),
+				dataTableOutput('doc_ex1' , width="100px"),
+				br()
+				),
+			column(3,offset=0,align="center",
+				br(),
+				dataTableOutput('doc_ex2' , width="100px"),
+				br()
+		)), br(),
+
+
+
+
+
+		# ==== Contact
+		fluidRow(align="center",
+			style="opacity: 1;background-color:white; margin-top: 0px;width: 100%;",
+			column(6,offset=3,
+				# Set the style of this page
+				br(),
+				helpText(strong(" - Contact - " , style="color:orange ; font-family: 'times'; font-size:30pt ; font-type:bold" ) ) ,
+				hr()
+			)),
+		fluidRow( align="center",
+			style="opacity: 1;background-color:white; margin-top: 0px;width: 100%;",
+			column(3,offset=3,
+				img(src="https://holtzyan.files.wordpress.com/2015/07/montpellier.png" ,  height = 300, width = 500),
+				br()
+				),
+			column(3,offset=1,
+				br(),br(),
+				helpText("Yan Holtz: holtz@supagro.fr"),
+				helpText("Vincent Ranwez: ranwez@supagro.fr"),
+				br(),br(),br(),
+				"Ge2pop Team, Bâtiment 21",br(),
+				"Montpellier SupAgro,",br(),
+				"2 place Pierre Viala",br(),
+				"34060 MONTPELLIER Cedex 1",br(),
+				"FRANCE",
+				br()
+				)
 			),
-            	
-              	
- 		column(3, offset=0, 
- 				br(""),br(""),
-              	helpText(legend[22], style="color:grey ; font-family: 'times'; font-size:15pt ; font-type:bold" ),    	      
-             	wellPanel(
-       				textInput("from", "From:", value="e.g. from@gmail.com"),
-          			#textInput("to", "To:", value="to@gmail.com"),
-           			textInput("subject", "Subject:", value=""),
-           			h5("Write message here"),
-           			aceEditor("message", value=""),
-           			actionButton("send", "Send mail")
-          			)		
-			#Close column
-			)
+		fluidRow(column(6,offset=3,hr())) , br() ,	
+		
+		#Black line?
+		fluidRow( style=" opacity: 0.8 ; background-color: white ; margin-top: 0px ; width: 100%; "  ),
+	
+
 
 		
+		# === Last bandeau for the logos
+		fluidRow(
+			
+			# Set the style of this page
+			style=" opacity: 0.8 ; background-color: black ; margin-top: 0px ; width: 100%; ",
+		
+			# put the logos
+			br(),
+			column(2, offset=4, img(src="https://upload.wikimedia.org/wikipedia/fr/thumb/d/d4/INRA_logo.jpg/800px-INRA_logo.jpg" ,  height = 70*grand, width = 120*grand) , br(),br() ),
+			column(2, offset=0, img(src="http://www.fiches.arvalis-infos.fr/fiche_variete/css/images/logo_arvalis.png" ,  height = 70*grand, width = 100*grand) ),
+			column(2, offset=0, img(src="http://www.supagro.fr/capeye/wp-content/uploads/2015/02/Logo-Montpellier-SupAgro-Vert-Web.jpg" ,  height = 70*grand, width = 110*grand) )
+			
+			)
+
 		#Close the tabPanel
 		)
 

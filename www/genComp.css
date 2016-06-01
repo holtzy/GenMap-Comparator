@@ -41,3 +41,15 @@ body	 {
     max-width: 13%;
 }
 */
+
+
+
+/* CSS des lignes hr() (page de doc) */
+hr {
+    display: block;
+    height: 3px;
+    border: 0;
+    border-top: 1px solid black;
+    margin: 1em 0;
+    padding: 0; 
+}
