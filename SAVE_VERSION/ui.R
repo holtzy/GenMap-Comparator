@@ -74,8 +74,8 @@ shinyUI(navbarPage(
 			fileInput("file1", strong(p(legend[3] , style="color:orange ; font-family: 'times'; font-size:18pt")) , multiple = TRUE, accept=NULL),
 			
 			# widget to propose 2 exemples
-			helpText(strong(p("Or an example dataset:" , style="color:orange ; font-family: 'times'; font-size:18pt"))) ,
-			actionButton("button_for_ex1", "Wheat"),
+			#helpText(strong(p("Or an example dataset:" , style="color:orange ; font-family: 'times'; font-size:18pt"))) ,
+			#actionButton("button_for_ex1", "Wheat"),
 			
 			br(""),br(""),br(""),
 			p(
@@ -200,10 +200,10 @@ shinyUI(navbarPage(
 			br(),br(),
 			
 			# Choix de la map
-			wellPanel(uiOutput("choose_maps3"))
+			wellPanel(uiOutput("choose_maps3")),
 			
 			#Submit button
-			#submitButton("Submit")
+			submitButton("Submit")
 
 			#Close column
 			),

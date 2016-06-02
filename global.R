@@ -27,9 +27,6 @@ legend=read.table("LEGEND/all_legend.txt",sep="@")[,2]
 # == Functions
 # Donut plot
 source("RESSOURCES/donut_function.R")
-# Something needed to choose a directory. Founded in : https://github.com/wleepang/shiny-directory-input
-source('RESSOURCES/directoryInput.R')
-
 
 # == Set the size of the logo of partners
 grand=1.7

@@ -33,8 +33,6 @@ shinyServer(function(input, output, session) {
 		#observe({ print("mon toto:") ; print ("4") ; print(  toto()  ) 	})
 
 
-	# 0/ --- If no data is selected at all, I put a dataset by default
-
 
 	# 1/ --- Catch the map names we have to compare :
 	MY_map_files=reactive({
@@ -47,7 +45,6 @@ shinyServer(function(input, output, session) {
 		
 		# I am reactive to the selection of input files !
 		inFile <- input$file1
-		print(inFile)
 		
 		# If it is not empty, I get the map names:
 		if ( is.null(inFile)) { return(NULL)} else {map_files=as.list(inFile$name)}
@@ -318,12 +315,22 @@ shinyServer(function(input, output, session) {
 #-----------------------------------------------------------------------------
 
 
+
+observe({ print("choix de carte pour la ma sheet 2:") ; print(input$selected_maps_sheet2) ; print("choix fait parmis") ; print(MY_map_files())  })
+
+
+
 	output$my_barplot=renderPlot({ 
 	
 		# Get the needed reactive objects:
 		summary_stat=MY_summary_stat()
 		map_files=MY_map_files()
-				
+		
+		print("variables sélectionntées")
+		print(input$var_for_barplot)
+		print("carte selectionnées")
+		print(input$selected_maps_sheet2)
+		
   		# Avoid bug when loading
   		if (is.null(input$var_for_barplot) | is.null(input$selected_maps_sheet2) ) {  return(NULL)  }
 

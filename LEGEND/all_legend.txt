@@ -1,6 +1,6 @@
 1@A user friendly tool to compare and characterize genetic maps.
 2@you are in the right place!
-3@Please select your data: 
+3@Please select your data files: 
 4@With contribution of
 5@Choose chromosome!
 6@Compare positions
@@ -8,8 +8,8 @@
 8@rien, j’ai fait nimp
 9@Interchromosomal Analysis
 10@Choose chromosome!
-11@Fig. 5: Comparison of markers positions for 2 selected maps. Choosing 1 chromosome only, it permits to visualize evolution of recombination rates among maps. If you select all chromosomes, it permits to discover interchromosomal recombinations
-12@Rough Map
+11@Fig. 5: Comparison of markers positions for 2 selected maps. Selecting a single chromosome allows to visualize the evolution of recombination rates between maps. Selecting all chromosomes allows to visualize interchromosomal recombinations
+12@Raw data
 13@Choose chromosome!
 14@Fig. 6: This table shows the rough data: the selected map as you gave it in input. You can order it by chromosome or position, search for a specific marker...
 15@The Genmap Comparator is an application developped to compare and characterize genetic maps. 
@@ -20,5 +20,5 @@
 20@3 -- Go to the home page of this app, add select your folder. Now you just have to naviguate from one page to another !
 21@If you use this app in your studies, please cite this reference, it helps to spread the tool !
 22@Drop us a line!
-23@Fig. 2: Distribution of the requested \nfeature per maps.Values are given \nchromosome per chromosome
-24@Fig. 1: Distribution of the requested \nfeature per maps.Calculations are \nmade considering the whole maps
+23@Fig. 2: Distribution of the requested \nfeature per map. Values are given \nchromosome per chromosome
+24@Fig. 1: Distribution of the requested \nfeature per map. Calculations are \nmade considering the whole maps

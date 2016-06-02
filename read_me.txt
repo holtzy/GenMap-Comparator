@@ -15,6 +15,8 @@
    - nom des chromosomes est en dur dans certains endroits !!!!
    - Noms des cartes plus petit quand il y a beaucoup de carte dans sheet3
    - Problème quand je change de chromosome dans sheet3, il remet 2 cartes seulement..
+   - Quand les fichiers ont finit de charger, il faudrait qu il se passe qqchose
+
 
 —— TODO for Yan OR Vincent —- 
 
