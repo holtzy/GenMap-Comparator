@@ -28,36 +28,45 @@ shinyServer(function(input, output, session) {
 # --- UPLOAD MAPS AND FILE FORMATING
 #-----------------------------------------------------------------------------
 
-		#print("============== go button")
-		#toto=eventReactive( input$button_for_ex1 , { input$button_for_ex1 } )
-		#observe({ print("mon toto:") ; print ("4") ; print(  toto()  ) 	})
 
 
-	# 0/ --- If no data is selected at all, I put a dataset by default
+
+	# 0/ --- Selection of the data set: default dataset / Example dataset / Chosen dataset
+	inFile=reactive({
+		
+		# If nothing is choosen I put the Sorgum by default
+		if ( is.null(input$file1)) {
+			inFile=data.frame(name=as.character(c("CIRAD","S2","S4","S5","S6","TAMU")) , datapath=as.character(c("DATA/SORGHUM/CIRAD", "DATA/SORGHUM/S2" , "DATA/SORGHUM/S4" , "DATA/SORGHUM/S5" , "DATA/SORGHUM/S6" , "DATA/SORGHUM/TAMU" )) )
+			
+		# If the user choose a dataset, I take this dataset:	
+		}else{
+			inFile <- input$file1
+		}
+		
+		# If the User pick an example dataset, I use it:
+		
+		
+		})
+		
+	# Check it worked properly
+	observe({ print("Mon inFile") ; print ( inFile() ) ; print("--") 	})
+
+
+
+
 
 
 	# 1/ --- Catch the map names we have to compare :
 	MY_map_files=reactive({
-	
-		# test exemp dataset
-		#print("actionbbuton:")
-		#a=input$button_for_ex1 
-		#print(a)
-		#print("ok")
-		
-		# I am reactive to the selection of input files !
-		inFile <- input$file1
-		print(inFile)
-		
-		# If it is not empty, I get the map names:
-		if ( is.null(inFile)) { return(NULL)} else {map_files=as.list(inFile$name)}
-		
-		#return the map names
-		return(map_files)
+
+		# List of map files:
+		map_files=as.list(inFile()$name)
+		# return this list, but do not forget to format it:
+		return(as.character(unlist(map_files)))
 		})
 
 	# Check it worked properly
-	#observe({ print("mes maps selectionnées") ; print ( MY_map_files()  ) 	})
+	observe({ print("mes maps selectionnées") ; print ( MY_map_files()) ; print("test widget selection") ; selected=c(MY_map_files()[1],MY_map_files()[2]) ; print(selected) 	})
 
 		
 
@@ -69,57 +78,52 @@ shinyServer(function(input, output, session) {
 	MY_maps=reactive({
 	
 		# I am reactive to the selection of input files !
-		inFile <- input$file1
+		inFile=inFile()
 		
-		# If it is not empty:
-		if (is.null(inFile)) { return(NULL)} else {
 
-			# how many maps do I have?
-			#nb_de_carte=length(inFile$datapath)
-
-			# Read and format maps one by one, and add them to a list:
-			my_maps=list()
-			for(i in inFile$datapath){
-							
-				# Load the map
-				map_tmp=read.table(i , header=T , dec="." ,na.strings="NA")
-		
-				# If I have only 1 column, the separator was wrong, I try with ";":
-				if(ncol(map_tmp)==1){
-					map_tmp=read.table(i , header=T ,  dec="." ,na.strings="NA" , sep=";")
+		# Read and format maps one by one, and add them to a list:
+		my_maps=list()
+		for(i in inFile$datapath){
+						
+			# Load the map
+			map_tmp=read.table(i , header=T , dec="." ,na.strings="NA")
+	
+			# If I have only 1 column, the separator was wrong, I try with ";":
+			if(ncol(map_tmp)==1){
+				map_tmp=read.table(i , header=T ,  dec="." ,na.strings="NA" , sep=";")
+			}
+			
+			# If I have 2 columns, It is the MapChart format --> I need to reformat it!
+			if(ncol(map_tmp)==2){
+				junctions=c(1, as.numeric(row.names(map_tmp[map_tmp[,1]=="group" , ])), nrow(map_tmp)+1 )
+				nb_rep=junctions[-1] - junctions[-length(junctions)]
+				LG_names=c(colnames(map_tmp)[2] , as.character(map_tmp[map_tmp[,1]=="group" , 2]) )
+				map_tmp$new=rep(LG_names , times=nb_rep)
+				map_tmp=map_tmp[map_tmp[,1]!="group" , ]
+				map_tmp=map_tmp[ , c(3,1,2)]
 				}
-				
-				# If I have 2 columns, It is the MapChart format --> I need to reformat it!
-				if(ncol(map_tmp)==2){
-					junctions=c(1, as.numeric(row.names(map_tmp[map_tmp[,1]=="group" , ])), nrow(map_tmp)+1 )
-					nb_rep=junctions[-1] - junctions[-length(junctions)]
-					LG_names=c(colnames(map_tmp)[2] , as.character(map_tmp[map_tmp[,1]=="group" , 2]) )
-					map_tmp$new=rep(LG_names , times=nb_rep)
-					map_tmp=map_tmp[map_tmp[,1]!="group" , ]
-					map_tmp=map_tmp[ , c(3,1,2)]
-					}
+		
+			# Columns must be in the good format:
+			map_tmp[,1]=as.factor(map_tmp[,1])
+			map_tmp[,2]=as.factor(map_tmp[,2])
+			map_tmp[,3]=as.numeric(as.character(map_tmp[,3]))
 			
-				# Columns must be in the good format:
-				map_tmp[,1]=as.factor(map_tmp[,1])
-				map_tmp[,2]=as.factor(map_tmp[,2])
-				map_tmp[,3]=as.numeric(as.character(map_tmp[,3]))
-				
-				# With the good names:
-				colnames(map_tmp)=c("group","marker","position")	
-				
-				# I keep only the first 3 columns (if they are more..)
-				map_tmp=map_tmp[,c(1:3)]
-							
-				# I remove positions where an information is missing:
-				map_tmp=na.omit(map_tmp)
-				
-				# And ordered
-				map_tmp=map_tmp[order(map_tmp$group , map_tmp$position ) , ]
-				
-				# Add it to the list
-				my_maps[[length(my_maps)+1]]=map_tmp
+			# With the good names:
+			colnames(map_tmp)=c("group","marker","position")	
 			
-			}}
+			# I keep only the first 3 columns (if they are more..)
+			map_tmp=map_tmp[,c(1:3)]
+						
+			# I remove positions where an information is missing:
+			map_tmp=na.omit(map_tmp)
+			
+			# And ordered
+			map_tmp=map_tmp[order(map_tmp$group , map_tmp$position ) , ]
+			
+			# Add it to the list
+			my_maps[[length(my_maps)+1]]=map_tmp
+		
+		}
 		return(my_maps)
 		
 	})
@@ -137,9 +141,6 @@ shinyServer(function(input, output, session) {
 	# 3/ --- Merge the maps together
 	MY_data=reactive({
 	
-		# Avoid mistake if no map is choosen:
-		if (is.null(input$file1)) { return(NULL)}
-				
 		# Get back the reactive objects needed:
 		my_maps=MY_maps()
 		nb_de_carte=length(my_maps)
@@ -169,9 +170,6 @@ shinyServer(function(input, output, session) {
 
 	# 4/ --- List of chromosomes ?
 	MY_chromosome_list=reactive({
-
-		# Avoid mistake if no map is choosen:
-		if (is.null(input$file1)) { return(NULL)}
 
 		# Get back the reactive objects needed:
 		data=MY_data()
@@ -204,9 +202,6 @@ shinyServer(function(input, output, session) {
 
 	MY_summary_stat=reactive({
 
-		# Avoid mistake if no map is choosen:
-		if (is.null(input$file1)) { return(NULL)}
-		
 		# Get the needed reactive objects:
 		my_maps=MY_maps()
 		nb_de_carte=length(my_maps)
@@ -322,12 +317,9 @@ shinyServer(function(input, output, session) {
 	
 		# Get the needed reactive objects:
 		summary_stat=MY_summary_stat()
-		map_files=MY_map_files()
+		map_files=unlist(MY_map_files())
 				
-  		# Avoid bug when loading
-  		if (is.null(input$var_for_barplot) | is.null(input$selected_maps_sheet2) ) {  return(NULL)  }
-
-		# Selected variable ?
+ 		# Selected variable ?
 		selected_var=which(c("nb. marker","size","average gap","biggest gap","Nb. uniq pos.")%in%input$var_for_barplot)
 
 		# Selected Maps ?
