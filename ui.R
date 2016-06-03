@@ -76,6 +76,7 @@ shinyUI(navbarPage(
 			# widget to propose 2 exemples
 			helpText(strong(p("Or an example dataset:" , style="color:orange ; font-family: 'times'; font-size:18pt"))) ,
 			actionButton("button_for_ex1", "Wheat"),
+			actionButton("button_for_ex2", "Sorghum"),
 			
 			br(""),br(""),br(""),
 			p(
@@ -122,52 +123,85 @@ shinyUI(navbarPage(
 		#Name
 		h4("Summary Statistics"),
 		
-		# First Row : bar and pieplot whit corresponding widget
-		fluidRow(
-		
-			#Left column to choose input
-			column(2, 
-				
-				# chooser map
-				br(),br(),br(),
-				wellPanel(uiOutput("choose_maps_sheet2")),
-	
-				# choose variable for barplot
+		# ==== Title in Orange
+		fluidRow(align="center",
+			style="opacity:0.9; background-color: white ;margin-top: 0px; width: 100%;",
+			column(6,offset=3,
 				br(),
-				wellPanel(radioButtons( "var_for_barplot", "Show on barplot:", choices = c("nb. marker","size","average gap","biggest gap","Nb. uniq pos."), selected =c("nb. marker") , inline = TRUE ))
-				
-				#Close column
+				helpText( strong(" - Summary Statistics - " , style="color:Orange ; font-family: 'times'; font-size:30pt ; font-type:bold" )) ,
+				hr()
+		)),
+
+
+		# === Some text to explain the Figure:
+		fluidRow(
+			style="opacity:0.9; background-color: white ;margin-top: 0px; width: 100%;",
+			column(6,offset=3,
+				br(),"Ergo ego senator inimicus, si ita vultis, homini, amicus esse, sicut semper fui, rei publicae debeo. Quid? si ipsas inimicitias, depono rei publicae causa, quis me tandem iure reprehendet, praesertim cum ego omnium meorum consiliorum atque factorum exempla semper ex summorum hominum consiliis atque factis mihi censuerim petenda.",br()
+				)
+			),br(),br(),
+
+		# === Two widgets to select maps and variables for pie and barplot:
+		fluidRow(
+			style="opacity:0.9; background-color: white ;margin-top: 0px; width: 100%;",
+			column(3,offset=3,
+				wellPanel(uiOutput("choose_maps_sheet2"))
 				),
-
-			#Center column for PiePlot
-			column(3,  plotOutput("my_pieplot", height = "500px" ,  width = "500px" ) ),
-
-			#Right column for Barplot
-			column(7 , plotOutput("my_barplot" , height = "500px" ,  width = "1000px")   )
-			
-		#Close first fluidRow
-		),
+			column(3,offset=0,
+				wellPanel(radioButtons( "var_for_barplot", "Show on barplot:", choices = c("nb. marker","size","average gap","biggest gap","Nb. uniq pos."), selected =c("nb. marker") , inline = TRUE ))
+				)
+			),
 		
-		# Second fluid row for the circular plot !
-		br(""),
+		
+		# === Bar and pieplot whit corresponding widget
 		fluidRow(
 		
-			column(2, 
+			# PiePlot
+			column(3, offset=1,  plotOutput("my_pieplot", height = "500px" ,  width = "500px" ) ),
+
+			#Barplot
+			column(7 , plotOutput("my_barplot" , height = "500px" ,  width = "1000px")   )
+
+		),br(),
 		
-				# Choose chromosome
+		# === Separation
+		#fluidRow( column( 6,offset=3, hr())),
+		
+
+		# ==== Title 2 in Orange
+		fluidRow(align="center",
+			style="opacity:0.9; background-color: white ;margin-top: 0px; width: 100%;",
+			column(6,offset=3,
+				br(),
+				helpText( strong(" - Markers density - " , style="color:Orange ; font-family: 'times'; font-size:30pt ; font-type:bold" )) ,
+				hr()
+		)),
+
+
+		# === Some text to explain the Figure:
+		fluidRow(
+			style="opacity:0.9; background-color: white ;margin-top: 0px; width: 100%;",
+			column(6,offset=3,
+				br(),"Ergo ego senator inimicus, si ita vultis, homini, amicus esse, sicut semper fui, rei publicae debeo. Quid? si ipsas inimicitias, depono rei publicae causa, quis me tandem iure reprehendet, praesertim cum ego omnium meorum consiliorum atque factorum exempla semper ex summorum hominum consiliis atque factis mihi censuerim petenda.",br()
+				)
+			),br(),br(),
+
+		# === One widget to select maps and variables for pie and barplot:
+		fluidRow( align="center",
+			style="opacity:0.9; background-color: white ;margin-top: 0px; width: 100%;",
+			column(2,offset=5,
 				wellPanel(uiOutput("choose_chromo_sheet2"))
+				)
+			),
 
-				#Close column
-				),
-
-			column(8, offset=2,
+		# === Fluid row for the circular plot !
+		br(""),
+		fluidRow(align="center",
+			column(12, offset=0,
 				plotOutput("circular_plot" ,  height = "700px" ,  width = "700px" )
-
-			#Close column
 			)
-
-		#Close Second fluidRow
 		)
+
 		
 		#Close the tabPanel
 		),
@@ -191,31 +225,50 @@ shinyUI(navbarPage(
 		#Name
 		h4(legend[6]) ,
 		
-		# Left column to choose input
-		column(2, 
+		# ==== Title in Orange
+		fluidRow(align="center",
+			style="opacity:0.9; background-color: white ;margin-top: 0px; width: 100%;",
+			column(6,offset=3,
+				br(),
+				helpText( strong(" - Maps comparison - " , style="color:Orange ; font-family: 'times'; font-size:30pt ; font-type:bold" )) ,
+				hr()
+		)),
 
-			# CHOIX DU chromosome d'étude
-			br(""),	br(""),	br(""),
-			wellPanel(uiOutput("choose_chromo_sheet3")),
-			br(),br(),
-			
-			# Choix de la map
-			wellPanel(uiOutput("choose_maps3"))
-			
-			#Submit button
-			#submitButton("Submit")
 
-			#Close column
+		# === Some text to explain the Figure:
+		fluidRow(
+			style="opacity:0.9; background-color: white ;margin-top: 0px; width: 100%;",
+			column(6,offset=3,
+				br(),"Ergo ego senator inimicus, si ita vultis, homini, amicus esse, sicut semper fui, rei publicae debeo. Quid? si ipsas inimicitias, depono rei publicae causa, quis me tandem iure reprehendet, praesertim cum ego omnium meorum consiliorum atque factorum exempla semper ex summorum hominum consiliis atque factis mihi censuerim petenda.",br()
+				)
+			),br(),br(),
+
+
+		# === Two widgets to select maps and variables for pie and barplot:
+		fluidRow( align="center",
+			style="opacity:0.9; background-color: white ;margin-top: 0px; width: 100%;",
+			column(3,offset=3,
+				wellPanel(uiOutput("choose_chromo_sheet3"))
+				),
+			column(3,offset=0,
+				wellPanel(uiOutput("choose_maps3"))
+				)
 			),
-		
-		# On the space left, I draw the graph
-		column(9, 
-       		
-       		br(""),
-			plotlyOutput("plot1" ,  height = "800px")
+
+		# === Separation
+		fluidRow( column( 6,offset=3, hr())),
+
 			
-			#Close column
-			)
+		# === Comparison graph
+		column(11, offset=1, 
+       		br(""), plotlyOutput("plot1" ,  height = "800px")
+			),
+
+
+		# === Separation
+		br(),fluidRow( column( 6,offset=3, hr())), br(), br()
+
+
 		
 		#Close the tabPanel
 		),
@@ -237,7 +290,26 @@ shinyUI(navbarPage(
 		#Name
 		h4(legend[9]),
 		
-		# Left column to choose input
+		# ==== Title in Orange
+		fluidRow(align="center",
+			style="opacity:0.9; background-color: white ;margin-top: 0px; width: 100%;",
+			column(6,offset=3,
+				br(),
+				helpText( strong(" - Interchromosomal Analysis - " , style="color:Orange ; font-family: 'times'; font-size:30pt ; font-type:bold" )) ,
+				hr()
+		)),
+
+
+		# === Some text to explain the Figure:
+		fluidRow(
+			style="opacity:0.9; background-color: white ;margin-top: 0px; width: 100%;",
+			column(6,offset=3,
+				br(),legend[11],br()
+				)
+			),br(),br(),
+
+
+		# === Left column to choose input
 		column(2, 
 			
 			# Make som space
@@ -256,7 +328,7 @@ shinyUI(navbarPage(
 			#Close column
 			),
 		
-		# On the space left, I add the plot
+		# === On the space left, I add the plot
 		column(8, 
 			
 			br(),
@@ -265,13 +337,9 @@ shinyUI(navbarPage(
 			#Close column
 			),
 
-		# Legend of the plot
+		# === Key numbers
 		column(2, 
-       		br(),
-       		plotOutput("key_numbers_sheet_3", height = "500px" ,  width = "350px"),
-       		br(),br(),
-			helpText(strong(p(legend[11] , style="color:grey ; font-family: 'times'; font-size:12pt")))
-			#Close column
+       		br(), plotOutput("key_numbers_sheet_3", height = "500px" ,  width = "350px"), br(),br()
 			)
 
 		#Close the tabPanel

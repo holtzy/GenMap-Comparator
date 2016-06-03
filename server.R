@@ -29,6 +29,17 @@ shinyServer(function(input, output, session) {
 #-----------------------------------------------------------------------------
 
 
+	# TEST
+	#inFile2= eventReactive( c(input$button_for_ex1 , input$button_for_ex1)  , { c("toto","titi") })
+	#inFile2=reactive({
+	#	if(input$button_for_ex1)isolate({"toto"})
+	#	if(input$button_for_ex2)isolate({"titi"})
+	#	})
+	#observe({ print("Mon TOTO") ; print ( inFile2() ) ; print("--") 	})
+	
+
+
+
 
 
 	# 0/ --- Selection of the data set: default dataset / Example dataset / Chosen dataset
@@ -37,15 +48,13 @@ shinyServer(function(input, output, session) {
 		# If nothing is choosen I put the Sorgum by default
 		if ( is.null(input$file1)) {
 			inFile=data.frame(name=as.character(c("CIRAD","S2","S4","S5","S6","TAMU")) , datapath=as.character(c("DATA/SORGHUM/CIRAD", "DATA/SORGHUM/S2" , "DATA/SORGHUM/S4" , "DATA/SORGHUM/S5" , "DATA/SORGHUM/S6" , "DATA/SORGHUM/TAMU" )) )
-			
-		# If the user choose a dataset, I take this dataset:	
+				
 		}else{
+			
+			# If the user choose a dataset, I take this dataset:
 			inFile <- input$file1
 		}
-		
-		# If the User pick an example dataset, I use it:
-		
-		
+				
 		})
 		
 	# Check it worked properly
@@ -268,16 +277,16 @@ shinyServer(function(input, output, session) {
 
   # ======== sheet2: Summary Statistics =========
   # MAP to study
-  output$choose_maps_sheet2<- renderUI({ checkboxGroupInput("selected_maps_sheet2", "Choose maps !", choices=MY_map_files(), selected=c(MY_map_files()[1],MY_map_files()[2]) ) })
+  output$choose_maps_sheet2<- renderUI({ checkboxGroupInput("selected_maps_sheet2", "Choose maps !", choices=MY_map_files(), selected=c(MY_map_files()[1],MY_map_files()[2]) , inline=T) })
   # Chromosomes to study
   output$choose_chromo_sheet2<- renderUI({checkboxGroupInput( "chromo_sheet2", legend[5], choices=MY_chromosome_list() , selected =c(MY_chromosome_list()[1],MY_chromosome_list()[2]) , inline = TRUE ) })
 
 
   # ======== sheet3: Compare Positions =========
   # Map to study
-  output$choose_maps3<- renderUI({ checkboxGroupInput("selected_maps", "Choose maps !", choices=MY_map_files(), selected=c(MY_map_files()[1],MY_map_files()[2]) ) })
+  output$choose_maps3<- renderUI({ checkboxGroupInput("selected_maps", "Choose maps !", choices=MY_map_files(), selected=c(MY_map_files()[1],MY_map_files()[2]) , inline=T) })
   # Chromosomes to study
-  output$choose_chromo_sheet3<- renderUI({selectInput( "chromo", legend[5], choices=MY_chromosome_list() , selected =MY_chromosome_list()[1] ) })
+  output$choose_chromo_sheet3<- renderUI({selectInput( "chromo", legend[5], choices=MY_chromosome_list() , selected =MY_chromosome_list()[1]  ) })
 
 
   # ======== sheet4: Interchromosomal Analyse =========
@@ -338,7 +347,7 @@ shinyServer(function(input, output, session) {
 		# Make the barplot !
 		par(mar=c(3,3,3,8))
 		barplot(barplot_table , beside=T , col=my_colors[1:length(selected_maps)]) 
-		mtext(legend[23] , col="#3C3C3C" , line=-3 , at=ncol(barplot_table)*nb_selected_maps+8)
+		#mtext(legend[23] , col="#3C3C3C" , line=-3 , at=ncol(barplot_table)*nb_selected_maps+8)
 		
 	#Close the render-barplot 
 	})
@@ -388,7 +397,7 @@ shinyServer(function(input, output, session) {
 		my_labels=paste(map_files[selected_maps],"\n",all_var[selected_var]," : ",barplot_table,sep="")
 		print(barplot_table)
 		doughnut(barplot_table, col=my_colors , border="white" , inner.radius=0.5, labels=my_labels )
-		mtext(expression(italic(legend[24])) , col="#3C3C3C" , line=-5)
+		#mtext(expression(italic(legend[24])) , col="#3C3C3C" , line=-5)
 	
 	#Close the render-barplot 
 	})
