@@ -58,7 +58,7 @@ shinyServer(function(input, output, session) {
 		})
 		
 	# Check it worked properly
-	observe({ print("Mon inFile") ; print ( inFile() ) ; print("--") 	})
+	#observe({ print("Mon inFile") ; print ( inFile() ) ; print("--") 	})
 
 
 
@@ -75,7 +75,7 @@ shinyServer(function(input, output, session) {
 		})
 
 	# Check it worked properly
-	observe({ print("mes maps selectionnées") ; print ( MY_map_files()) ; print("test widget selection") ; selected=c(MY_map_files()[1],MY_map_files()[2]) ; print(selected) 	})
+	#observe({ print("mes maps selectionnées") ; print ( MY_map_files()) ; print("test widget selection") ; selected=c(MY_map_files()[1],MY_map_files()[2]) ; print(selected) 	})
 
 		
 
@@ -278,9 +278,11 @@ shinyServer(function(input, output, session) {
   # ======== sheet2: Summary Statistics =========
   # MAP to study
   output$choose_maps_sheet2<- renderUI({ checkboxGroupInput("selected_maps_sheet2", "Choose maps !", choices=MY_map_files(), selected=c(MY_map_files()[1],MY_map_files()[2]) , inline=T) })
-  # Chromosomes to study
+  # Chromosomes to study for markers density
   output$choose_chromo_sheet2<- renderUI({checkboxGroupInput( "chromo_sheet2", legend[5], choices=MY_chromosome_list() , selected =c(MY_chromosome_list()[1],MY_chromosome_list()[2]) , inline = TRUE ) })
-
+  # Map to study for summary table
+  output$choose_maps_sheet2_bis<- renderUI({ radioButtons("selected_maps_sheet2_bis", "Choose maps !", choices=MY_map_files(), selected=c(MY_map_files()[1]) , inline=T) })
+  
 
   # ======== sheet3: Compare Positions =========
   # Map to study
@@ -395,7 +397,6 @@ shinyServer(function(input, output, session) {
 		# Make the donut-plot !
 		par(mar=c(3,3,3,10))
 		my_labels=paste(map_files[selected_maps],"\n",all_var[selected_var]," : ",barplot_table,sep="")
-		print(barplot_table)
 		doughnut(barplot_table, col=my_colors , border="white" , inner.radius=0.5, labels=my_labels )
 		#mtext(expression(italic(legend[24])) , col="#3C3C3C" , line=-5)
 	
@@ -404,6 +405,44 @@ shinyServer(function(input, output, session) {
 
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------#
+
+
+
+
+
+
+
+
+#-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------#
+
+#-----------------------------------------------------------------------------
+# --- SHEET 2 : SUMMARY STATISTICS PAGE - SUMMARY TABLE OF SELECTED MAP
+#-----------------------------------------------------------------------------
+
+
+		observe({
+
+			# Selected Map ?
+			selected_map=which(MY_map_files()%in%input$selected_maps_sheet2_bis)
+			
+  			# Avoid bug when loading
+  			if (is.null(input$selected_maps_sheet2_bis) ) {return(NULL)}
+
+			# Get the desired summary stat
+			toprint=MY_summary_stat()[[selected_map]]
+	
+			output$sum_table <- DT::renderDataTable(
+					DT::datatable( toprint , rownames = FALSE , options = list(pageLength = 40, dom = 't' ))
+			)
+		
+		# Close observer
+		})
+	
+
+#-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------#
+
+
+
 
 
 
@@ -451,34 +490,39 @@ shinyServer(function(input, output, session) {
 			data_circ[,1]=droplevels(data_circ[,1])
 			}		
 		
-		# General graphical parameters
-		par(mar =c(1, 1, 1, 1), lwd = 0.1, cex = 0.7)
-		circos.par(track.height = 0.7/nb_de_carte)
-		coul = brewer.pal(4, "Set3") 
-		coul = colorRampPalette(coul)(nlevels(data_circ[,1]))
-		num=0
+
+		# Réalisation du graph
+		par(mfrow=c(nb_de_carte ,1) , mar=c(0.3,4,0,0) )
+		for( map in levels(as.factor(data_circ$map_name))){
 		
-		# Initialization of the circular plot
-		circos.initialize(factors = data_circ[,1], x = data_circ$position)
-		
-		# Add chosen maps one by one
-		for( i in c(1:nb_selected_maps)){
-		
-			# Select one of the chosen map
-			don=data_circ[data_circ$map_name==levels(as.factor(data_circ$map_name))[i] , ]
-					
-			# add density curve
-			circos.trackHist(don[,1], don$position, col="orange" , lwd=3 , draw.density=T, bg.col=coul)
-					
-			# add one black line for each marker
-			circos.trackLines(don[,1], don$position, rep(0.005,nrow(don)), type = "h")
-		
-			}
-		
-		# add chromosome names
-		for(i in levels(data_circ[,1])){
-			circos.text(max(data_circ$position[data_circ[,1]==i])/2, 1.5, i, sector.index = i, track.index = 1 , col="orange" , cex=1.4 , lwd=2)
-			}
+			# Reset x positions
+			vecX=c()
+			vecY=c()
+			vecSep=c(0)
+			my_data=data_circ[which(data_circ$map_name==map) , ]
+			
+			for( chromo in levels(as.factor(my_data$group)) ){
+			
+			 	 don=my_data[which(my_data$group==chromo) , ]
+			 	 a=density(don$position)
+				 a$x=a$x + abs(min(a$x)) 
+				 if(length(vecX)>0){a$x=a$x+max(vecX) }
+				 vecX=c(vecX , a$x)
+				 vecY=c(vecY , a$y)
+				 vecSep=c(vecSep, max(vecX)) 
+			 }
+			 
+			 # print the plot
+			 plot(1,1,col="transparent" , xlim=c(0,max(vecX)) , ylim=c(0,max(vecY)) , xlab="" , xaxt="n" , ylab="" , yaxt="n" , bty="n" )
+			 rect(  vecSep[-length( vecSep)], rep(-2,length( vecSep)) ,  vecSep[-1] , rep(1 , length( vecSep))  , col=my_colors , border=F )
+			 lines( vecX , vecY  , col="orange" , lwd=3 )
+	 		 mtext( map , at=max(vecY)/2 , col="orange" , cex=2 , line=0, side=2 )
+
+ 		#fin du plot
+ 		}
+ 		
+ 		#Ajout des labels de l'axe des x?
+		mtext( levels(as.factor(my_data$group)) , at=(vecSep[-1]+vecSep[-length(vecSep)]) /2 , col="orange" , cex=2 , line=5, side=1 )
 			
 		})
 	
@@ -589,6 +633,9 @@ shinyServer(function(input, output, session) {
 		}
 		don=unique(don)
 		
+		print("=================== objet don final:")
+		print(head(don))
+		
 		# --- OBJET 1 POUR LES LIAISONS ENRTE MARQUEURS
 		#Je fais une fonction qui me fait mon vecteur de position pour 2 cartes données : AXE des Y
 		function_pos=function(x,y){
@@ -626,9 +673,16 @@ shinyServer(function(input, output, session) {
 			xaxis=c(xaxis,to_add)
 			}
 
-		# Start the plotly graph
-		p=plot_ly(x=xaxis , y=pos_final , hoverinfo="none" ,  line=list(width=0.4, color="purple" , opacity=0.1) , showlegend=F,  evaluate=TRUE)
+		print("=================== objet vecteur des x et y:")
+		print(xaxis)
+		print(pos_final)
+		print("ok")
 
+		# Start the plotly graph
+		p=plot_ly(x=xaxis , y=pos_final , hoverinfo="none" ,  line=list(width=0.4, color="purple" , opacity=0.1) , showlegend=F)      # normalement il faut ajouter  evaluate=TRUE mais marche pas dans la derniere release de plotly.
+
+		print("ok1")
+		
 		# Custom the layout
 		p=layout( 
 			#Gestion du hovermode
@@ -637,12 +691,14 @@ shinyServer(function(input, output, session) {
 			xaxis=list(title = "", zeroline = FALSE, showline = FALSE, showticklabels = FALSE, showgrid = FALSE , range=c(0.5,nb_selected_maps+0.5) ),
 			yaxis=list(range=c(0,500), autorange = "reversed", title = "Position (cM)", zeroline = F, showline = T, showticklabels = T, showgrid = FALSE ,  tickfont=list(color="grey") , titlefont=list(color="grey") , tickcolor="grey" , linecolor="grey"),
 			)
+		print("ok2")
 
 		# Add vertical lines to represent chromosomes
 		for(m in c(1:nb_selected_maps)){
 			p=add_trace( x=c(m,m), y=c(0, max(don[,m*2+1],na.rm=T)) , evaluate=TRUE , line=list(width=4, color="black") )
 			p=layout( yaxis=list(range=c(0,max(pos_final))) )
 			}
+		print("ok3")
 		
 		# Add markers
 		for(m in c(1:nb_selected_maps)){
@@ -651,6 +707,7 @@ shinyServer(function(input, output, session) {
 			p=add_trace(obj2, x=rep(m,nrow(obj2) ) , y=obj2[,2] , mode="markers" ,  evaluate=TRUE, marker=list(color="black" , size=10 , opacity=0.5,symbol=24) , text=text , hoverinfo="text")
 			p=layout( yaxis=list(range=c(0,max(pos_final))) )
 			}
+		print("ok4")
 
 		# Add maps names			
 		p=add_trace(x=seq(1:nb_selected_maps) , y=rep(-10,nb_selected_maps) , text=unlist(liste_of_map_to_compare) , mode="text" , textfont=list(size=20 , color="orange") )

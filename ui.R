@@ -19,6 +19,7 @@
 #		cd /Users/holtz/Dropbox ; R ; library(shiny) ; runApp("GenMap-Comparator")
 
 
+
 # Let's start the UI file --> it codes for the design of the app!
 shinyUI(navbarPage(
 
@@ -168,7 +169,50 @@ shinyUI(navbarPage(
 		#fluidRow( column( 6,offset=3, hr())),
 		
 
+
+
+
+
+
 		# ==== Title 2 in Orange
+		fluidRow(align="center",
+			style="opacity:0.9; background-color: white ;margin-top: 0px; width: 100%;",
+			column(6,offset=3,
+				br(),
+				helpText( strong(" - Summary Table - " , style="color:Orange ; font-family: 'times'; font-size:30pt ; font-type:bold" )) ,
+				hr()
+		)),
+
+		# === Some text to explain the Figure:
+		fluidRow(
+			style="opacity:0.9; background-color: white ;margin-top: 0px; width: 100%;",
+			column(6,offset=3,
+				br(),"Ergo ego senator inimicus, si ita vultis, homini, amicus esse, sicut semper fui, rei publicae debeo. Quid? si ipsas inimicitias, depono rei publicae causa, quis me tandem iure reprehendet, praesertim cum ego omnium meorum consiliorum atque factorum exempla semper ex summorum hominum consiliis atque factis mihi censuerim petenda.",br()
+				)
+			),br(),br(),
+
+		# === One widget to select maps and variables for pie and barplot:
+		fluidRow( align="center",
+			style="opacity:0.9; background-color: white ;margin-top: 0px; width: 100%;",
+			column(2,offset=5,
+				wellPanel(uiOutput("choose_maps_sheet2_bis"))
+				)
+			),
+
+		# === Fluid row for the summary table
+		br(""),
+		fluidRow(align="center",
+			column(12, offset=0,
+				dataTableOutput('sum_table' , width="700px")
+			)
+		),br(),br(),
+		
+
+
+
+
+		
+		# ==== Title 3 in Orange
 		fluidRow(align="center",
 			style="opacity:0.9; background-color: white ;margin-top: 0px; width: 100%;",
 			column(6,offset=3,
@@ -198,9 +242,11 @@ shinyUI(navbarPage(
 		br(""),
 		fluidRow(align="center",
 			column(12, offset=0,
-				plotOutput("circular_plot" ,  height = "700px" ,  width = "700px" )
+				plotOutput("circular_plot" ,  height = "1200px" ,  width = "900px" )
 			)
-		)
+		),br(),br()
+
+
 
 		
 		#Close the tabPanel
