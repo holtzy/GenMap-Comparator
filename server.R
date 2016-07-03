@@ -288,7 +288,7 @@ shinyServer(function(input, output, session) {
   # Map to study
   output$choose_maps3<- renderUI({ checkboxGroupInput("selected_maps", "Choose maps !", choices=MY_map_files(), selected=c(MY_map_files()[1],MY_map_files()[2]) , inline=T) })
   # Chromosomes to study
-  output$choose_chromo_sheet3<- renderUI({selectInput( "chromo", legend[5], choices=MY_chromosome_list() , selected =MY_chromosome_list()[1]  ) })
+  output$choose_chromo_sheet3<- renderUI({ radioButtons( "chromo", legend[5], choices=MY_chromosome_list() , selected =MY_chromosome_list()[1] , inline=T ) })
 
 
   # ======== sheet4: Interchromosomal Analyse =========
@@ -673,15 +673,9 @@ shinyServer(function(input, output, session) {
 			xaxis=c(xaxis,to_add)
 			}
 
-		print("=================== objet vecteur des x et y:")
-		print(xaxis)
-		print(pos_final)
-		print("ok")
 
 		# Start the plotly graph
 		p=plot_ly(x=xaxis , y=pos_final , hoverinfo="none" ,  line=list(width=0.4, color="purple" , opacity=0.1) , showlegend=F)      # normalement il faut ajouter  evaluate=TRUE mais marche pas dans la derniere release de plotly.
-
-		print("ok1")
 		
 		# Custom the layout
 		p=layout( 
@@ -691,14 +685,12 @@ shinyServer(function(input, output, session) {
 			xaxis=list(title = "", zeroline = FALSE, showline = FALSE, showticklabels = FALSE, showgrid = FALSE , range=c(0.5,nb_selected_maps+0.5) ),
 			yaxis=list(range=c(0,500), autorange = "reversed", title = "Position (cM)", zeroline = F, showline = T, showticklabels = T, showgrid = FALSE ,  tickfont=list(color="grey") , titlefont=list(color="grey") , tickcolor="grey" , linecolor="grey"),
 			)
-		print("ok2")
 
 		# Add vertical lines to represent chromosomes
 		for(m in c(1:nb_selected_maps)){
 			p=add_trace( x=c(m,m), y=c(0, max(don[,m*2+1],na.rm=T)) , evaluate=TRUE , line=list(width=4, color="black") )
 			p=layout( yaxis=list(range=c(0,max(pos_final))) )
 			}
-		print("ok3")
 		
 		# Add markers
 		for(m in c(1:nb_selected_maps)){
@@ -707,7 +699,6 @@ shinyServer(function(input, output, session) {
 			p=add_trace(obj2, x=rep(m,nrow(obj2) ) , y=obj2[,2] , mode="markers" ,  evaluate=TRUE, marker=list(color="black" , size=10 , opacity=0.5,symbol=24) , text=text , hoverinfo="text")
 			p=layout( yaxis=list(range=c(0,max(pos_final))) )
 			}
-		print("ok4")
 
 		# Add maps names			
 		p=add_trace(x=seq(1:nb_selected_maps) , y=rep(-10,nb_selected_maps) , text=unlist(liste_of_map_to_compare) , mode="text" , textfont=list(size=20 , color="orange") )

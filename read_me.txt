@@ -2,21 +2,16 @@
 
 —— TODO for YAN —- 
 
-   - Logo
    - Comment mettre plusieurs images et un titre dans la barre du haut ?
-   - Histogramme de densité de marqueur
    - Diagramme de Venn des marqueurs communs
    - Faire un fichier de conf avec ls couleurs (au moins)
    - Faire un fichier avec toutes les légendes.
    - mettre en place le choix des fichiers d’entrée.
-   - transformation de format d’entrée automatique.
    - possibilité d’export des figures en pdf.
    - sheet comparison: bug lorsque une seule carte est affichée.
-   - nom des chromosomes est en dur dans certains endroits !!!!
-   - Noms des cartes plus petit quand il y a beaucoup de carte dans sheet3
    - Problème quand je change de chromosome dans sheet3, il remet 2 cartes seulement..
    - Quand les fichiers ont finit de charger, il faudrait qu il se passe qqchose
-
+   - Ecrire a Delphine Fleury.
 
 —— TODO for Yan OR Vincent —- 
 
