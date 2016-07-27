@@ -13,7 +13,6 @@
 library(shiny)
 library(plotly)
 library(DT)
-library(circlize)
 library(RColorBrewer)
 library(shinyAce) 
 library(shinythemes) 

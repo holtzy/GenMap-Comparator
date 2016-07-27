@@ -2,11 +2,10 @@
 
 —— TODO for YAN —- 
 
-   - Comment mettre plusieurs images et un titre dans la barre du haut ?
-   - Diagramme de Venn des marqueurs communs
    - Faire un fichier de conf avec ls couleurs (au moins)
    - Faire un fichier avec toutes les légendes.
-   - mettre en place le choix des fichiers d’entrée.
+   - pk jeu de donné tram marche pas
+   - page summary, le widget choose map trop long, il faut le mettre en horizontal
    - possibilité d’export des figures en pdf.
    - sheet comparison: bug lorsque une seule carte est affichée.
    - Problème quand je change de chromosome dans sheet3, il remet 2 cartes seulement..
@@ -19,7 +18,6 @@
    - Essayer les logiciels existants: Cmap / Cmap 3D / MapDraw? / Biomercator / MapChart / autres?
    - Améliorer les légendes des graphiques
    - Correction anglais
-   - Faire la page de doc / explications (dernière sheet)   
    - Rédaction
    - Biblio: synthèse claire des différents format de carte. Décider lesquels on accepte comme format d’entrée.
 
@@ -27,11 +25,8 @@
 —— IDEES POTENTIELLES —- 
  
    - Possibilité de retourner une carte
-   - Ajouter une possibilité d'ajouter des données d'annotations ? GFF?
    - Ajouter positionnement des QTLs?
    - outil de synténie pour simplifier le graf quand beaucoup de marqueurs sont parrallèles
-   - Rajouter une page pour les QTLs ?
-   - 2 modes de vision : High density / Low density avec les noms des marqueurs ?
 
 
 

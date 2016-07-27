@@ -76,9 +76,10 @@ shinyUI(navbarPage(
 			
 			# widget to propose 2 exemples
 			helpText(strong(p("Or an example dataset:" , style="color:orange ; font-family: 'times'; font-size:18pt"))) ,
-			actionButton("button_for_ex1", "Wheat"),
-			actionButton("button_for_ex2", "Sorghum"),
-			
+			#actionButton("button_for_ex1", "Wheat"),
+			#actionButton("button_for_ex2", "Sorghum"),
+			radioButtons( "file2", "", choices = c("sorghum","wheat"), selected =c("sorghum") , inline = TRUE ),
+
 			br(""),br(""),br(""),
 			p(
 				"By", 
@@ -480,12 +481,12 @@ shinyUI(navbarPage(
 		)),
 		fluidRow(
 			style="opacity:0.9; background-color: white ;margin-top: 0px; width: 100%;",
-			column(3,offset=3,
+			column(3,offset=3, align="justify",
 				br(),
 				"The Genetic map comparators should permit to compare easily and quickly several genetic maps. The Genetic map comparators should permit to compare easily and quickly several genetic maps. The Genetic map comparators should permit to compare easily and quickly several genetic maps",
 				br()
 				),
-			column(3,offset=0,
+			column(3,offset=0, align="justify",
 				br(),
 				"The Genetic map comparators should permit to compare easily and quickly several genetic maps. The Genetic map comparators should permit to compare easily and quickly several genetic maps. The Genetic map comparators should permit to compare easily and quickly several genetic maps",
 				br()

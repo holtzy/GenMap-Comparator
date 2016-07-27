@@ -37,7 +37,9 @@ shinyServer(function(input, output, session) {
 	#	})
 	#observe({ print("Mon TOTO") ; print ( inFile2() ) ; print("--") 	})
 	
-
+	
+	inFile2= eventReactive( c(input$button_for_ex1 , input$button_for_ex2)  , { c("toto","titi") })
+	observe({ print("Mon infile2") ; print(input$button_for_ex1) ; print ( inFile2() ) ; print("--") 	})
 
 
 
