@@ -1,0 +1,10 @@
+1@Raw data
+2@This table shows the rough data: the selected map as you gave it in input. You can order it by chromosome or position and search for a specific marker.
+3@Choose the reference map:
+4@Choose chromosome:
+5@
+6@
+7@
+8@
+9@
+10@

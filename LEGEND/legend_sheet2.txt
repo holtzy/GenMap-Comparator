@@ -1,0 +1,11 @@
+1@Summary Statistics
+2@ - Summary Statistics - 
+3@Here is an overview of basic map features. Five variables can be observed: the number of genetic markers, the size of the map (in cM), the average gap size between 2 markers (cM), the size of the biggest gap (cM) and the number of unique positions. The donut plot on the left summarizes such informations for the whole map. The barplot gives details for every chromosome.
+4@
+5@ - Summary Table - 
+6@This table gives exact values for the features described above. It is the usual table you provide when doing a publication involving genetic maps.
+7@ - Markers density - 
+8@Here is a description of marker density along chromosomes. This figure allows to visualize length of chromosome for several maps, and check if some area are lacking (or are concentrated with) genetic markers.
+9@Choose maps:
+10@Choose chromosome:
+11@Choose maps

@@ -1,0 +1,10 @@
+1@Compare positions
+2@ - Maps comparison - 
+3@The main goal of this application is to compare genetic positions of markers in several genetic maps. Select maps in the order you want to see them (from the left to the right). Common markers between two adjacent markers are linked with purple lines. Hover markers to get their names. You can also zoom on a specific area, and slide along the Y axis (position in cM). Double-click to come back to a normal view.
+4@Choose maps:
+5@Choose chromosome:
+6@
+7@
+8@
+9@
+10@

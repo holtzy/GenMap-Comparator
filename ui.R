@@ -29,7 +29,7 @@ shinyUI(navbarPage(
 	# And I custom it with additionnal CSS
 	includeCSS("www/genComp.css") ,
 
-	# Title of the app
+	# Title of the app (appears nowhere)
 	("The Gen Map Comparator") ,
 	
   		
@@ -49,7 +49,7 @@ shinyUI(navbarPage(
 	tabPanel( 
 
 		# Name
-		h4("Home") ,
+		h4(legend1[1]) ,
 
 		# Only one zone for the home page
 		column(12, offset=0, align="center" ,
@@ -65,21 +65,21 @@ shinyUI(navbarPage(
 
 			# And write the welcome message
 			br(""),br(""),br(""),
-			helpText(strong("The Genetic Map Comparator" , style="color:white ; font-family: 'times'; font-size:50pt ; font-type:bold" ) ) ,
+			helpText(strong(legend1[2] , style="color:white ; font-family: 'times'; font-size:50pt ; font-type:bold" ) ) ,
 			br(""),
-			helpText(strong(p(legend[1] , style="color:white ; font-family: 'times'; font-size:18pt"))) ,
-			helpText(strong(p(legend[2] , style="color:white ; font-family: 'times'; font-size:18pt"))) ,
+			helpText(strong(p(legend1[3] , style="color:white ; font-family: 'times'; font-size:18pt"))) ,
 			br(""),
 			
-			# Test of widget to choose several files:
-			fileInput("file1", strong(p(legend[3] , style="color:orange ; font-family: 'times'; font-size:18pt")) , multiple = TRUE, accept=NULL),
+			# widget to choose several files:
+			fileInput("file1", strong(p(legend1[4] , style="color:orange ; font-family: 'times'; font-size:18pt")) , multiple = TRUE, accept=NULL),
 			
 			# widget to propose 2 exemples
-			helpText(strong(p("Or an example dataset:" , style="color:orange ; font-family: 'times'; font-size:18pt"))) ,
-			#actionButton("button_for_ex1", "Wheat"),
-			#actionButton("button_for_ex2", "Sorghum"),
-			radioButtons( "file2", "", choices = c("sorghum","wheat"), selected =c("sorghum") , inline = TRUE ),
+			radioButtons( "file2", legend1[5], choices = c("sorghum","wheat"), selected =c("sorghum") , inline = TRUE ),
+			br(),
+			helpText(strong(p(legend1[6] , style="color:orange ; font-family: 'times'; font-size:18pt"))) ,
 
+			
+			# Last part with our names. Not in the legend file..
 			br(""),br(""),br(""),
 			p(
 				"By", 
@@ -123,23 +123,23 @@ shinyUI(navbarPage(
 	tabPanel(
 		
 		#Name
-		h4("Summary Statistics"),
+		h4(legend2[1]),
 		
 		# ==== Title in Orange
 		fluidRow(align="center",
 			style="opacity:0.9; background-color: white ;margin-top: 0px; width: 100%;",
 			column(6,offset=3,
 				br(),
-				helpText( strong(" - Summary Statistics - " , style="color:Orange ; font-family: 'times'; font-size:30pt ; font-type:bold" )) ,
+				helpText( strong(legend2[2] , style="color:Orange ; font-family: 'times'; font-size:30pt ; font-type:bold" )) ,
 				hr()
 		)),
 
 
 		# === Some text to explain the Figure:
-		fluidRow(
+		fluidRow(align="justify",
 			style="opacity:0.9; background-color: white ;margin-top: 0px; width: 100%;",
 			column(6,offset=3,
-				br(),"Ergo ego senator inimicus, si ita vultis, homini, amicus esse, sicut semper fui, rei publicae debeo. Quid? si ipsas inimicitias, depono rei publicae causa, quis me tandem iure reprehendet, praesertim cum ego omnium meorum consiliorum atque factorum exempla semper ex summorum hominum consiliis atque factis mihi censuerim petenda.",br()
+				br(),legend2[3],br()
 				)
 			),br(),br(),
 
@@ -150,7 +150,7 @@ shinyUI(navbarPage(
 				wellPanel(uiOutput("choose_maps_sheet2"))
 				),
 			column(3,offset=0,
-				wellPanel(radioButtons( "var_for_barplot", "Show on barplot:", choices = c("nb. marker","size","average gap","biggest gap","Nb. uniq pos."), selected =c("nb. marker") , inline = TRUE ))
+				wellPanel(radioButtons( "var_for_barplot", legend2[4], choices = c("nb. marker","size","average gap","biggest gap","Nb. uniq pos."), selected =c("nb. marker") , inline = TRUE ))
 				)
 			),
 		
@@ -180,15 +180,15 @@ shinyUI(navbarPage(
 			style="opacity:0.9; background-color: white ;margin-top: 0px; width: 100%;",
 			column(6,offset=3,
 				br(),
-				helpText( strong(" - Summary Table - " , style="color:Orange ; font-family: 'times'; font-size:30pt ; font-type:bold" )) ,
+				helpText( strong(legend2[5] , style="color:Orange ; font-family: 'times'; font-size:30pt ; font-type:bold" )) ,
 				hr()
 		)),
 
 		# === Some text to explain the Figure:
-		fluidRow(
+		fluidRow(align="justify",
 			style="opacity:0.9; background-color: white ;margin-top: 0px; width: 100%;",
 			column(6,offset=3,
-				br(),"Ergo ego senator inimicus, si ita vultis, homini, amicus esse, sicut semper fui, rei publicae debeo. Quid? si ipsas inimicitias, depono rei publicae causa, quis me tandem iure reprehendet, praesertim cum ego omnium meorum consiliorum atque factorum exempla semper ex summorum hominum consiliis atque factis mihi censuerim petenda.",br()
+				br(),legend2[6],br()
 				)
 			),br(),br(),
 
@@ -218,16 +218,16 @@ shinyUI(navbarPage(
 			style="opacity:0.9; background-color: white ;margin-top: 0px; width: 100%;",
 			column(6,offset=3,
 				br(),
-				helpText( strong(" - Markers density - " , style="color:Orange ; font-family: 'times'; font-size:30pt ; font-type:bold" )) ,
+				helpText( strong(legend2[7] , style="color:Orange ; font-family: 'times'; font-size:30pt ; font-type:bold" )) ,
 				hr()
 		)),
 
 
 		# === Some text to explain the Figure:
-		fluidRow(
+		fluidRow(align="justify",
 			style="opacity:0.9; background-color: white ;margin-top: 0px; width: 100%;",
 			column(6,offset=3,
-				br(),"Ergo ego senator inimicus, si ita vultis, homini, amicus esse, sicut semper fui, rei publicae debeo. Quid? si ipsas inimicitias, depono rei publicae causa, quis me tandem iure reprehendet, praesertim cum ego omnium meorum consiliorum atque factorum exempla semper ex summorum hominum consiliis atque factis mihi censuerim petenda.",br()
+				br(),legend2[8],br()
 				)
 			),br(),br(),
 
@@ -239,7 +239,7 @@ shinyUI(navbarPage(
 				)
 			),
 
-		# === Fluid row for the circular plot !
+		# === Fluid row for the density plot !
 		br(""),
 		fluidRow(align="center",
 			column(12, offset=0,
@@ -261,6 +261,8 @@ shinyUI(navbarPage(
 
 
 
+
+
 # --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 	# ----------------------
@@ -270,23 +272,23 @@ shinyUI(navbarPage(
 	tabPanel( class = "two",
 	
 		#Name
-		h4(legend[6]) ,
+		h4(legend3[1]) ,
 		
 		# ==== Title in Orange
 		fluidRow(align="center",
 			style="opacity:0.9; background-color: white ;margin-top: 0px; width: 100%;",
 			column(6,offset=3,
 				br(),
-				helpText( strong(" - Maps comparison - " , style="color:Orange ; font-family: 'times'; font-size:30pt ; font-type:bold" )) ,
+				helpText( strong(legend3[2] , style="color:Orange ; font-family: 'times'; font-size:30pt ; font-type:bold" )) ,
 				hr()
 		)),
 
 
 		# === Some text to explain the Figure:
-		fluidRow(
+		fluidRow(align="justify",
 			style="opacity:0.9; background-color: white ;margin-top: 0px; width: 100%;",
 			column(6,offset=3,
-				br(),"Ergo ego senator inimicus, si ita vultis, homini, amicus esse, sicut semper fui, rei publicae debeo. Quid? si ipsas inimicitias, depono rei publicae causa, quis me tandem iure reprehendet, praesertim cum ego omnium meorum consiliorum atque factorum exempla semper ex summorum hominum consiliis atque factis mihi censuerim petenda.",br()
+				br(),legend3[3],br()
 				)
 			),br(),br(),
 
@@ -335,23 +337,23 @@ shinyUI(navbarPage(
 	tabPanel(
 		
 		#Name
-		h4(legend[9]),
+		h4(legend4[1]),
 		
 		# ==== Title in Orange
 		fluidRow(align="center",
 			style="opacity:0.9; background-color: white ;margin-top: 0px; width: 100%;",
 			column(6,offset=3,
 				br(),
-				helpText( strong(" - Interchromosomal Analysis - " , style="color:Orange ; font-family: 'times'; font-size:30pt ; font-type:bold" )) ,
+				helpText( strong(legend4[2] , style="color:Orange ; font-family: 'times'; font-size:30pt ; font-type:bold" )) ,
 				hr()
 		)),
 
 
 		# === Some text to explain the Figure:
-		fluidRow(
+		fluidRow(align="justify",
 			style="opacity:0.9; background-color: white ;margin-top: 0px; width: 100%;",
 			column(6,offset=3,
-				br(),legend[11],br()
+				br(),legend4[3],br()
 				)
 			),br(),br(),
 
@@ -370,7 +372,8 @@ shinyUI(navbarPage(
 			wellPanel(uiOutput("map1")),
 
 			# Choix de la map2
-			wellPanel(uiOutput("map2"))
+			wellPanel(uiOutput("map2")),
+			br(),br(),br(),br(),br()
 
 			#Close column
 			),
@@ -406,7 +409,7 @@ shinyUI(navbarPage(
 	tabPanel(
 		
 		#Name
-		h4(legend[12]),
+		h4(legend5[1]),
 		
 		# Left column to choose input
 		column(2, 
@@ -431,12 +434,12 @@ shinyUI(navbarPage(
 			dataTableOutput('my_rough_map_viz' , width="500px")
 			
 			#Close column
-			),
+			),br(),br(),br(),
 			
 		# Legend of the plot
 		column(2, 
        		br(),br(),br(),br(),br(),br(),
-			helpText(strong(p(legend[14] , style="color:grey ; font-family: 'times'; font-size:12pt")))
+			helpText(strong(p(legend5[2] , style="color:grey ; font-family: 'times'; font-size:12pt")))
 			#Close column
 			)
 
@@ -468,7 +471,7 @@ shinyUI(navbarPage(
 	tabPanel(
 		
 		#Name
-		h4("Documentation"),
+		h4(legend6[1]),
 		
 			
 		# ==== About section
@@ -476,19 +479,19 @@ shinyUI(navbarPage(
 			style="opacity:0.9; background-color: white ;margin-top: 0px; width: 100%;",
 			column(6,offset=3,
 				br(),
-				helpText( strong(" - About - " , style="color:Orange ; font-family: 'times'; font-size:30pt ; font-type:bold" )) ,
+				helpText( strong(legend6[2] , style="color:Orange ; font-family: 'times'; font-size:30pt ; font-type:bold" )) ,
 				hr()
 		)),
 		fluidRow(
 			style="opacity:0.9; background-color: white ;margin-top: 0px; width: 100%;",
 			column(3,offset=3, align="justify",
 				br(),
-				"The Genetic map comparators should permit to compare easily and quickly several genetic maps. The Genetic map comparators should permit to compare easily and quickly several genetic maps. The Genetic map comparators should permit to compare easily and quickly several genetic maps",
+				legend6[3],
 				br()
 				),
 			column(3,offset=0, align="justify",
 				br(),
-				"The Genetic map comparators should permit to compare easily and quickly several genetic maps. The Genetic map comparators should permit to compare easily and quickly several genetic maps. The Genetic map comparators should permit to compare easily and quickly several genetic maps",
+				legend6[4],
 				br()
 		)), br(),br(),
 
@@ -501,20 +504,20 @@ shinyUI(navbarPage(
 			style="opacity:0.9; background-color: white ;margin-top: 0px; width: 100%;",
 			column(6,offset=3,
 				br(),
-				helpText( strong(" - Input Files - " , style="color:Orange ; font-family: 'times'; font-size:30pt ; font-type:bold" )) ,
+				helpText( strong(legend6[5] , style="color:Orange ; font-family: 'times'; font-size:30pt ; font-type:bold" )) ,
 				hr()
 		)),
-		fluidRow(align="center",
+		fluidRow(align="left",
 			style="opacity:0.9; background-color: white ;margin-top: 0px; width: 100%;",
 			column(6,offset=3,
 				br(),
-				"The application imports linkage data from map files, produced by software for linkage analysis. Two formats are accepted:",
+				legend6[6],
 				br(),
-				"- \"Carthagene format\", where map files are composed of 3 columns: linkage group, marker name and position in the map." ,
+				"-      -",legend6[7],
 				br(),
-				"- \"MapChart format\", where map files are composed of a sequence of linkage groups, each with a header line specifying the linkage group title, followed by a sequence of lines with locus names and map positions. Such map files are exported by JoinMap 3.0",
+				"-      -",legend6[8],
 				br(),
-				" The columns names of files does not matter. Columns must be separated by either \";\" or tabulation (\"\t\") ",
+				legend6[9],
 				br()
 		)), br(),
 		fluidRow( 
@@ -540,7 +543,7 @@ shinyUI(navbarPage(
 			column(6,offset=3,
 				# Set the style of this page
 				br(),
-				helpText(strong(" - Contact - " , style="color:orange ; font-family: 'times'; font-size:30pt ; font-type:bold" ) ) ,
+				helpText(strong(legend6[10] , style="color:orange ; font-family: 'times'; font-size:30pt ; font-type:bold" ) ) ,
 				hr()
 			)),
 		fluidRow( align="center",
@@ -578,9 +581,9 @@ shinyUI(navbarPage(
 		
 			# put the logos
 			br(),
-			column(2, offset=4, img(src="https://upload.wikimedia.org/wikipedia/fr/thumb/d/d4/INRA_logo.jpg/800px-INRA_logo.jpg" ,  height = 70*grand, width = 120*grand) , br(),br() ),
-			column(2, offset=0, img(src="http://www.fiches.arvalis-infos.fr/fiche_variete/css/images/logo_arvalis.png" ,  height = 70*grand, width = 100*grand) ),
-			column(2, offset=0, img(src="http://www.supagro.fr/capeye/wp-content/uploads/2015/02/Logo-Montpellier-SupAgro-Vert-Web.jpg" ,  height = 70*grand, width = 110*grand) )
+			column(2, offset=2, img(src="logo_INRA.png" ,  height = 70*grand, width = 120*grand) , br(),br() ),
+			column(2, offset=1, img(src="logo_SUPAGRO.jpg" ,  height = 70*grand, width = 120*grand) ),
+			column(2, offset=1, img(src="logo_arvalis.png" ,  height = 70*grand, width = 110*grand) )
 			
 			)
 

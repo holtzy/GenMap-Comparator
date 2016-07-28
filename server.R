@@ -29,27 +29,18 @@ shinyServer(function(input, output, session) {
 #-----------------------------------------------------------------------------
 
 
-	# TEST
-	#inFile2= eventReactive( c(input$button_for_ex1 , input$button_for_ex1)  , { c("toto","titi") })
-	#inFile2=reactive({
-	#	if(input$button_for_ex1)isolate({"toto"})
-	#	if(input$button_for_ex2)isolate({"titi"})
-	#	})
-	#observe({ print("Mon TOTO") ; print ( inFile2() ) ; print("--") 	})
-	
-	
-	inFile2= eventReactive( c(input$button_for_ex1 , input$button_for_ex2)  , { c("toto","titi") })
-	observe({ print("Mon infile2") ; print(input$button_for_ex1) ; print ( inFile2() ) ; print("--") 	})
-
-
 
 
 	# 0/ --- Selection of the data set: default dataset / Example dataset / Chosen dataset
 	inFile=reactive({
 		
-		# If nothing is choosen I put the Sorgum by default
+		# If nothing is choosen I take the chosen exemple dataset
 		if ( is.null(input$file1)) {
-			inFile=data.frame(name=as.character(c("CIRAD","S2","S4","S5","S6","TAMU")) , datapath=as.character(c("DATA/SORGHUM/CIRAD", "DATA/SORGHUM/S2" , "DATA/SORGHUM/S4" , "DATA/SORGHUM/S5" , "DATA/SORGHUM/S6" , "DATA/SORGHUM/TAMU" )) )
+			
+			rm(list=ls())
+
+			if( input$file2=="sorghum" | is.null(input$file2)){ inFile=data.frame(name=as.character(c("CIRAD","S2","S4","S5","S6","TAMU")) , datapath=as.character(c("DATA/SORGHUM/CIRAD", "DATA/SORGHUM/S2" , "DATA/SORGHUM/S4" , "DATA/SORGHUM/S5" , "DATA/SORGHUM/S6" , "DATA/SORGHUM/TAMU" )) ) }
+			else if( input$file2=="wheat"){  inFile=data.frame(name=as.character(c("Ben_Pi41025","Colosseo_Lloyd","Kofa_svevo","Langdon_G1816","Latino_MG5323","Mohawk_Cocorrit69","Simeto_Levante")) , datapath=as.character(c("DATA/WHEAT_MACAF/CLEAN/Ben_Pi41025", "DATA/WHEAT_MACAF/CLEAN/Colosseo_Lloyd" , "DATA/WHEAT_MACAF/CLEAN/Kofa_svevo", "DATA/WHEAT_MACAF/CLEAN/Langdon_G1816", "DATA/WHEAT_MACAF/CLEAN/Latino_MG5323", "DATA/WHEAT_MACAF/CLEAN/Mohawk_Cocorrit69", "DATA/WHEAT_MACAF/CLEAN/Simeto_Levante" )) ) }
 				
 		}else{
 			
@@ -57,7 +48,7 @@ shinyServer(function(input, output, session) {
 			inFile <- input$file1
 		}
 				
-		})
+	})
 		
 	# Check it worked properly
 	#observe({ print("Mon inFile") ; print ( inFile() ) ; print("--") 	})
@@ -279,34 +270,34 @@ shinyServer(function(input, output, session) {
 
   # ======== sheet2: Summary Statistics =========
   # MAP to study
-  output$choose_maps_sheet2<- renderUI({ checkboxGroupInput("selected_maps_sheet2", "Choose maps !", choices=MY_map_files(), selected=c(MY_map_files()[1],MY_map_files()[2]) , inline=T) })
+  output$choose_maps_sheet2<- renderUI({ checkboxGroupInput("selected_maps_sheet2", legend2[9], choices=MY_map_files(), selected=c(MY_map_files()[1],MY_map_files()[2]) , inline=T) })
   # Chromosomes to study for markers density
-  output$choose_chromo_sheet2<- renderUI({checkboxGroupInput( "chromo_sheet2", legend[5], choices=MY_chromosome_list() , selected =c(MY_chromosome_list()[1],MY_chromosome_list()[2]) , inline = TRUE ) })
+  output$choose_chromo_sheet2<- renderUI({checkboxGroupInput( "chromo_sheet2", legend2[10], choices=MY_chromosome_list() , selected =c(MY_chromosome_list()[1],MY_chromosome_list()[2]) , inline = TRUE ) })
   # Map to study for summary table
-  output$choose_maps_sheet2_bis<- renderUI({ radioButtons("selected_maps_sheet2_bis", "Choose maps !", choices=MY_map_files(), selected=c(MY_map_files()[1]) , inline=T) })
+  output$choose_maps_sheet2_bis<- renderUI({ radioButtons("selected_maps_sheet2_bis", legend2[11], choices=MY_map_files(), selected=c(MY_map_files()[1]) , inline=T) })
   
 
   # ======== sheet3: Compare Positions =========
   # Map to study
-  output$choose_maps3<- renderUI({ checkboxGroupInput("selected_maps", "Choose maps !", choices=MY_map_files(), selected=c(MY_map_files()[1],MY_map_files()[2]) , inline=T) })
+  output$choose_maps3<- renderUI({ checkboxGroupInput("selected_maps", legend3[4], choices=MY_map_files(), selected=c(MY_map_files()[1],MY_map_files()[2]) , inline=T) })
   # Chromosomes to study
-  output$choose_chromo_sheet3<- renderUI({ radioButtons( "chromo", legend[5], choices=MY_chromosome_list() , selected =MY_chromosome_list()[1] , inline=T ) })
+  output$choose_chromo_sheet3<- renderUI({ radioButtons( "chromo", legend3[5], choices=MY_chromosome_list() , selected =MY_chromosome_list()[1] , inline=T ) })
 
 
   # ======== sheet4: Interchromosomal Analyse =========
   # First map to study :
-  output$map1<- renderUI({ radioButtons("map1", "Choose a first map", choices=MY_map_files(), selected=MY_map_files()[1] ) })
+  output$map1<- renderUI({ radioButtons("map1", legend4[4], choices=MY_map_files(), selected=MY_map_files()[1] ) })
   # Second map to study :
-  output$map2<- renderUI({ radioButtons("map2", "Choose a second map", choices=MY_map_files(), selected=MY_map_files()[2] ) })
+  output$map2<- renderUI({ radioButtons("map2", legend4[5], choices=MY_map_files(), selected=MY_map_files()[2] ) })
   # Chromosomes to study
-  output$choose_chromo_sheet4<- renderUI({   selectInput( "chromo_sheet4", legend[10], choices=c("all", MY_chromosome_list()) , selected =c("all") )  })
+  output$choose_chromo_sheet4<- renderUI({   selectInput( "chromo_sheet4", legend4[6], choices=c("all", MY_chromosome_list()) , selected =c("all") )  })
 
 
   # ======== sheet5: Rough Map vizualisation =========
   # MAP to study
-  output$choose_maps5<- renderUI({ radioButtons("selected_maps_sheet5", "Choose the reference map!", choices=MY_map_files(), selected=MY_map_files()[1] ) })
+  output$choose_maps5<- renderUI({ radioButtons("selected_maps_sheet5", legend5[3], choices=MY_map_files(), selected=MY_map_files()[1] ) })
   # Chromosomes to study
-  output$choose_chromo_sheet5<- renderUI({   checkboxGroupInput( "chromo_sheet5", legend[13], choices=c("all", MY_chromosome_list()) , selected =c(MY_chromosome_list()[1],MY_chromosome_list()[2]) , inline = TRUE )     })
+  output$choose_chromo_sheet5<- renderUI({   checkboxGroupInput( "chromo_sheet5", legend5[4], choices=c("all", MY_chromosome_list()) , selected =c(MY_chromosome_list()[1],MY_chromosome_list()[2]) , inline = TRUE )     })
   
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------#
 
@@ -575,8 +566,7 @@ shinyServer(function(input, output, session) {
 
 		# --- Avoid bug when less than 2 maps are selected
   		validate( need( length(current_choice())>1  , "Please select at least 2 maps"))
-  		#if ( length(current_choice())<2 ) { plot_ly(x=1 , y=1)  }
-  
+ 
 
 		# --- First step : get the list of selected maps in the good order
 		# Old_choice represents the last choice of the user (before the current one). I initialize it with the value of the 2 maps to compare
@@ -635,8 +625,6 @@ shinyServer(function(input, output, session) {
 		}
 		don=unique(don)
 		
-		print("=================== objet don final:")
-		print(head(don))
 		
 		# --- OBJET 1 POUR LES LIAISONS ENRTE MARQUEURS
 		#Je fais une fonction qui me fait mon vecteur de position pour 2 cartes données : AXE des Y
@@ -707,6 +695,7 @@ shinyServer(function(input, output, session) {
 
 		#Draw the plot
 		p
+		
 
 	
 	})
