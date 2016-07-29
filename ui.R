@@ -87,7 +87,7 @@ shinyUI(navbarPage(
 				style="color:white ; font-family: 'times'; font-size:15pt"
 				),
 			p(
-				legend[4], 
+				legend1[7], 
 				a(em("Vincent Ranwez") , style="color:white ; font-family:'times'; font-size:15pt", href = "https://sites.google.com/site/ranwez/" , target="_blank"),
 				" & ",
 				a(em("Jacques David") , style="color:white ; font-family:'times'; font-size:15pt", href = "https://www.researchgate.net/profile/Jacques_David4" , target="_blank"),
