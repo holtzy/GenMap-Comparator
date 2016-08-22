@@ -1,9 +1,9 @@
-1@Documentation
+1@Help
 2@ - About - 
-3@The Genetic map comparators allows to compare easily and quickly several genetic maps. Please start by uploading your maps through the « Home » sheet. Two example datasets (from sorghum and wheat) are also provided in case you just want to discover the application possibilities.
-4@Several sheets are provided, each aiming to study a specific feature of your maps. It should allow you to get simple usual statistics and compare them, and visualize the marker positions in an efficient way.
+3@The Genetic map comparator allows to easily compare several genetic maps. The first step is to upload your maps through the « Home » sheet. Two example datasets (from sorghum and wheat) are provided to easily explore the Genetic map comparator features.
+4@Once a dataset is upload you can explore it using the various sheets accessible via links at the top of the window. Each sheet help you to study some specific features of your maps, they allow you to compare your maps via standart statistics (number of markers, average gap size betweeen marker etc.) as well as to get visual representation of your map congruences through plot of marker positions along chromosomes.
 5@ - Input Files - 
-6@The application imports linkage data from map files, produced by software for linkage analysis. The columns names of files does not matter. Columns must be separated by either ";" or tabulation (« \t »). Two formats are accepted:
+6@The Genetic map comparator is able to import map files produced by most widespread software for linkage analysis (e.g. Carthagene and JoinMap). The column names does not matter but they must be ordered correctly (see details and example below) and be separated by either ";" or tabulation (« \t »). Two formats are accepted:
 7@-Carthagene format: where map files are composed of 3 columns: linkage group, marker name and position in the map.
 8@-MapChart format: where map files are composed of a sequence of linkage groups, each with a header line specifying the linkage group title, followed by a sequence of lines with locus names and map positions. Such map files are exported by JoinMap 3.0
 9@

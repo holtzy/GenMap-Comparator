@@ -73,21 +73,22 @@ shinyUI(navbarPage(
 			# widget to choose several files:
 			fileInput("file1", strong(p(legend1[4] , style="color:orange ; font-family: 'times'; font-size:18pt")) , multiple = TRUE, accept=NULL),
 			
+			
 			# widget to propose 2 exemples
-			radioButtons( "file2", legend1[5], choices = c("sorghum","wheat"), selected =c("sorghum") , inline = TRUE ),
+			radioButtons( "file2", strong(p(legend1[5] , style="color:orange ; font-family: 'times'; font-size:18pt")), choices = c("sorghum","wheat"), selected =c("sorghum") , inline = TRUE ),
 			br(),
 			helpText(strong(p(legend1[6] , style="color:orange ; font-family: 'times'; font-size:18pt"))) ,
-
+			legend1[7],	
 			
 			# Last part with our names. Not in the legend file..
 			br(""),br(""),br(""),
 			p(
-				"By", 
-				a(em("Holtz Yan") , style="color:white ; font-family:'times'; font-size:15pt", href = "https://holtzyan.wordpress.com/" , target="_blank"),
+				legend1[8], 
+				a(em("Yan Holtz") , style="color:white ; font-family:'times'; font-size:15pt", href = "https://holtzyan.wordpress.com/" , target="_blank"),
 				style="color:white ; font-family: 'times'; font-size:15pt"
 				),
 			p(
-				legend1[7], 
+				legend1[9], 
 				a(em("Vincent Ranwez") , style="color:white ; font-family:'times'; font-size:15pt", href = "https://sites.google.com/site/ranwez/" , target="_blank"),
 				" & ",
 				a(em("Jacques David") , style="color:white ; font-family:'times'; font-size:15pt", href = "https://www.researchgate.net/profile/Jacques_David4" , target="_blank"),
@@ -125,6 +126,40 @@ shinyUI(navbarPage(
 		#Name
 		h4(legend2[1]),
 		
+		# ==== Title 2 in Orange 
+		fluidRow(align="center",
+			style="opacity:0.9; background-color: white ;margin-top: 0px; width: 100%;",
+			column(6,offset=3,
+				br(),
+				helpText( strong(legend2[5] , style="color:Orange ; font-family: 'times'; font-size:30pt ; font-type:bold" )) ,
+				hr()
+		)),
+
+		# === Some text to explain the Figure:
+		fluidRow(align="justify",
+			style="opacity:0.9; background-color: white ;margin-top: 0px; width: 100%;",
+			column(6,offset=3,
+				br(),legend2[6],br()
+				)
+			),br(),br(),
+
+		# === One widget to select maps and variables for pie and barplot:
+		fluidRow( align="center",
+			style="opacity:0.9; background-color: white ;margin-top: 0px; width: 100%;",
+			column(6,offset=3,
+				wellPanel(uiOutput("choose_maps_sheet2_bis"))
+				)
+			),
+
+		# === Fluid row for the summary table
+		br(""),
+		fluidRow(align="center",
+			column(12, offset=0,
+				dataTableOutput('sum_table' , width="700px")
+			)
+		),br(),br(),
+
+
 		# ==== Title in Orange
 		fluidRow(align="center",
 			style="opacity:0.9; background-color: white ;margin-top: 0px; width: 100%;",
@@ -139,7 +174,7 @@ shinyUI(navbarPage(
 		fluidRow(align="justify",
 			style="opacity:0.9; background-color: white ;margin-top: 0px; width: 100%;",
 			column(6,offset=3,
-				br(),legend2[3],br()
+				br(),legend2[3],br(),br(),legend2[4],br(),br(),legend2[12]
 				)
 			),br(),br(),
 
@@ -150,7 +185,9 @@ shinyUI(navbarPage(
 				wellPanel(uiOutput("choose_maps_sheet2"))
 				),
 			column(3,offset=0,
-				wellPanel(radioButtons( "var_for_barplot", legend2[4], choices = c("nb. marker","size","average gap","biggest gap","Nb. uniq pos."), selected =c("nb. marker") , inline = TRUE ))
+				#wellPanel(radioButtons( "var_for_barplot", legend2[41], choices = c("nb. marker","size","average gap","biggest gap","Nb. uniq pos."), selected =c("nb. marker") , inline = FALSE ))
+				wellPanel(radioButtons( "var_for_barplot", legend2[13], choices = c("# markers","map size","average gap size","biggest gap size","# unique positions"), selected =c("# markers") , inline = FALSE ))
+				
 				)
 			),
 		
@@ -175,43 +212,7 @@ shinyUI(navbarPage(
 
 
 
-		# ==== Title 2 in Orange
-		fluidRow(align="center",
-			style="opacity:0.9; background-color: white ;margin-top: 0px; width: 100%;",
-			column(6,offset=3,
-				br(),
-				helpText( strong(legend2[5] , style="color:Orange ; font-family: 'times'; font-size:30pt ; font-type:bold" )) ,
-				hr()
-		)),
-
-		# === Some text to explain the Figure:
-		fluidRow(align="justify",
-			style="opacity:0.9; background-color: white ;margin-top: 0px; width: 100%;",
-			column(6,offset=3,
-				br(),legend2[6],br()
-				)
-			),br(),br(),
-
-		# === One widget to select maps and variables for pie and barplot:
-		fluidRow( align="center",
-			style="opacity:0.9; background-color: white ;margin-top: 0px; width: 100%;",
-			column(2,offset=5,
-				wellPanel(uiOutput("choose_maps_sheet2_bis"))
-				)
-			),
-
-		# === Fluid row for the summary table
-		br(""),
-		fluidRow(align="center",
-			column(12, offset=0,
-				dataTableOutput('sum_table' , width="700px")
-			)
-		),br(),br(),
 		
-
-
-
-
 		
 		# ==== Title 3 in Orange
 		fluidRow(align="center",
@@ -234,7 +235,7 @@ shinyUI(navbarPage(
 		# === One widget to select maps and variables for pie and barplot:
 		fluidRow( align="center",
 			style="opacity:0.9; background-color: white ;margin-top: 0px; width: 100%;",
-			column(2,offset=5,
+			column(6,offset=3,
 				wellPanel(uiOutput("choose_chromo_sheet2"))
 				)
 			),
@@ -246,6 +247,11 @@ shinyUI(navbarPage(
 				plotOutput("circular_plot" ,  height = "1200px" ,  width = "900px" )
 			)
 		),br(),br()
+
+
+		
+
+
 
 
 
@@ -288,7 +294,7 @@ shinyUI(navbarPage(
 		fluidRow(align="justify",
 			style="opacity:0.9; background-color: white ;margin-top: 0px; width: 100%;",
 			column(6,offset=3,
-				br(),legend3[3],br()
+				br(),legend3[3],br(),br(),legend3[6],br(),br(),legend3[7]
 				)
 			),br(),br(),
 
@@ -410,7 +416,25 @@ shinyUI(navbarPage(
 		
 		#Name
 		h4(legend5[1]),
-		
+
+		# ==== Title in Orange
+		fluidRow(align="center",
+			style="opacity:0.9; background-color: white ;margin-top: 0px; width: 100%;",
+			column(6,offset=3,
+				br(),
+				helpText( strong(legend5[6] , style="color:Orange ; font-family: 'times'; font-size:30pt ; font-type:bold" )) ,
+				hr()
+		)),
+
+		# === Some text to explain the Figure:
+		fluidRow(align="justify",
+			style="opacity:0.9; background-color: white ;margin-top: 0px; width: 100%;",
+			column(6,offset=3,
+				br(),legend5[2],br(),br(),legend5[5]
+				)
+			),br(),br(),
+
+
 		# Left column to choose input
 		column(2, 
 			
@@ -438,8 +462,9 @@ shinyUI(navbarPage(
 			
 		# Legend of the plot
 		column(2, 
-       		br(),br(),br(),br(),br(),br(),
-			helpText(strong(p(legend5[2] , style="color:grey ; font-family: 'times'; font-size:12pt")))
+       		br(),br(),br(),br(),br(),br()
+			#,helpText(strong(p(legend5[2] , style="color:grey ; font-family: 'times'; font-size:12pt"))),br(),br(),
+			#helpText(strong(p(legend5[5] , style="color:grey ; font-family: 'times'; font-size:12pt")))
 			#Close column
 			)
 
@@ -549,7 +574,8 @@ shinyUI(navbarPage(
 		fluidRow( align="center",
 			style="opacity: 1;background-color:white; margin-top: 0px;width: 100%;",
 			column(3,offset=3,
-				img(src="https://holtzyan.files.wordpress.com/2015/07/montpellier.png" ,  height = 300, width = 500),
+				#img(src="https://holtzyan.files.wordpress.com/2015/07/montpellier.png" ,  height = 300, width = 500),
+				img(src="https://holtzyan.files.wordpress.com/2015/07/montpellier.png" ,  width = 350),
 				br()
 				),
 			column(3,offset=1,

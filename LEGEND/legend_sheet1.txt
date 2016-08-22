@@ -1,7 +1,9 @@
 1@Home
 2@The Genetic Map Comparator
-3@A user friendly tool to compare and characterize genetic maps.
-4@1. Please upload your maps or a provided dataset: 
-5@provided dataset:
-6@2. Go visit the app
-7@With contribution of 
+3@A user friendly tool to compare and characterize genetic maps
+4@1. Please upload your maps:
+5@... or select a demo dataset: 
+6@2. Explore your data           
+7@using the top buttons to navigate among the proposed views
+8@project leader:
+9@other project members: 

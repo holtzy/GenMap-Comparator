@@ -1,11 +1,13 @@
 1@Summary Statistics
-2@ - Summary Statistics - 
-3@Here is an overview of basic map features. Five variables can be observed: the number of genetic markers, the size of the map (in cM), the average gap size between 2 markers (cM), the size of the biggest gap (cM) and the number of unique positions. The donut plot on the left summarizes such informations for the whole map. The barplot gives details for every chromosome.
-4@
-5@ - Summary Table - 
-6@This table gives exact values for the features described above. It is the usual table you provide when doing a publication involving genetic maps.
+2@ - Key statistics (several maps) - 
+3@Here you can compare various maps throught five key statistics:
+4@ 1. their number of genetic markers, 2. their overall size (in cM), 3. the average gap size between 2 of their markers (cM), 4. the size of their biggest gap (cM) and the number of unique positions. 
+5@ - Key statistics (1 map) - 
+6@This table provides five key statistics for the chromosomes of the selected map (1. their number of genetic markers, 2. their overall size (in cM), 3. the average gap size between 2 of their markers (cM), 4. the size of their biggest gap (cM) and the number of unique positions). It is the usual table you provide when doing a publication involving genetic maps.
 7@ - Markers density - 
-8@Here is a description of marker density along chromosomes. This figure allows to visualize length of chromosome for several maps, and check if some area are lacking (or are concentrated with) genetic markers.
-9@Choose maps:
-10@Choose chromosome:
-11@Choose maps
+8@Here is a description of marker density along chromosomes. This figure allows to visualize chromosome lengths variation among maps, and to identified regions with unusualy low/high genetic marker density.
+9@Select some maps:
+10@Select some chromosomes:
+11@Select one map:
+12@The donut plot (on the left) summarizes the selected statistic comparison for the whole maps, whereas the barplot provides details for every chromosome.
+13@Select one feature

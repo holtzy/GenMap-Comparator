@@ -230,7 +230,7 @@ shinyServer(function(input, output, session) {
 			# Make an emty matrix
 			map=my_maps[[j]]			
 			bilan=data.frame(matrix(0,0,6)) ; num=0
-			colnames(bilan)=c("Chromo","nbr marker","size","average gap","biggest gap","Nb uniq pos")
+			colnames(bilan)=c("Chr.","#markers","map_size","average gap_size","biggest gap_size","#unique positions")
 			# Apply the my_fun function to each chromosome one by one
 			for(i in levels(map[,1])){
 				map_K=map[map[,1]==i,]
@@ -324,8 +324,9 @@ shinyServer(function(input, output, session) {
 		map_files=unlist(MY_map_files())
 				
  		# Selected variable ?
-		selected_var=which(c("nb. marker","size","average gap","biggest gap","Nb. uniq pos.")%in%input$var_for_barplot)
-
+		#VRselected_var=which(c("nb. marker","size","average gap","biggest gap","Nb. uniq pos.")%in%input$var_for_barplot)
+		selected_var=which(c("# markers","map size","average gap size","biggest gap size","# unique positions")%in%input$var_for_barplot)
+		
 		# Selected Maps ?
 		selected_maps=which(map_files%in%input$selected_maps_sheet2)
 		nb_selected_maps=length(selected_maps)
@@ -371,7 +372,8 @@ shinyServer(function(input, output, session) {
   		if (is.null(input$var_for_barplot) | is.null(input$selected_maps_sheet2) ) {return(NULL)}
 
 		# Selected variable ?
-		all_var=c("nb. marker","size","average gap","biggest gap","Nb. uniq pos.")
+		#all_var=c("nb. marker","size","average gap","biggest gap","Nb. uniq pos.")
+		all_var=c("# markers","map size","average gap size","biggest gap size","# unique positions")
 		selected_var=which(all_var%in%input$var_for_barplot)
 
 		# Selected Maps ?
@@ -544,70 +546,67 @@ shinyServer(function(input, output, session) {
 		liste_of_map_to_compare=c(map_files[1],map_files[2])
 		return(liste_of_map_to_compare)
 		})
-	old_choice=NULL
- 
+	old_choice=c()
+ 	
   
     output$plot1 <- renderPlotly({ 
 
 		# Get the needed reactive objects:
-		liste_of_map_to_compare=MY_liste_of_map_to_compare()
+		#VR liste_of_map_to_compare=MY_liste_of_map_to_compare()
 		summary_stat=MY_summary_stat()
 		map_files=MY_map_files()
   		my_maps=MY_maps()
   		nb_de_carte=length(map_files)
     	data=MY_data()
-   	
+   		
+   		
 
    		# --- Avoid bug when page is loading
-  		if (is.null(input$selected_maps)) {return(NULL)}
+  		#VR if (is.null(input$selected_maps)) {return(NULL)}
+
 
   		# I get the current choice of maps to show:
 		current_choice=reactive({ return(input$selected_maps) })
 
-		# --- Avoid bug when less than 2 maps are selected
-  		validate( need( length(current_choice())>1  , "Please select at least 2 maps"))
- 
-
-		# --- First step : get the list of selected maps in the good order
-		# Old_choice represents the last choice of the user (before the current one). I initialize it with the value of the 2 maps to compare
-		if(is.null(old_choice)){ old_choice=liste_of_map_to_compare  }
-		
-		
-		# If the user has added a map, I determine which, and add it to the map to compare:
+		print("")
 		print("===the old choice was :")
 		print(old_choice)
-		
-		if(length(current_choice()) > length(old_choice)){
-			print("yes it is longer")
-			to_add= current_choice()[-which(current_choice()%in%old_choice)]
-			print("donc j'ajoute")
-			print(to_add)
-			print("à:")
-			print(old_choice)
+		print("===the current choice is :")
+		print(current_choice())
 
-			liste_of_map_to_compare=c(old_choice,to_add)
-			print("=================== list of map to compare:")
-			print(liste_of_map_to_compare)
-		}
 		
-		# If the user has removed a map, I determine which and remove it from the maps to compare:
-		if(length(current_choice()) < length(old_choice)){
-			print("yes it is SHORTER")
-			to_del=old_choice[-which(old_choice%in%current_choice())]
-			print("je dois supprimer")
-			print(to_del)
-			print("la liste acutelle c'est")
-			print(old_choice)
-			liste_of_map_to_compare=old_choice[ - which(old_choice%in%to_del) ]
-			print("=================== list of map to compare:")
-			print(liste_of_map_to_compare)
+		# If the user has added a map, I determine which, and add it to the map to compare:
+		#VR
+		if(is.null(old_choice) | is.null(current_choice()) )
+		{
+			print("=IF")
+			liste_of_map_to_compare=current_choice()
 		}
-					
-		# To avoid a bug, when only ONE map is selected, the map to compare is this map:
-		if(length(current_choice())==1){  liste_of_map_to_compare<<-current_choice() }
+		else
+		{
+			print("=ELSE")
 			
+			to_del=old_choice[-which(old_choice%in%current_choice())]
+			if(length(to_del)>0)
+			{liste_of_map_to_compare=old_choice[ - which(old_choice%in%to_del) ]}
+
+			to_add= current_choice()[-which(current_choice()%in%old_choice)]
+			if(length(to_add)>0)
+			liste_of_map_to_compare=c(liste_of_map_to_compare,to_add)
+		}
 		# I save the current choice as old_choice for next change:
-		old_choice<<-isolate(current_choice())
+		old_choice<<-liste_of_map_to_compare
+		liste_of_map_to_compare<<-liste_of_map_to_compare
+		
+		
+		
+		print("+++the ordered current choice is :")
+		print(liste_of_map_to_compare)
+				
+		# To avoid a bug, when only ONE map is selected, the map to compare is this map:
+		#VR if(length(current_choice())==1){  liste_of_map_to_compare<<-current_choice() }
+		
+		#fin VR
 
 
 		# --- Make an input table with columns in the corresponding order: from mapB,mapA i keep column: 1, 4,5, 2,3:
@@ -616,7 +615,15 @@ shinyServer(function(input, output, session) {
 		selected_col=c(1,selected_col+rep(c(0,1) , length(selected_col)/2))
 		dat=data[ , selected_col ]
 		nb_selected_maps=length(selected_maps)
-		 		
+		print("nb map")
+		print(nb_selected_maps)
+		
+		# VR 
+		if(nb_selected_maps<2){
+		return (NULL)
+		#liste_of_map_to_compare=c(map_files[1],map_files[2])
+		}
+
 		# --- Subset of the dataset with only the good chromosome :
 		don=dat[dat[,2]==input$chromo & !is.na(dat[,2]) , ]
 		for(j in c(2:nb_selected_maps)){
@@ -673,12 +680,12 @@ shinyServer(function(input, output, session) {
 			hovermode="closest"  ,
 			# Gestion des axes
 			xaxis=list(title = "", zeroline = FALSE, showline = FALSE, showticklabels = FALSE, showgrid = FALSE , range=c(0.5,nb_selected_maps+0.5) ),
-			yaxis=list(range=c(0,500), autorange = "reversed", title = "Position (cM)", zeroline = F, showline = T, showticklabels = T, showgrid = FALSE ,  tickfont=list(color="grey") , titlefont=list(color="grey") , tickcolor="grey" , linecolor="grey"),
+			yaxis=list(range=c(0,500), autorange = "reversed", title = "Position (cM)", zeroline = F, showline = T, showticklabels = F, showgrid = FALSE ,  tickfont=list(color="grey") , titlefont=list(color="grey") , tickcolor="grey" , linecolor="grey"),
 			)
 
 		# Add vertical lines to represent chromosomes
 		for(m in c(1:nb_selected_maps)){
-			p=add_trace( x=c(m,m), y=c(0, max(don[,m*2+1],na.rm=T)) , evaluate=TRUE , line=list(width=4, color="black") )
+			p=add_trace( x=c(m,m), y=c(0, max(don[,m*2+1],na.rm=T)) , evaluate=TRUE , line=list(width=4, color="black"),showlegend=F )
 			p=layout( yaxis=list(range=c(0,max(pos_final))) )
 			}
 		
@@ -686,12 +693,12 @@ shinyServer(function(input, output, session) {
 		for(m in c(1:nb_selected_maps)){
 			obj2=don[,c(1,m*2+1)]
 			obj2$text=paste(obj2[,1],"\npos: ",obj2[,2],sep="")
-			p=add_trace(obj2, x=rep(m,nrow(obj2) ) , y=obj2[,2] , mode="markers" ,  evaluate=TRUE, marker=list(color="black" , size=10 , opacity=0.5,symbol=24) , text=text , hoverinfo="text")
+			p=add_trace(obj2, x=rep(m,nrow(obj2) ) , y=obj2[,2] , mode="markers" ,  evaluate=TRUE, marker=list(color="black" , size=10 , opacity=0.5,symbol=24) , text=text , hoverinfo="text",showlegend=F)
 			p=layout( yaxis=list(range=c(0,max(pos_final))) )
 			}
 
 		# Add maps names			
-		p=add_trace(x=seq(1:nb_selected_maps) , y=rep(-10,nb_selected_maps) , text=unlist(liste_of_map_to_compare) , mode="text" , textfont=list(size=20 , color="orange") )
+		p=add_trace(x=seq(1:nb_selected_maps) , y=rep(-10,nb_selected_maps) , text=unlist(liste_of_map_to_compare) , mode="text" , textfont=list(size=20 , color="orange"), showlegend=F )
 
 		#Draw the plot
 		p
@@ -776,12 +783,15 @@ shinyServer(function(input, output, session) {
 		}
 		
 		# Make the plot !
-		p=plot_ly(don , x=don[,4] , y=don[,7] , mode="markers" , color=don[,2] , text=don$text , hoverinfo="text"  , marker=list( size=15 , opacity=0.5)  , showlegend=F )
+		p=plot_ly(don , x=don[,4] , y=don[,7] , mode="markers" , color=don[,2] , text=don$text , hoverinfo="text"  , marker=list( size=15 , opacity=0.5)  )
 				
 		# Add chromosome name on X and Y axis
-		p=add_trace(x=apply(cbind(map1max[,2],map1min[,2]) , 1 , mean) , y=rep(-0.1*max(map1max[,2]),nrow(map1max)) , text=map1max[,1] , mode="text" , textfont=list(size=13 , color="orange") )
-		p=add_trace(x=rep(-0.1*max(map2max[,2]),nrow(map2max)) , y=apply(cbind(map2max[,2],map2min[,2]) , 1 , mean) , text=map1max[,1] , mode="text" , textfont=list(size=13 , color="orange") )
-		
+		if(input$chromo_sheet4=="all")
+		{
+		p=add_trace(x=apply(cbind(map1max[,2],map1min[,2]) , 1 , mean) , y=rep(-0.1*max(map1max[,2]),nrow(map1max)) , text=map1max[,1] , mode="text" , textfont=list(size=13 , color="orange") , showlegend=F)
+		p=add_trace(x=rep(-0.1*max(map2max[,2]),nrow(map2max)) , y=apply(cbind(map2max[,2],map2min[,2]) , 1 , mean) , text=map1max[,1] , mode="text" , textfont=list(size=13 , color="orange"), showlegend=F )
+		}
+
 		# Custom the layout
 		p=layout( 
 			#Gestion du hovermode
