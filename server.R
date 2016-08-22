@@ -33,12 +33,13 @@ shinyServer(function(input, output, session) {
 
 	# 0/ --- Selection of the data set: default dataset / Example dataset / Chosen dataset
 	inFile=reactive({
+	
+		# Cleaning
+		rm(list=ls())
 		
 		# If nothing is choosen I take the chosen exemple dataset
 		if ( is.null(input$file1)) {
 			
-			rm(list=ls())
-
 			if( input$file2=="sorghum" | is.null(input$file2)){ inFile=data.frame(name=as.character(c("CIRAD","S2","S4","S5","S6","TAMU")) , datapath=as.character(c("DATA/SORGHUM/CIRAD", "DATA/SORGHUM/S2" , "DATA/SORGHUM/S4" , "DATA/SORGHUM/S5" , "DATA/SORGHUM/S6" , "DATA/SORGHUM/TAMU" )) ) }
 			else if( input$file2=="wheat"){  inFile=data.frame(name=as.character(c("Ben_Pi41025","Colosseo_Lloyd","Kofa_svevo","Langdon_G1816","Latino_MG5323","Mohawk_Cocorrit69","Simeto_Levante")) , datapath=as.character(c("DATA/WHEAT_MACAF/CLEAN/Ben_Pi41025", "DATA/WHEAT_MACAF/CLEAN/Colosseo_Lloyd" , "DATA/WHEAT_MACAF/CLEAN/Kofa_svevo", "DATA/WHEAT_MACAF/CLEAN/Langdon_G1816", "DATA/WHEAT_MACAF/CLEAN/Latino_MG5323", "DATA/WHEAT_MACAF/CLEAN/Mohawk_Cocorrit69", "DATA/WHEAT_MACAF/CLEAN/Simeto_Levante" )) ) }
 				
@@ -46,6 +47,7 @@ shinyServer(function(input, output, session) {
 			
 			# If the user choose a dataset, I take this dataset:
 			inFile <- input$file1
+			
 		}
 				
 	})
@@ -585,14 +587,33 @@ shinyServer(function(input, output, session) {
 		else
 		{
 			print("=ELSE")
-			
-			to_del=old_choice[-which(old_choice%in%current_choice())]
-			if(length(to_del)>0)
-			{liste_of_map_to_compare=old_choice[ - which(old_choice%in%to_del) ]}
+			intersection=which(old_choice%in%current_choice())
+			if( length(intersection)==0 ){
+				to_del=old_choice
+			}else{
+				to_del=old_choice[-intersection]
+				}
+			print("TODEL")
+			print(to_del)
 
-			to_add= current_choice()[-which(current_choice()%in%old_choice)]
+			if(length(to_del)>0)
+				{liste_of_map_to_compare=old_choice[ - which(old_choice%in%to_del) ]}
+			print("AFTERDEL")
+			print(liste_of_map_to_compare)
+
+			intersection=which(current_choice()%in%old_choice)			
+			if( length(intersection)==0 ){
+				to_add= current_choice()
+			}else{
+				to_add= current_choice()[-intersection]
+				}				
+			print("TOADD")
+			print(to_add)
+
 			if(length(to_add)>0)
 			liste_of_map_to_compare=c(liste_of_map_to_compare,to_add)
+			print("AFTERADD")
+			print(liste_of_map_to_compare)
 		}
 		# I save the current choice as old_choice for next change:
 		old_choice<<-liste_of_map_to_compare
@@ -672,7 +693,8 @@ shinyServer(function(input, output, session) {
 
 
 		# Start the plotly graph
-		p=plot_ly(x=xaxis , y=pos_final , hoverinfo="none" ,  line=list(width=0.4, color="purple" , opacity=0.1) , showlegend=F)      # normalement il faut ajouter  evaluate=TRUE mais marche pas dans la derniere release de plotly.
+		#p=plot_ly(x=xaxis , y=pos_final , hoverinfo="none" ,  line=list(width=0.4, color="purple" , opacity=0.1) , showlegend=F)      # normalement il faut ajouter  evaluate=TRUE mais marche pas dans la derniere release de plotly.
+		p=plot_ly(x=xaxis , y=pos_final , hoverinfo="none" ,  line=list(width=3.6, color="purple" , opacity=0.1) , showlegend=F)      # normalement il faut ajouter  evaluate=TRUE mais marche pas dans la derniere release de plotly.
 		
 		# Custom the layout
 		p=layout( 
