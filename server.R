@@ -11,14 +11,8 @@
 shinyServer(function(input, output, session) {
 
 
-#-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------#
 
 
-
-
-
-	
-	
 
 
 
@@ -28,20 +22,22 @@ shinyServer(function(input, output, session) {
 # --- UPLOAD MAPS AND FILE FORMATING
 #-----------------------------------------------------------------------------
 
-
-
-
+	
+	
 	# 0/ --- Selection of the data set: default dataset / Example dataset / Chosen dataset
 	inFile=reactive({
-	
+		
 		# Cleaning
 		rm(list=ls())
+		my_global_old_choice <- c(3)
+		
 		
 		# If nothing is choosen I take the chosen exemple dataset
 		if ( is.null(input$file1)) {
 			
-			if( input$file2=="sorghum" | is.null(input$file2)){ inFile=data.frame(name=as.character(c("CIRAD","S2","S4","S5","S6","TAMU")) , datapath=as.character(c("DATA/SORGHUM/CIRAD", "DATA/SORGHUM/S2" , "DATA/SORGHUM/S4" , "DATA/SORGHUM/S5" , "DATA/SORGHUM/S6" , "DATA/SORGHUM/TAMU" )) ) }
-			else if( input$file2=="wheat"){  inFile=data.frame(name=as.character(c("Ben_Pi41025","Colosseo_Lloyd","Kofa_svevo","Langdon_G1816","Latino_MG5323","Mohawk_Cocorrit69","Simeto_Levante")) , datapath=as.character(c("DATA/WHEAT_MACAF/CLEAN/Ben_Pi41025", "DATA/WHEAT_MACAF/CLEAN/Colosseo_Lloyd" , "DATA/WHEAT_MACAF/CLEAN/Kofa_svevo", "DATA/WHEAT_MACAF/CLEAN/Langdon_G1816", "DATA/WHEAT_MACAF/CLEAN/Latino_MG5323", "DATA/WHEAT_MACAF/CLEAN/Mohawk_Cocorrit69", "DATA/WHEAT_MACAF/CLEAN/Simeto_Levante" )) ) }
+			if( input$file2=="sorghum (Mace et al. 2009)" | is.null(input$file2)){ inFile=data.frame(name=as.character(c("CIRAD","S2","S4","S5","S6","TAMU")) , datapath=as.character(c("DATA/SORGHUM/CIRAD", "DATA/SORGHUM/S2" , "DATA/SORGHUM/S4" , "DATA/SORGHUM/S5" , "DATA/SORGHUM/S6" , "DATA/SORGHUM/TAMU" )) ) }
+			else if( input$file2=="wheat (Maccaferri et al. 2015)"){  inFile=data.frame(name=as.character(c("Ben_Pi41025","Colosseo_Lloyd","Kofa_svevo","Langdon_G1816","Latino_MG5323","Mohawk_Cocorrit69","Simeto_Levante")) , datapath=as.character(c("DATA/WHEAT_MACAF/CLEAN/Ben_Pi41025", "DATA/WHEAT_MACAF/CLEAN/Colosseo_Lloyd" , "DATA/WHEAT_MACAF/CLEAN/Kofa_svevo", "DATA/WHEAT_MACAF/CLEAN/Langdon_G1816", "DATA/WHEAT_MACAF/CLEAN/Latino_MG5323", "DATA/WHEAT_MACAF/CLEAN/Mohawk_Cocorrit69", "DATA/WHEAT_MACAF/CLEAN/Simeto_Levante" )) ) }
+			else if( input$file2=="wheat (Holtz et al. 2016)"){  inFile=data.frame(name=as.character(c("map_DS","map_DL","map_consensus","physical_position")) , datapath=as.character(c("DATA/WHEAT_TRAM/map_DS","DATA/WHEAT_TRAM/map_DL","DATA/WHEAT_TRAM/map_consensus","DATA/WHEAT_TRAM/physical_position" )) ) }
 				
 		}else{
 			
@@ -81,8 +77,10 @@ shinyServer(function(input, output, session) {
 	# 2/ --- Load every maps and add their content in a list.
 	MY_maps=reactive({
 	
+	
 		# I am reactive to the selection of input files !
 		inFile=inFile()
+		print("......... repeat ........")
 		
 
 		# Read and format maps one by one, and add them to a list:
@@ -114,6 +112,7 @@ shinyServer(function(input, output, session) {
 			
 			# With the good names:
 			colnames(map_tmp)=c("group","marker","position")	
+
 			
 			# I keep only the first 3 columns (if they are more..)
 			map_tmp=map_tmp[,c(1:3)]
@@ -542,17 +541,25 @@ shinyServer(function(input, output, session) {
 #-----------------------------------------------------------------------------
 
 
+
+	# define session specific variable
+	# visible from all functions but session/user specific 
+	my_global_old_choice<-c();
+	liste_of_map_to_compare<-c();
+
+
 	# liste_of_map_to_compare is an object with the genetic maps to compare, in the good order. I initialize it with the 2 first maps, like in the radiobutton.
 	MY_liste_of_map_to_compare=reactive({
 		map_files=MY_map_files()
 		liste_of_map_to_compare=c(map_files[1],map_files[2])
 		return(liste_of_map_to_compare)
 		})
-	old_choice=c()
  	
   
+  	
     output$plot1 <- renderPlotly({ 
 
+    	
 		# Get the needed reactive objects:
 		#VR liste_of_map_to_compare=MY_liste_of_map_to_compare()
 		summary_stat=MY_summary_stat()
@@ -561,62 +568,64 @@ shinyServer(function(input, output, session) {
   		nb_de_carte=length(map_files)
     	data=MY_data()
    		
-   		
+   		old_choice <- my_global_old_choice;
 
    		# --- Avoid bug when page is loading
   		#VR if (is.null(input$selected_maps)) {return(NULL)}
 
 
   		# I get the current choice of maps to show:
-		current_choice=reactive({ return(input$selected_maps) })
+		#current_choice=reactive({ return(input$selected_maps) })
+		current_choice=input$selected_maps
 
 		print("")
 		print("===the old choice was :")
 		print(old_choice)
 		print("===the current choice is :")
-		print(current_choice())
+		print(current_choice)
 
 		
 		# If the user has added a map, I determine which, and add it to the map to compare:
 		#VR
-		if(is.null(old_choice) | is.null(current_choice()) )
+		if(is.null(old_choice) | is.null(current_choice) )
 		{
-			print("=IF")
-			liste_of_map_to_compare=current_choice()
+			#print("=IF")
+			liste_of_map_to_compare=current_choice
 		}
 		else
 		{
-			print("=ELSE")
-			intersection=which(old_choice%in%current_choice())
+			#print("=ELSE")
+			intersection=which(old_choice%in%current_choice)
 			if( length(intersection)==0 ){
 				to_del=old_choice
 			}else{
 				to_del=old_choice[-intersection]
 				}
-			print("TODEL")
-			print(to_del)
+			#print("TODEL")
+			#print(to_del)
 
 			if(length(to_del)>0)
 				{liste_of_map_to_compare=old_choice[ - which(old_choice%in%to_del) ]}
-			print("AFTERDEL")
-			print(liste_of_map_to_compare)
+			#print("AFTERDEL")
+			#print(liste_of_map_to_compare)
 
-			intersection=which(current_choice()%in%old_choice)			
+			intersection=which(current_choice%in%old_choice)			
 			if( length(intersection)==0 ){
-				to_add= current_choice()
+				to_add= current_choice
 			}else{
-				to_add= current_choice()[-intersection]
+				to_add= current_choice[-intersection]
 				}				
-			print("TOADD")
-			print(to_add)
+			#print("TOADD")
+			#print(to_add)
 
 			if(length(to_add)>0)
 			liste_of_map_to_compare=c(liste_of_map_to_compare,to_add)
-			print("AFTERADD")
+			print("AFTERADD NEW LIST")
 			print(liste_of_map_to_compare)
 		}
 		# I save the current choice as old_choice for next change:
-		old_choice<<-liste_of_map_to_compare
+		#old_choice<<-liste_of_map_to_compare
+		my_global_old_choice<<-liste_of_map_to_compare
 		liste_of_map_to_compare<<-liste_of_map_to_compare
 		
 		
@@ -625,7 +634,7 @@ shinyServer(function(input, output, session) {
 		print(liste_of_map_to_compare)
 				
 		# To avoid a bug, when only ONE map is selected, the map to compare is this map:
-		#VR if(length(current_choice())==1){  liste_of_map_to_compare<<-current_choice() }
+		#VR if(length(current_choice)==1){  liste_of_map_to_compare<<-current_choice }
 		
 		#fin VR
 
@@ -693,8 +702,7 @@ shinyServer(function(input, output, session) {
 
 
 		# Start the plotly graph
-		#p=plot_ly(x=xaxis , y=pos_final , hoverinfo="none" ,  line=list(width=0.4, color="purple" , opacity=0.1) , showlegend=F)      # normalement il faut ajouter  evaluate=TRUE mais marche pas dans la derniere release de plotly.
-		p=plot_ly(x=xaxis , y=pos_final , hoverinfo="none" ,  line=list(width=3.6, color="purple" , opacity=0.1) , showlegend=F)      # normalement il faut ajouter  evaluate=TRUE mais marche pas dans la derniere release de plotly.
+		p=plot_ly(x=xaxis , y=pos_final , hoverinfo="none" ,  line=list(width=input$thickness, color=input$my_color , opacity=0.1) , showlegend=F)      # normalement il faut ajouter  evaluate=TRUE mais marche pas dans la derniere release de plotly.
 		
 		# Custom the layout
 		p=layout( 
@@ -702,7 +710,7 @@ shinyServer(function(input, output, session) {
 			hovermode="closest"  ,
 			# Gestion des axes
 			xaxis=list(title = "", zeroline = FALSE, showline = FALSE, showticklabels = FALSE, showgrid = FALSE , range=c(0.5,nb_selected_maps+0.5) ),
-			yaxis=list(range=c(0,500), autorange = "reversed", title = "Position (cM)", zeroline = F, showline = T, showticklabels = T, showgrid = FALSE ,  tickfont=list(color="grey") , titlefont=list(color="grey") , tickcolor="grey" , linecolor="grey"),
+			yaxis=list(range=c(0,500), autorange = "reversed", title = "Position (cM)", zeroline = F, showline = T, showticklabels = T, showgrid = FALSE   ,  tickfont=list(color="grey", size=15) , titlefont=list(color="grey", size=15) , tickcolor="grey" , linecolor="grey"),
 			)
 
 		# Add vertical lines to represent chromosomes
@@ -810,8 +818,10 @@ shinyServer(function(input, output, session) {
 		# Add chromosome name on X and Y axis
 		if(input$chromo_sheet4=="all")
 		{
-		p=add_trace(x=apply(cbind(map1max[,2],map1min[,2]) , 1 , mean) , y=rep(-0.1*max(map1max[,2]),nrow(map1max)) , text=map1max[,1] , mode="text" , textfont=list(size=13 , color="orange") , showlegend=F)
-		p=add_trace(x=rep(-0.1*max(map2max[,2]),nrow(map2max)) , y=apply(cbind(map2max[,2],map2min[,2]) , 1 , mean) , text=map1max[,1] , mode="text" , textfont=list(size=13 , color="orange"), showlegend=F )
+		retrait=ifelse(map1max[,2]>10000, -100 , -0.1*max(map1max[,2]) )
+		p=add_trace(x=apply(cbind(map1max[,2],map1min[,2]) , 1 , mean) , y=rep(retrait,nrow(map1max)) , text=map1max[,1] , mode="text" , textfont=list(size=13 , color="orange") , showlegend=F)
+		retrait=ifelse(map2max[,2]>10000, -100 , -0.1*max(map2max[,2]) )
+		p=add_trace(x=rep(retrait,nrow(map2max)) , y=apply(cbind(map2max[,2],map2min[,2]) , 1 , mean) , text=map1max[,1] , mode="text" , textfont=list(size=13 , color="orange"), showlegend=F )
 		}
 
 		# Custom the layout

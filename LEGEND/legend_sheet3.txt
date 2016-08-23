@@ -4,7 +4,7 @@
 4@Select some maps:
 5@Select one chromosome:
 6@Select maps in the order you want to see them (each new selected map is added on the right). 
-7@Common markers between two adjacent maps are linked with purple lines. Hover markers to get their names. You can also zoom on a specific area, and slide along the Y axis (position in cM). Double-click to come back to a normal view.
+7@Common markers between two adjacent maps are linked with purple lines. Hover markers to get their names. You can also zoom on a specific area, and slide along the Y axis (position in cM). Double-click to come back to a normal view. You can personalize the rendering by choosing line thickness and 
 8@
 9@
 10@

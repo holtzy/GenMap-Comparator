@@ -74,8 +74,8 @@ shinyUI(navbarPage(
 			fileInput("file1", strong(p(legend1[4] , style="color:orange ; font-family: 'times'; font-size:18pt")) , multiple = TRUE, accept=NULL),
 			
 			
-			# widget to propose 2 exemples
-			radioButtons( "file2", strong(p(legend1[5] , style="color:orange ; font-family: 'times'; font-size:18pt")), choices = c("sorghum","wheat"), selected =c("sorghum") , inline = TRUE ),
+			# widget to propose 3 exemples
+			radioButtons( "file2", strong(p(legend1[5] , style="color:orange ; font-family: 'times'; font-size:18pt")), choices = c("sorghum (Mace et al. 2009)","wheat (Maccaferri et al. 2015)", "wheat (Holtz et al. 2016)"), selected =c("sorghum (Mace et al. 2009)") , inline = FALSE ),
 			br(),
 			helpText(strong(p(legend1[6] , style="color:orange ; font-family: 'times'; font-size:18pt"))) ,
 			legend1[7],	
@@ -294,7 +294,7 @@ shinyUI(navbarPage(
 		fluidRow(align="justify",
 			style="opacity:0.9; background-color: white ;margin-top: 0px; width: 100%;",
 			column(6,offset=3,
-				br(),legend3[3],br(),br(),legend3[6],br(),br(),legend3[7]
+				br(),legend3[3],br(),br(),legend3[6],br(),br(),legend3[7],a(em("color.") , style="color:blue", href = "http://www.color-hex.com/" , target="_blank")
 				)
 			),br(),br(),
 
@@ -307,6 +307,18 @@ shinyUI(navbarPage(
 				),
 			column(3,offset=0,
 				wellPanel(uiOutput("choose_maps3"))
+				)
+			),
+
+
+		# === Two widgets to select maps and variables for pie and barplot:
+		fluidRow( align="center",
+			style="opacity:0.9; background-color: white ;margin-top: 0px; width: 100%;",
+			column(3,offset=3,
+				wellPanel( sliderInput("thickness", "Line thickness:", min=0.1, max=12, value=2.0) )
+				),
+			column(3,offset=0,
+				wellPanel( textInput("my_color", "Line color:" ,  value="purple" ) )
 				)
 			),
 
