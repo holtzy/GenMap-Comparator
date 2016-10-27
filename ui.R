@@ -17,7 +17,7 @@
 #		http://www.agap-sunshine.inra.fr/holtz-apps/GenMap-Comparator/
 #  Pour lancer l'appli
 #		cd /Users/holtz/Dropbox ; R ; library(shiny) ; runApp("GenMap-Comparator")
-
+#  Faire un touch restart si l'appli ne s'actualise pas bien sur le serveur.
 
 
 # Let's start the UI file --> it codes for the design of the app!
@@ -72,7 +72,7 @@ shinyUI(navbarPage(
 			
 			# widget to choose several files:
 			fileInput("file1", strong(p(legend1[4] , style="color:orange ; font-family: 'times'; font-size:18pt")) , multiple = TRUE, accept=NULL),
-			
+			downloadLink("load_ex_format", label = "See examples"),
 			
 			# widget to propose 3 exemples
 			radioButtons( "file2", strong(p(legend1[5] , style="color:orange ; font-family: 'times'; font-size:18pt")), choices = c("sorghum (Mace et al. 2009)","wheat (Maccaferri et al. 2015)", "wheat (Holtz et al. 2016)"), selected =c("sorghum (Mace et al. 2009)") , inline = FALSE ),

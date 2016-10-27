@@ -14,7 +14,29 @@ shinyServer(function(input, output, session) {
 
 
 
+#-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------#
 
+#-----------------------------------------------------------------------------
+# --- ALLOWS USER TO DOWNLOAD EXAMPLE DATASET
+#-----------------------------------------------------------------------------
+
+
+output$load_ex_format <- downloadHandler(
+    filename = "GenMapComp_Examples.csv",
+	content <- function(file) {
+    	file.copy("DATA/Example_Data_Set.csv", file)
+  		}  
+  	)
+  
+#-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------#
+
+
+
+
+
+
+  
+  
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------#
 
@@ -702,33 +724,33 @@ shinyServer(function(input, output, session) {
 
 
 		# Start the plotly graph
-		p=plot_ly(x=xaxis , y=pos_final , hoverinfo="none" ,  line=list(width=input$thickness, color=input$my_color , opacity=0.1) , showlegend=F)      # normalement il faut ajouter  evaluate=TRUE mais marche pas dans la derniere release de plotly.
-		
+		p=plot_ly(x=xaxis , y=pos_final , hoverinfo="none" , type="scatter", mode="lines",  line=list(width=input$thickness, color=input$my_color , opacity=0.1) , showlegend=F)%>%   
+
 		# Custom the layout
-		p=layout( 
+		layout( 
 			#Gestion du hovermode
 			hovermode="closest"  ,
 			# Gestion des axes
 			xaxis=list(title = "", zeroline = FALSE, showline = FALSE, showticklabels = FALSE, showgrid = FALSE , range=c(0.5,nb_selected_maps+0.5) ),
-			yaxis=list(range=c(0,500), autorange = "reversed", title = "Position (cM)", zeroline = F, showline = T, showticklabels = T, showgrid = FALSE   ,  tickfont=list(color="grey", size=15) , titlefont=list(color="grey", size=15) , tickcolor="grey" , linecolor="grey"),
+			yaxis=list(range=c(0,500), autorange = "reversed", title = "Position (cM)", zeroline = F, showline = T, showticklabels = T, showgrid = FALSE   ,  tickfont=list(color="grey", size=15) , titlefont=list(color="grey", size=15) , tickcolor="grey" , linecolor="grey")
 			)
 
-		# Add vertical lines to represent chromosomes
+		# Add vertical lines to represent chromosomes.
 		for(m in c(1:nb_selected_maps)){
-			p=add_trace( x=c(m,m), y=c(0, max(don[,m*2+1],na.rm=T)) , evaluate=TRUE , line=list(width=4, color="black"),showlegend=F )
-			p=layout( yaxis=list(range=c(0,max(pos_final))) )
+			p=add_trace(p, x=c(m,m), y=c(0, max(don[,m*2+1],na.rm=T)) , type="scatter", mode="lines" , line=list(width=4, color="black"),showlegend=F )%>%
+			layout( yaxis=list(range=c(0,max(pos_final))) )
 			}
 		
 		# Add markers
 		for(m in c(1:nb_selected_maps)){
 			obj2=don[,c(1,m*2+1)]
 			obj2$text=paste(obj2[,1],"\npos: ",obj2[,2],sep="")
-			p=add_trace(obj2, x=rep(m,nrow(obj2) ) , y=obj2[,2] , mode="markers" ,  evaluate=TRUE, marker=list(color="black" , size=10 , opacity=0.5,symbol=24) , text=text , hoverinfo="text",showlegend=F)
-			p=layout( yaxis=list(range=c(0,max(pos_final))) )
+			p=add_trace(p, x=rep(m,nrow(obj2) ) , y=obj2[,2] , type="scatter", mode="markers+lines", marker=list(color="black" , size=10 , opacity=0.5,symbol=24) , text=obj2$text , hoverinfo="text", showlegend=F)%>%
+			layout( yaxis=list(range=c(0,max(pos_final))) )
 			}
 
 		# Add maps names			
-		p=add_trace(x=seq(1:nb_selected_maps) , y=rep(-10,nb_selected_maps) , text=unlist(liste_of_map_to_compare) , mode="text" , textfont=list(size=20 , color="orange"), showlegend=F )
+		p=add_trace(p, x=seq(1:nb_selected_maps) , y=rep(-10,nb_selected_maps) , text=unlist(liste_of_map_to_compare) , type="scatter" , mode="lines+text" , textfont=list(size=20 , color="orange"), line=list(color="transparent"), showlegend=F )
 
 		#Draw the plot
 		p
