@@ -21,7 +21,7 @@ shinyServer(function(input, output, session) {
 #-----------------------------------------------------------------------------
 
 
-# format 3 columns
+# format OneMap
 output$load_ex_format1 <- downloadHandler(
     filename = "GenMapComp_Example1.csv",
 	content <- function(file) {
@@ -35,6 +35,14 @@ output$load_ex_format2 <- downloadHandler(
     filename = "GenMapComp_Example2.csv",
 	content <- function(file) {
     	file.copy("DATA/EX_HELP_PAGE/Example_Data_Set2.csv", file)
+  		}  
+  	)
+
+#format Carthagène
+output$load_ex_format3 <- downloadHandler(
+    filename = "GenMapComp_Example3.csv",
+	content <- function(file) {
+    	file.copy("DATA/EX_HELP_PAGE/Example_Data_Set3.csv", file)
   		}  
   	)
 
@@ -113,7 +121,7 @@ output$load_ex_format2 <- downloadHandler(
 	
 		# I am reactive to the selection of input files !
 		inFile=inFile()
-		print("......... repeat ........")
+		#print("......... repeat ........")
 		
 
 		# Read and format maps one by one, and add them to a list:
@@ -128,7 +136,7 @@ output$load_ex_format2 <- downloadHandler(
 				map_tmp=read.table(i , header=T ,  dec="." ,na.strings="NA" , sep=";")
 			}
 			
-			# If I have 2 columns, It is the MapChart format --> I need to reformat it!
+			# If I have 2 columns, It is the MAPCHART format --> I need to reformat it!
 			if(ncol(map_tmp)==2){
 				junctions=c(1, as.numeric(row.names(map_tmp[map_tmp[,1]=="group" , ])), nrow(map_tmp)+1 )
 				nb_rep=junctions[-1] - junctions[-length(junctions)]
@@ -137,7 +145,36 @@ output$load_ex_format2 <- downloadHandler(
 				map_tmp=map_tmp[map_tmp[,1]!="group" , ]
 				map_tmp=map_tmp[ , c(3,1,2)]
 				}
-		
+			
+			
+			# If I have only 0 line, it is the CARTHAGENE Format --> I need to reformat it!
+			if(nrow(map_tmp)==0){
+				tmp_data=read.table(i , header=F , sep=" ")
+				tmp_data=apply(tmp_data, 2 , as.character)
+				tmp_data=gsub("\\}" , "" , tmp_data )
+				tmp_data=tmp_data[-c(1,2)]
+				map_tmp=data.frame(matrix(0, length(tmp_data), 3))
+				num=0
+				for(k in tmp_data){
+					# If the LG changes, I change my "LG" variable, and num1 back to -2
+					if( substr(k,1,1) == "{" ){
+						LG=gsub("\\{","",k)
+						num1=-2
+						}
+					# For each step of the loop, num1 increases
+					num1=num1+1
+					# When I am not reading a LG name (num1=-2) or a likelihood (num1=0), I add stuff in my map_tmp table
+					# The line number (num) increase only once every 2 iterations
+					if( num1>0){
+						num=num+num1%%2
+						map_tmp[num,1]=LG
+						map_tmp[num,num1%%2+2]=k
+				}}
+				# Clean this map_tmp
+				map_tmp=map_tmp[ c(1:num) , c(1,3,2)]			
+				}
+			
+					
 			# Columns must be in the good format:
 			map_tmp[,1]=as.factor(map_tmp[,1])
 			map_tmp[,2]=as.factor(map_tmp[,2])
@@ -146,7 +183,6 @@ output$load_ex_format2 <- downloadHandler(
 			# With the good names:
 			colnames(map_tmp)=c("group","marker","position")	
 
-			
 			# I keep only the first 3 columns (if they are more..)
 			map_tmp=map_tmp[,c(1:3)]
 						
@@ -165,7 +201,7 @@ output$load_ex_format2 <- downloadHandler(
 	})
 		
 	# Check everything worked properly
-	#observe({ print("summary de la carte 1:") ;	print ( head(MY_maps()[[1]])  ) 	})
+	observe({ print("summary de la carte 1:") ;	print ( head(MY_maps()[[1]])  ) 	})
 	
 
 
@@ -252,7 +288,7 @@ output$load_ex_format2 <- downloadHandler(
 			# Calcul des gaps: je vais prendre les gaps entre position unique, pas les gaps entre chaque marqueurs !
 			gaps = sort(my_map[,3])[-1] - sort(my_map[,3])[-length(my_map[,3])] 
 			gaps=gaps[gaps!=0]
-			bilan[num,4]=mean(gaps)
+			bilan[num,4]=round(mean(gaps),2)
 			bilan[num,5]=max(gaps)
 			bilan[num,6]=nrow(unique(my_map[,c(1,3)]))
 			return(bilan)
@@ -273,6 +309,8 @@ output$load_ex_format2 <- downloadHandler(
 			# And then to the whole map
 			i="tot"
 			bilan=my_fun(map , bilan , "all")
+			#Correct map size
+			bilan[nrow(bilan) , 3] = sum(bilan[ -nrow(bilan) ,3])
 			#Add the result to the list containing all the map summaries
 			summary_stat[[length(summary_stat)+1]]=bilan
 			}
@@ -969,7 +1007,7 @@ output$load_ex_format2 <- downloadHandler(
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------#
 
-	# Just 2 small tables for the documentation page
+	# Just 3 small tables for the documentation page
 	a=c("marker_52", "marker_23", "marker_18", "marker_8", "marker_12", "marker_3", "marker_98", "marker_72")
 	b=c(0.0,29.4,31.2,40.5,0.0,3.3,4.6,10.8)
 	c=c(rep("LG1",4),rep("LG2",4))
@@ -978,12 +1016,18 @@ output$load_ex_format2 <- downloadHandler(
 		DT::datatable(ex1 , rownames = FALSE , options = list(dom = 't' ))
 	)
 
-	# Just 2 small tables for the documentation page
+	# Just 3 small tables for the documentation page
 	a=c("group", "marker_52", "marker_23", "marker_18", "marker_8", "group", "marker_12", "marker_3", "marker_98", "marker_72")
 	b=c("LG1",0.0,29.4,31.2,40.5,"LG2",0.0,3.3,4.6,10.8)
 	ex2=data.frame(a , b)
 	output$doc_ex2 <- DT::renderDataTable(
 		DT::datatable(ex2 , rownames = FALSE , colnames="", options = list(dom = 't' ))
+	)
+
+	# Just 3 small tables for the documentation page
+	ex3=data.frame("0 -801.56 {1 -485.24 MS4 0.0 MS5 3.3 MS13 38.8 MS6 64.2 MS11 86.4 MS17 137.9 MS16 159.5 MS8 186.5 MS7 192.4 MS2 207.4 MS3 208.0 MS9 231.5 MS15 249.3 MS12 252.8 MS20 291.1 MS19 293.8 MS1 483.9} {2 -316.32 MS4 0.0 MS5 84.4 MS6 138.5 MS8 229.0 MS7 307.2 MS3 493.5 MS9 706.1 MS15 862.8 MS1 1622.9 G36 1726.5 G39 1786.2 G37 1845.9 G40 1871.3}")
+	output$doc_ex3 <- DT::renderDataTable(
+		DT::datatable(ex3 , rownames = FALSE , colnames="", options = list(dom = 't' ))
 	)
 
 	

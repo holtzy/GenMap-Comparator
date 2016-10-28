@@ -543,33 +543,39 @@ shinyUI(navbarPage(
 				helpText( strong(legend6[5] , style="color:Orange ; font-family: 'times'; font-size:30pt ; font-type:bold" )) ,
 				hr()
 		)),
-		fluidRow(align="left",
+		fluidRow(align="justify",
 			style="opacity:0.9; background-color: white ;margin-top: 0px; width: 100%;",
 			column(6,offset=3,
 				br(),
 				legend6[6],
-				br(),
-				"-      -",legend6[7],
-				br(),
-				"-      -",legend6[8],
-				br(),
-				legend6[9],
 				br()
-		)), br(),
+				)), 
+		br(),
 		fluidRow( 
 			style="opacity:0.9; background-color: white ;margin-top: 0px; width: 100%;",
-			column(3,offset=3,align="center",
-				br(),
-				downloadLink("load_ex_format1", label = "Download example file"),
+			column(3,offset=1,align="center",
+				br(),br(),
+				"OneMap [1] format: 3 columns: linkage group, marker name and position in the map",
+				downloadLink("load_ex_format1", label = "Download"),br(),
 				dataTableOutput('doc_ex1' , width="100px"),
 				br()
 				),
-			column(3,offset=0,align="center",
+			column(3,offset=1,align="center",
 				br(),
-				downloadLink("load_ex_format2", label = "Download example file"),
+				"MapChart [2] format: composed of a sequence of linkage groups, each with a header line specifying the linkage group title, followed by a sequence of lines with locus names and map positions.",
+				downloadLink("load_ex_format2", label = "Download"),
 				dataTableOutput('doc_ex2' , width="100px"),
 				br()
-		)), br(),
+				),
+			column(3,offset=1,align="center",
+				br(),
+				"Carthagène [3] format: 1 line only. LG are separated with {}. Then markers name and positions are provided successively. Output created with the \'mapget\' command",
+				downloadLink("load_ex_format3", label = "Download"),br(),
+				dataTableOutput('doc_ex3' , width="300px"),
+				br()
+				)
+		
+		), br(),
 
 
 
@@ -588,11 +594,11 @@ shinyUI(navbarPage(
 			style="opacity: 1;background-color:white; margin-top: 0px;width: 100%;",
 			column(3,offset=3,
 				#img(src="https://holtzyan.files.wordpress.com/2015/07/montpellier.png" ,  height = 300, width = 500),
-				img(src="https://holtzyan.files.wordpress.com/2015/07/montpellier.png" ,  width = 500),
+				img(src="map_montpellier.png" ,  width = 500),
 				br()
 				),
 			column(3,offset=1,
-				br(),br(),
+				br(),
 				helpText("Yan Holtz: holtz@supagro.fr"),
 				helpText("Vincent Ranwez: ranwez@supagro.fr"),
 				br(),br(),br(),
