@@ -72,8 +72,7 @@ shinyUI(navbarPage(
 			
 			# widget to choose several files:
 			fileInput("file1", strong(p(legend1[4] , style="color:orange ; font-family: 'times'; font-size:18pt")) , multiple = TRUE, accept=NULL),
-			downloadLink("load_ex_format", label = "See examples"),
-			
+						
 			# widget to propose 3 exemples
 			radioButtons( "file2", strong(p(legend1[5] , style="color:orange ; font-family: 'times'; font-size:18pt")), choices = c("sorghum (Mace et al. 2009)","wheat (Maccaferri et al. 2015)", "wheat (Holtz et al. 2016)"), selected =c("sorghum (Mace et al. 2009)") , inline = FALSE ),
 			br(),
@@ -561,11 +560,13 @@ shinyUI(navbarPage(
 			style="opacity:0.9; background-color: white ;margin-top: 0px; width: 100%;",
 			column(3,offset=3,align="center",
 				br(),
+				downloadLink("load_ex_format1", label = "Download example file"),
 				dataTableOutput('doc_ex1' , width="100px"),
 				br()
 				),
 			column(3,offset=0,align="center",
 				br(),
+				downloadLink("load_ex_format2", label = "Download example file"),
 				dataTableOutput('doc_ex2' , width="100px"),
 				br()
 		)), br(),
@@ -587,7 +588,7 @@ shinyUI(navbarPage(
 			style="opacity: 1;background-color:white; margin-top: 0px;width: 100%;",
 			column(3,offset=3,
 				#img(src="https://holtzyan.files.wordpress.com/2015/07/montpellier.png" ,  height = 300, width = 500),
-				img(src="https://holtzyan.files.wordpress.com/2015/07/montpellier.png" ,  width = 350),
+				img(src="https://holtzyan.files.wordpress.com/2015/07/montpellier.png" ,  width = 500),
 				br()
 				),
 			column(3,offset=1,
@@ -606,8 +607,28 @@ shinyUI(navbarPage(
 		fluidRow(column(6,offset=3,hr())) , br() ,	
 		
 		#Black line?
-		fluidRow( style=" opacity: 0.8 ; background-color: white ; margin-top: 0px ; width: 100%; "  ),
-	
+		fluidRow( style=" opacity: 0.8 ; background-color: white ; margin-top: 0px ; width: 100%; "  ), br(),
+		
+		
+		
+		# ==== References
+		fluidRow(align="center",
+			style="opacity: 1;background-color:white; margin-top: 0px;width: 100%;",
+			column(6,offset=3,
+				# Set the style of this page
+				br(),
+				helpText(strong("- References -" , style="color:orange ; font-family: 'times'; font-size:30pt ; font-type:bold" ) ) ,
+				hr()
+			)),
+		fluidRow(align="left",
+			style="opacity:0.9; background-color: white ;margin-top: 0px; width: 100%;",
+			column(6,offset=3,
+				br(),
+				"1. Margarido GRA, Souza AP, Garcia AAF. OneMap: software for genetic mapping in outcrossing species. Hereditas. Wiley Online Library; 2007;144: 78–79.", br(),
+				"2. Lander ES, Green P, Abrahamson J, Barlow A, Daly MJ, Lincoln SE, et al. MAPMAKER: an interactive computer package for constructing primary genetic linkage maps of experimental and natural populations. Genomics. Elsevier; 1987;1: 174–181.", br(),
+				"3. de Givry S, Bouchez M, Chabrier P, Milan D, Schiex T. CARTHAGENE: Multipopulation integrated genetic and radiation hybrid mapping. Bioinformatics. 2005;21: 1703–1704. doi:10.1093/bioinformatics/bti222.", br(),
+				br(), br()
+			)),
 
 
 		

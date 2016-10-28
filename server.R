@@ -21,12 +21,23 @@ shinyServer(function(input, output, session) {
 #-----------------------------------------------------------------------------
 
 
-output$load_ex_format <- downloadHandler(
-    filename = "GenMapComp_Examples.csv",
+# format 3 columns
+output$load_ex_format1 <- downloadHandler(
+    filename = "GenMapComp_Example1.csv",
 	content <- function(file) {
-    	file.copy("DATA/Example_Data_Set.csv", file)
+    	file.copy("DATA/EX_HELP_PAGE/Example_Data_Set1.csv", file)
   		}  
   	)
+
+
+#format Mapchart
+output$load_ex_format2 <- downloadHandler(
+    filename = "GenMapComp_Example2.csv",
+	content <- function(file) {
+    	file.copy("DATA/EX_HELP_PAGE/Example_Data_Set2.csv", file)
+  		}  
+  	)
+
   
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------#
 
