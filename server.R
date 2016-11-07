@@ -521,7 +521,7 @@ output$load_ex_format3 <- downloadHandler(
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------#
 
 #-----------------------------------------------------------------------------
-# --- SHEET 2 : SUMMARY STATISTICS PAGE - CIRCULAR PLOT FOR DENSITY !
+# --- SHEET 2 : SUMMARY STATISTICS PAGE -  PLOT FOR DENSITY !
 #-----------------------------------------------------------------------------
 
 	# Make the circular plot. See https://cran.r-project.org/web/packages/circlize/vignettes/circlize.pdf to understand how circular plot works.
@@ -582,7 +582,7 @@ output$load_ex_format3 <- downloadHandler(
 			 # print the plot
 			 plot(1,1,col="transparent" , xlim=c(0,max(vecX)) , ylim=c(0,max(vecY)) , xlab="" , xaxt="n" , ylab="" , yaxt="n" , bty="n" )
 			 rect(  vecSep[-length( vecSep)], rep(-2,length( vecSep)) ,  vecSep[-1] , rep(1 , length( vecSep))  , col=my_colors , border=F )
-			 lines( vecX , vecY  , col="orange" , lwd=3 )
+			 lines( vecX , vecY  , col="black" , lwd=3 )
 	 		 mtext( map , at=max(vecY)/2 , col="orange" , cex=2 , line=0, side=2 )
 
  		#fin du plot
@@ -772,7 +772,7 @@ output$load_ex_format3 <- downloadHandler(
 			}
 
 
-		# Start the plotly graph
+		# ------ Start the plotly graph
 		p=plot_ly(x=xaxis , y=pos_final , hoverinfo="none" , type="scatter", mode="lines",  line=list(width=input$thickness, color=input$my_color , opacity=0.1) , showlegend=F)%>%   
 
 		# Custom the layout
@@ -802,13 +802,25 @@ output$load_ex_format3 <- downloadHandler(
 		p=add_trace(p, x=seq(1:nb_selected_maps) , y=rep(-10,nb_selected_maps) , text=unlist(liste_of_map_to_compare) , type="scatter" , mode="lines+text" , textfont=list(size=20 , color="orange"), line=list(color="transparent"), showlegend=F )
 
 		#Draw the plot
-		p
+		#p
 		
+		p1=plot_ly(x=seq(1,10) , y=seq(1,10) )
 
+
+		# ------ If only ONE map selected..
+		if( nb_selected_maps==1 ){
+			print("okkkkkkkk 1 map")
+			p1
+			}
+		else{p}
+		
+		print("----------")
+		print(selected_maps)
 	
 	})
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------#
+
 
 
 
@@ -855,7 +867,7 @@ output$load_ex_format3 <- downloadHandler(
 		out=c()
 		for (i in a){
 			if(i>=last) { sortie=i+to_add }
-			if(i<last) {to_add=to_add+last+0.05*last ; sortie=i+to_add }
+			if(i<last) {to_add=to_add+last ; sortie=i+to_add }         # +0.05*last
 			last=i
 			out=c(out,sortie)
 			}
@@ -864,43 +876,64 @@ output$load_ex_format3 <- downloadHandler(
 		map1$pos_cum_map1=my_fun(map1[,3])
 		map2$pos_cum_map2=my_fun(map2[,3])
 		don=merge(map1,map2,by.x=2,by.y=2)
-		
+				
 		#Calculation of max and min of every chromosome
-		map1max=aggregate(don[,4] , by=list(don[,2]) , max)
-		map1min=aggregate(don[,4] , by=list(don[,2]) , min)
-		map2max=aggregate(don[,7] , by=list(don[,5]) , max)
-		map2min=aggregate(don[,7] , by=list(don[,5]) , min)
+		map1max=aggregate(map1$pos_cum_map1 , by=list(map1$group) , max)
+		map1min=aggregate(map1$pos_cum_map1 , by=list(map1$group) , min)
+		map2max=aggregate(map2$pos_cum_map2 , by=list(map2$group) , max)
+		map2min=aggregate(map2$pos_cum_map2 , by=list(map2$group) , min)
 		
 		# --- Add a text column for plotly and compute some useful values for the plot drawing
 		don$text=paste(don[,1],"\nmap1: position : ",round(don[,3],2)," | chromosome : ",don[,2],"\nmap2: position : ",round(don[,6],2)," | chromosome : ",don[,5],sep="")
 		
 		#Prepare 2 layouts !
 		if(input$chromo_sheet4=="all"){
-			lay_x=list(title = name1, tickmode="array", tickvals=map1max[,2] , ticktext="" , showticklabels = F )
-			lay_y=list(title = name2, tickmode="array", tickvals=map2max[,2] , ticktext="" , showticklabels = F )
+			lay_x=list(title = name1, tickmode="array", tickvals=map1max[,2] , ticktext="" , showticklabels = F , zeroline="TRUE" , zerolinewidth=1.5)
+			lay_y=list(title = name2, tickmode="array", tickvals=map2max[,2] , ticktext="" , showticklabels = F , zeroline="TRUE" , zerolinewidth=2)
 		}else{
 			lay_x=list(title = name1 )
 			lay_y=list(title = name2 )	
 		}
 		
-		# Make the plot !
-		p=plot_ly(don , x=don[,4] , y=don[,7] , mode="markers" , color=don[,2] , text=don$text , hoverinfo="text"  , marker=list( size=15 , opacity=0.5)  )
-				
-		# Add chromosome name on X and Y axis
-		if(input$chromo_sheet4=="all")
-		{
-		retrait=ifelse(map1max[,2]>10000, -100 , -0.1*max(map1max[,2]) )
-		p=add_trace(x=apply(cbind(map1max[,2],map1min[,2]) , 1 , mean) , y=rep(retrait,nrow(map1max)) , text=map1max[,1] , mode="text" , textfont=list(size=13 , color="orange") , showlegend=F)
-		retrait=ifelse(map2max[,2]>10000, -100 , -0.1*max(map2max[,2]) )
-		p=add_trace(x=rep(retrait,nrow(map2max)) , y=apply(cbind(map2max[,2],map2min[,2]) , 1 , mean) , text=map1max[,1] , mode="text" , textfont=list(size=13 , color="orange"), showlegend=F )
-		}
+		# Prepare 2 vectors in case user select all chromosomes:
+		retrait=ifelse( max(map1max[,2])>10000, -100 , -0.05*max(map1max[,2]) )
 
-		# Custom the layout
-		p=layout( 
-			#Gestion du hovermode
-			hovermode="closest"  , xaxis=lay_x , yaxis=lay_y
-		)
-		p
+		# Prepare rectangles
+        my_list_rect=list()
+        if(input$chromo_sheet4=="all"){
+        	for(i in c(1:nrow(map1max))){
+        		L1=list(type = "rect", fillcolor = "blue", line = list(color = "blue"), opacity = 0.1, x0 = map1min[i,2], x1 = map1max[i,2], xref = "x", y0 = map2min[i,2], y1 = map2max[i,2], yref = "y" )
+				my_list_rect[[ length(my_list_rect)+1]] = L1 
+				}}
+		
+					
+		# --- Make the plot !
+		p <- plot_ly() %>%
+			
+			# markers
+			add_trace( x=don[,4] , y=don[,7] , type="scatter", mode="markers"  , text=don$text , hoverinfo="text"  , marker=list( size=15 , opacity=0.5, color=ifelse( don$group.x==don$group.y , "grey" , "red")), showlegend=F  ) %>%
+			
+			# xaxis: chromosome names
+			add_trace( x=apply(cbind(map1max[,2],map1min[,2]) , 1 , mean) , y=rep(retrait,nrow(map1max))  , type="scatter", mode="text", text=map1max[,1] , mode="text" , textfont=list(size=13 , color="orange") , showlegend=F) %>%	
+
+			# yaxis: chromosome names
+			add_trace( x=rep(retrait,nrow(map2max)) , y=apply(cbind(map2max[,2],map2min[,2]) , 1 , mean), type="scatter", mode="text", text=map1max[,1] , mode="text" , textfont=list(size=13 , color="orange"), showlegend=F ) %>%
+		
+			# Layout
+			layout( 
+				hovermode="closest" , 
+				xaxis=lay_x , 
+				yaxis=lay_y
+				) %>%
+					
+			# Add rectangles
+			layout( title = "",
+             shapes = my_list_rect
+             )
+                    
+			#plot it!
+			p	
+	
 		
   	#Je ferme le outputPlot2
   	})
