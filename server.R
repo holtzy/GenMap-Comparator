@@ -80,17 +80,50 @@ output$load_ex_format3 <- downloadHandler(
 			else if( input$file2=="wheat (Maccaferri et al. 2015)"){  inFile=data.frame(name=as.character(c("Ben_Pi41025","Colosseo_Lloyd","Kofa_svevo","Langdon_G1816","Latino_MG5323","Mohawk_Cocorrit69","Simeto_Levante")) , datapath=as.character(c("DATA/WHEAT_MACAF/CLEAN/Ben_Pi41025", "DATA/WHEAT_MACAF/CLEAN/Colosseo_Lloyd" , "DATA/WHEAT_MACAF/CLEAN/Kofa_svevo", "DATA/WHEAT_MACAF/CLEAN/Langdon_G1816", "DATA/WHEAT_MACAF/CLEAN/Latino_MG5323", "DATA/WHEAT_MACAF/CLEAN/Mohawk_Cocorrit69", "DATA/WHEAT_MACAF/CLEAN/Simeto_Levante" )) ) }
 			else if( input$file2=="wheat (Holtz et al. 2016)"){  inFile=data.frame(name=as.character(c("map_DS","map_DL","map_consensus","physical_position")) , datapath=as.character(c("DATA/WHEAT_TRAM/map_DS","DATA/WHEAT_TRAM/map_DL","DATA/WHEAT_TRAM/map_consensus","DATA/WHEAT_TRAM/physical_position" )) ) }
 				
+		# If the user proposes a dataset:
 		}else{
+					
+			print("step 1: input$file1")
+			print(input$file1)
+			print("--\n\n")
+				
+			print("inputfile1$datapath")
+			print(input$file1$datapath)
+			print("---\n\n")
+					
+			print("start loop")
+			# I have to check if the proposed fileS ARE readable and in the good format! 
+			my_list=list()
+			for(i in c(input$file1$datapath)) {
+
+				a=try(read.table(i, header=T , dec="." ,na.strings="NA"))
+				my_list[[length(my_list)+1]]=a
+			}
+			print("loop is over \n\n\n")
 			
-			# If the user choose a dataset, I take this dataset:
-			inFile <- input$file1
+			print("my_list")
+			print(my_list)
+			print("---\n\n")
+
+			mistake_presence="try-error"%in%lapply(my_list , class)
+			print(mistake_presence)
+			
+			# En fonction de la présence d erreur ou pas, je garde le sorgho ou je prends le dataset proposé:
+			if( mistake_presence==TRUE){
+				inFile=data.frame(name=as.character(c("CIRAD","S2","S4","S5","S6","TAMU")) , datapath=as.character(c("DATA/SORGHUM/CIRAD", "DATA/SORGHUM/S2" , "DATA/SORGHUM/S4" , "DATA/SORGHUM/S5" , "DATA/SORGHUM/S6" , "DATA/SORGHUM/TAMU" )) ) 
+			}else{
+				inFile <- input$file1
+				}
+				
+			#I take this dataset:
+			#inFile <- input$file1
 			
 		}
 				
 	})
 		
-	# Check it worked properly
-	#observe({ print("Mon inFile") ; print ( inFile() ) ; print("--") 	})
+	# Check if it worked properly
+	observe({ print("Mon inFile") ; print ( inFile() ) ; print("--") 	})
 
 
 
@@ -127,7 +160,10 @@ output$load_ex_format3 <- downloadHandler(
 		# Read and format maps one by one, and add them to a list:
 		my_maps=list()
 		for(i in inFile$datapath){
-						
+			
+			print("---val i")
+			print(i)
+					
 			# Load the map
 			map_tmp=read.table(i , header=T , dec="." ,na.strings="NA")
 	
@@ -196,12 +232,13 @@ output$load_ex_format3 <- downloadHandler(
 			my_maps[[length(my_maps)+1]]=map_tmp
 		
 		}
+		
 		return(my_maps)
 		
 	})
 		
 	# Check everything worked properly
-	observe({ print("summary de la carte 1:") ;	print ( head(MY_maps()[[1]])  ) 	})
+	#observe({ print("summary de la carte 1:") ;	print ( head(MY_maps()[[1]])  ) 	})
 	
 
 
@@ -800,22 +837,23 @@ output$load_ex_format3 <- downloadHandler(
 
 		# Add maps names			
 		p=add_trace(p, x=seq(1:nb_selected_maps) , y=rep(-10,nb_selected_maps) , text=unlist(liste_of_map_to_compare) , type="scatter" , mode="lines+text" , textfont=list(size=20 , color="orange"), line=list(color="transparent"), showlegend=F )
+		p
+		#p1=plot_ly(x=seq(1,10) , y=seq(1,10) )
 
 		#Draw the plot
-		#p
+		#if(1+1==2){p1 }
 		
-		p1=plot_ly(x=seq(1,10) , y=seq(1,10) )
 
 
 		# ------ If only ONE map selected..
-		if( nb_selected_maps==1 ){
-			print("okkkkkkkk 1 map")
-			p1
-			}
-		else{p}
+		#if( nb_selected_maps==1 ){
+			#print("okkkkkkkk 1 map")
+			##p1
+			#}
+		#else{p}
 		
-		print("----------")
-		print(selected_maps)
+		#print("----------")
+		#print(selected_maps)
 	
 	})
 

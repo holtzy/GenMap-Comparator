@@ -72,9 +72,10 @@ shinyUI(navbarPage(
 			
 			# widget to choose several files:
 			fileInput("file1", strong(p(legend1[4] , style="color:orange ; font-family: 'times'; font-size:18pt")) , multiple = TRUE, accept=NULL),
-						
+			uiOutput("error_message"),
+				
 			# widget to propose 3 exemples
-			radioButtons( "file2", strong(p(legend1[5] , style="color:orange ; font-family: 'times'; font-size:18pt")), choices = c("sorghum (Mace et al. 2009)","wheat (Maccaferri et al. 2015)", "wheat (Holtz et al. 2016)"), selected =c("sorghum (Mace et al. 2009)") , inline = FALSE ),
+			radioButtons("file2", strong(p(legend1[5] , style="color:orange ; font-family: 'times'; font-size:18pt")), choices = c("sorghum (Mace et al. 2009)","wheat (Maccaferri et al. 2015)", "wheat (Holtz et al. 2016)"), selected =c("sorghum (Mace et al. 2009)") , inline = FALSE ),
 			br(),
 			helpText(strong(p(legend1[6] , style="color:orange ; font-family: 'times'; font-size:18pt"))) ,
 			legend1[7],	
