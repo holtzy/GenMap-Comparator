@@ -10,7 +10,7 @@
 # OPEN THE SHINY SERVER
 shinyServer(function(input, output, session) {
 
-
+####session$allowReconnect("force")
 
 
 
@@ -64,6 +64,7 @@ output$load_ex_format3 <- downloadHandler(
 #-----------------------------------------------------------------------------
 
 	
+
 	
 	# 0/ --- Selection of the data set: default dataset / Example dataset / Chosen dataset
 	inFile=reactive({
@@ -75,49 +76,51 @@ output$load_ex_format3 <- downloadHandler(
 		
 		# If nothing is choosen I take the chosen exemple dataset
 		if ( is.null(input$file1)) {
-			
+
+			# So no error message needed
+  			output$error_message<- renderUI({ helpText("") })
+						
 			if( input$file2=="sorghum (Mace et al. 2009)" | is.null(input$file2)){ inFile=data.frame(name=as.character(c("CIRAD","S2","S4","S5","S6","TAMU")) , datapath=as.character(c("DATA/SORGHUM/CIRAD", "DATA/SORGHUM/S2" , "DATA/SORGHUM/S4" , "DATA/SORGHUM/S5" , "DATA/SORGHUM/S6" , "DATA/SORGHUM/TAMU" )) ) }
 			else if( input$file2=="wheat (Maccaferri et al. 2015)"){  inFile=data.frame(name=as.character(c("Ben_Pi41025","Colosseo_Lloyd","Kofa_svevo","Langdon_G1816","Latino_MG5323","Mohawk_Cocorrit69","Simeto_Levante")) , datapath=as.character(c("DATA/WHEAT_MACAF/CLEAN/Ben_Pi41025", "DATA/WHEAT_MACAF/CLEAN/Colosseo_Lloyd" , "DATA/WHEAT_MACAF/CLEAN/Kofa_svevo", "DATA/WHEAT_MACAF/CLEAN/Langdon_G1816", "DATA/WHEAT_MACAF/CLEAN/Latino_MG5323", "DATA/WHEAT_MACAF/CLEAN/Mohawk_Cocorrit69", "DATA/WHEAT_MACAF/CLEAN/Simeto_Levante" )) ) }
 			else if( input$file2=="wheat (Holtz et al. 2016)"){  inFile=data.frame(name=as.character(c("map_DS","map_DL","map_consensus","physical_position")) , datapath=as.character(c("DATA/WHEAT_TRAM/map_DS","DATA/WHEAT_TRAM/map_DL","DATA/WHEAT_TRAM/map_consensus","DATA/WHEAT_TRAM/physical_position" )) ) }
+
 				
 		# If the user proposes a dataset:
 		}else{
 					
-			print("step 1: input$file1")
-			print(input$file1)
-			print("--\n\n")
-				
-			print("inputfile1$datapath")
-			print(input$file1$datapath)
-			print("---\n\n")
-					
-			print("start loop")
 			# I have to check if the proposed fileS ARE readable and in the good format! 
-			my_list=list()
+			mistake_presence=FALSE
+			output$error_message<- renderUI({ helpText("") })
+			
 			for(i in c(input$file1$datapath)) {
-
+				
+				# I try to read the file
 				a=try(read.table(i, header=T , dec="." ,na.strings="NA"))
-				my_list[[length(my_list)+1]]=a
+				
+				# if the file is NOT readable by R
+				if(class(a)=="try-error"){
+					mistake_presence=TRUE
+	  				output$error_message<- renderUI({ helpText("File input is not readable by R. Is it a genetic map?" , style="color:red ; font-family: 'times'; font-size:11pt") })
+					break				
+				}else{
+				
+					# if the file does not have 2 or 3 columns
+					if( !ncol(a)%in%c(2,3) ){
+						mistake_presence=TRUE
+	  					output$error_message<- renderUI({ helpText("One of your file does not have 2 nor 3 columns" , style="color:red ; font-family: 'times'; font-size:11pt") })
+						break						
+					}}
+					
+				
 			}
-			print("loop is over \n\n\n")
 			
-			print("my_list")
-			print(my_list)
-			print("---\n\n")
-
-			mistake_presence="try-error"%in%lapply(my_list , class)
-			print(mistake_presence)
-			
-			# En fonction de la présence d erreur ou pas, je garde le sorgho ou je prends le dataset proposé:
+			# So if there is a mistake in the proposed files, I keep sorghum as an example. Else I take the proposed files
 			if( mistake_presence==TRUE){
 				inFile=data.frame(name=as.character(c("CIRAD","S2","S4","S5","S6","TAMU")) , datapath=as.character(c("DATA/SORGHUM/CIRAD", "DATA/SORGHUM/S2" , "DATA/SORGHUM/S4" , "DATA/SORGHUM/S5" , "DATA/SORGHUM/S6" , "DATA/SORGHUM/TAMU" )) ) 
 			}else{
 				inFile <- input$file1
 				}
 				
-			#I take this dataset:
-			#inFile <- input$file1
-			
 		}
 				
 	})
@@ -139,8 +142,8 @@ output$load_ex_format3 <- downloadHandler(
 		return(as.character(unlist(map_files)))
 		})
 
-	# Check it worked properly
-	#observe({ print("mes maps selectionnées") ; print ( MY_map_files()) ; print("test widget selection") ; selected=c(MY_map_files()[1],MY_map_files()[2]) ; print(selected) 	})
+	# Check if it worked properly
+	observe({ print("mes maps selectionnées") ; print ( MY_map_files()) ; print("test widget selection") ; selected=c(MY_map_files()[1],MY_map_files()[2]) ; print(selected) 	})
 
 		
 
@@ -154,15 +157,10 @@ output$load_ex_format3 <- downloadHandler(
 	
 		# I am reactive to the selection of input files !
 		inFile=inFile()
-		#print("......... repeat ........")
-		
 
 		# Read and format maps one by one, and add them to a list:
 		my_maps=list()
 		for(i in inFile$datapath){
-			
-			print("---val i")
-			print(i)
 					
 			# Load the map
 			map_tmp=read.table(i , header=T , dec="." ,na.strings="NA")
@@ -232,13 +230,13 @@ output$load_ex_format3 <- downloadHandler(
 			my_maps[[length(my_maps)+1]]=map_tmp
 		
 		}
-		
+
 		return(my_maps)
 		
 	})
 		
 	# Check everything worked properly
-	#observe({ print("summary de la carte 1:") ;	print ( head(MY_maps()[[1]])  ) 	})
+	observe({ print("summary de la carte 1:") ;	print ( head(MY_maps()[[1]])  ) 	})
 	
 
 
@@ -264,12 +262,13 @@ output$load_ex_format3 <- downloadHandler(
 				colnames(data)[c( ncol(data)-1 , ncol(data) )]= c( paste("chromo",map_files[i],sep="_") , paste("pos",map_files[i],sep="_") )
 			}}
 		
+			
 		# I have now a file summarizing the information for every markers present at least one time ! Return it!
 		return(data)
 	})
 		
 	# Check everything worked properly
-	#observe({ print("summary du fichier mergé data:") ; print ( head( MY_data() )  )  })
+	observe({ print("summary du fichier mergé data:") ; print ( head( MY_data() )  )  })
 
 
 
@@ -292,7 +291,7 @@ output$load_ex_format3 <- downloadHandler(
 		})
 
 	# Did it work ?
-	#observe({ print("Liste des chromosomes:") ; print ( head( MY_chromosome_list() )  ) })
+	observe({ print("Liste des chromosomes:") ; print ( head( MY_chromosome_list() )  ) })
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------#
 		
@@ -354,7 +353,7 @@ output$load_ex_format3 <- downloadHandler(
 		
 		# If I want the summary of the first map : summary_stat[[1]]
 		return(summary_stat)
-	
+			
 	})
 		
 	# Check if everything is all right
@@ -417,7 +416,7 @@ output$load_ex_format3 <- downloadHandler(
 
 
 
-
+print("---- ok on commence la sheeet2 ----")
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------#
 
@@ -429,18 +428,21 @@ output$load_ex_format3 <- downloadHandler(
 	output$my_barplot=renderPlot({ 
 	
 		# Get the needed reactive objects:
+		print("ok1")
 		summary_stat=MY_summary_stat()
 		map_files=unlist(MY_map_files())
 				
  		# Selected variable ?
-		#VRselected_var=which(c("nb. marker","size","average gap","biggest gap","Nb. uniq pos.")%in%input$var_for_barplot)
+		print("ok2")
 		selected_var=which(c("# markers","map size","average gap size","biggest gap size","# unique positions")%in%input$var_for_barplot)
 		
 		# Selected Maps ?
+		print("ok3")
 		selected_maps=which(map_files%in%input$selected_maps_sheet2)
 		nb_selected_maps=length(selected_maps)
 		
 		# Create a table which gives this selected_variable for every selected maps and every chromosomes.
+		print("ok4")
 		barplot_table=summary_stat[[selected_maps[1]]] [,c(1,selected_var+1)]
 		for(i in selected_maps[-1]){
 			barplot_table=merge(barplot_table , summary_stat[[i]] [,c(1,selected_var+1)] , by.x=1 , by.y=1 , all=T)
@@ -450,15 +452,17 @@ output$load_ex_format3 <- downloadHandler(
 		barplot_table=t(as.matrix(barplot_table[,-1]))
 		
 		# Make the barplot !
+		print("ok5")
 		par(mar=c(3,3,3,8))
 		barplot(barplot_table , beside=T , col=my_colors[1:length(selected_maps)]) 
 		#mtext(legend[23] , col="#3C3C3C" , line=-3 , at=ncol(barplot_table)*nb_selected_maps+8)
+
+		print("--- barplot finit --- ")
 		
 	#Close the render-barplot 
 	})
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------#
-
 
 
 
@@ -504,6 +508,8 @@ output$load_ex_format3 <- downloadHandler(
 		doughnut(barplot_table, col=my_colors , border="white" , inner.radius=0.5, labels=my_labels )
 		#mtext(expression(italic(legend[24])) , col="#3C3C3C" , line=-5)
 	
+		print("--- donut plot finit --- ")
+
 	#Close the render-barplot 
 	})
 
@@ -538,6 +544,8 @@ output$load_ex_format3 <- downloadHandler(
 			output$sum_table <- DT::renderDataTable(
 					DT::datatable( toprint , rownames = FALSE , options = list(pageLength = 40, dom = 't' ))
 			)
+		
+			print("--- summary table finit --- ")
 		
 		# Close observer
 		})
@@ -627,6 +635,8 @@ output$load_ex_format3 <- downloadHandler(
  		
  		#Ajout des labels de l'axe des x?
 		mtext( levels(as.factor(my_data$group)) , at=(vecSep[-1]+vecSep[-length(vecSep)]) /2 , col="orange" , cex=2 , line=5, side=1 )
+
+		print("--- densityplot finit --- ")
 			
 		})
 	
@@ -667,55 +677,36 @@ output$load_ex_format3 <- downloadHandler(
   	
     output$plot1 <- renderPlotly({ 
 
-    	
-		# Get the needed reactive objects:
-		#VR liste_of_map_to_compare=MY_liste_of_map_to_compare()
+		# ========== PART 0 : INITIALISE OBJECTS
+		#Get the needed reactive objects:
 		summary_stat=MY_summary_stat()
 		map_files=MY_map_files()
   		my_maps=MY_maps()
   		nb_de_carte=length(map_files)
     	data=MY_data()
    		
+   		# We need to remember the old choice
    		old_choice <- my_global_old_choice;
 
-   		# --- Avoid bug when page is loading
-  		#VR if (is.null(input$selected_maps)) {return(NULL)}
-
-
-  		# I get the current choice of maps to show:
-		#current_choice=reactive({ return(input$selected_maps) })
+   		# I get the current choice of maps to show (this is not ordered, we have to order it):
 		current_choice=input$selected_maps
-
-		print("")
-		print("===the old choice was :")
-		print(old_choice)
-		print("===the current choice is :")
-		print(current_choice)
-
 		
+		
+		
+		# ========== PART 1 : DETERMIN WHICH MAP HAS BEEN ADDED / REMOVED + CREATE THE ORDERED SELECTED MAP LIST
 		# If the user has added a map, I determine which, and add it to the map to compare:
-		#VR
-		if(is.null(old_choice) | is.null(current_choice) )
-		{
-			#print("=IF")
+		if(is.null(old_choice) | is.null(current_choice) ){
 			liste_of_map_to_compare=current_choice
-		}
-		else
-		{
-			#print("=ELSE")
+		}else{
 			intersection=which(old_choice%in%current_choice)
 			if( length(intersection)==0 ){
 				to_del=old_choice
 			}else{
 				to_del=old_choice[-intersection]
 				}
-			#print("TODEL")
-			#print(to_del)
 
 			if(length(to_del)>0)
 				{liste_of_map_to_compare=old_choice[ - which(old_choice%in%to_del) ]}
-			#print("AFTERDEL")
-			#print(liste_of_map_to_compare)
 
 			intersection=which(current_choice%in%old_choice)			
 			if( length(intersection)==0 ){
@@ -723,55 +714,67 @@ output$load_ex_format3 <- downloadHandler(
 			}else{
 				to_add= current_choice[-intersection]
 				}				
-			#print("TOADD")
-			#print(to_add)
 
 			if(length(to_add)>0)
 			liste_of_map_to_compare=c(liste_of_map_to_compare,to_add)
-			print("AFTERADD NEW LIST")
-			print(liste_of_map_to_compare)
 		}
 		# I save the current choice as old_choice for next change:
-		#old_choice<<-liste_of_map_to_compare
 		my_global_old_choice<<-liste_of_map_to_compare
 		liste_of_map_to_compare<<-liste_of_map_to_compare
-		
-		
-		
-		print("+++the ordered current choice is :")
-		print(liste_of_map_to_compare)
+	
+	
+	
+	
 				
-		# To avoid a bug, when only ONE map is selected, the map to compare is this map:
-		#VR if(length(current_choice)==1){  liste_of_map_to_compare<<-current_choice }
-		
-		#fin VR
+
+		# ========== PART 2 : IF NO SELECTED MAP, I RETURN A MESSAGE!
+   		 validate(
+     		 need(length(liste_of_map_to_compare)!=0, "Please select at least one map!")
+     		 )
 
 
-		# --- Make an input table with columns in the corresponding order: from mapB,mapA i keep column: 1, 4,5, 2,3:
+
+
+
+
+		# ========== PART 3 : CREATE A TABLE WITH MAPS FEATURES, IN THE GOOD ORDER. ex:for mapB and mapA i keep column: 1, 4,5, 2,3:
+		# --- Make an input table with columns in the corresponding order: 
 		selected_maps=match(liste_of_map_to_compare , map_files)  
 		selected_col=rep(selected_maps , each=2)*2
 		selected_col=c(1,selected_col+rep(c(0,1) , length(selected_col)/2))
 		dat=data[ , selected_col ]
 		nb_selected_maps=length(selected_maps)
-		print("nb map")
-		print(nb_selected_maps)
-		
-		# VR 
-		if(nb_selected_maps<2){
-		return (NULL)
-		#liste_of_map_to_compare=c(map_files[1],map_files[2])
-		}
+		print("---dat---")
+		print(head(dat))
 
-		# --- Subset of the dataset with only the good chromosome :
+		# --- Subset of the dataset with only the good chromosome (Could be easier I think)
 		don=dat[dat[,2]==input$chromo & !is.na(dat[,2]) , ]
-		for(j in c(2:nb_selected_maps)){
-			temp=dat[dat[,c((j-1)*2+2)]==input$chromo & !is.na(dat[,c((j-1)*2+2)]) , ]
-			don=rbind(don,temp)
-		}
+		if(nb_selected_maps>1){
+			for(j in c(2:nb_selected_maps)){
+				temp=dat[dat[,c((j-1)*2+2)]==input$chromo & !is.na(dat[,c((j-1)*2+2)]) , ]
+				don=rbind(don,temp)
+			}}
 		don=unique(don)
 		
 		
-		# --- OBJET 1 POUR LES LIAISONS ENRTE MARQUEURS
+		
+		
+		# ========== PART 4 : IF ONE MAP IS SELECTED ONLY, I GIVE A CERTAIN TYPE OF PLOT
+		if(nb_selected_maps<2){
+			return(
+				plot_ly(x=rep(1,nrow(don)),y=don[,3], type="scatter", mode="marker", hoverinfo="text", text=paste(don[,1], "<br>", "position: ",don[,3],sep="") , marker=list(size=10) )%>%
+				layout(hovermode="closest",
+					xaxis=list(title = "", zeroline = FALSE, showline = FALSE, showticklabels = FALSE, showgrid = FALSE , range=c(0.5,1.5) ),
+					yaxis=list( autorange = "reversed", title = "Position (cM)", zeroline = F, showline = T, showticklabels = T, showgrid = FALSE   ,  tickfont=list(color="grey", size=15) , titlefont=list(color="grey", size=15) , tickcolor="grey" , linecolor="grey")
+				))
+		}
+
+		
+		
+		# ========== PART 5 : COMPARISON PLOT IF I HAVE AT LEAST 2 MAPS SELECTED
+		
+
+		# --- PART 5.1: CREATE THE Y AXIS OF LINK BETWEEN MAPS
 		#Je fais une fonction qui me fait mon vecteur de position pour 2 cartes données : AXE des Y
 		function_pos=function(x,y){
 			#Récupération de 2 carte seulement:
@@ -788,7 +791,7 @@ output$load_ex_format3 <- downloadHandler(
 			return(my_vect)
 			}
 			
-		# --- J applique a toutes les cartes sélectionnées, j obtiens un maxi vecteur.
+		#  Apply te function to the selected maps.
 		pos_final=c()
 		for(v in c(1:(nb_selected_maps-1))){
 			col_x=v*2+1
@@ -797,7 +800,9 @@ output$load_ex_format3 <- downloadHandler(
 			pos_final=c(pos_final,a)
 			}
 				
-		#Et je dois faire le vecteur de l'axe des X !
+
+
+		# --- PART 5.2: CREATE THE X AXIS OF LINK BETWEEN MAPS
 		xaxis=c()
 		num=0
 		for(i in c(1:(nb_selected_maps-1))){
@@ -809,7 +814,7 @@ output$load_ex_format3 <- downloadHandler(
 			}
 
 
-		# ------ Start the plotly graph
+		# --- PART 5.3: MAKE THE GRAPH WITH PLOTLY
 		p=plot_ly(x=xaxis , y=pos_final , hoverinfo="none" , type="scatter", mode="lines",  line=list(width=input$thickness, color=input$my_color , opacity=0.1) , showlegend=F)%>%   
 
 		# Custom the layout
@@ -838,22 +843,6 @@ output$load_ex_format3 <- downloadHandler(
 		# Add maps names			
 		p=add_trace(p, x=seq(1:nb_selected_maps) , y=rep(-10,nb_selected_maps) , text=unlist(liste_of_map_to_compare) , type="scatter" , mode="lines+text" , textfont=list(size=20 , color="orange"), line=list(color="transparent"), showlegend=F )
 		p
-		#p1=plot_ly(x=seq(1,10) , y=seq(1,10) )
-
-		#Draw the plot
-		#if(1+1==2){p1 }
-		
-
-
-		# ------ If only ONE map selected..
-		#if( nb_selected_maps==1 ){
-			#print("okkkkkkkk 1 map")
-			##p1
-			#}
-		#else{p}
-		
-		#print("----------")
-		#print(selected_maps)
 	
 	})
 

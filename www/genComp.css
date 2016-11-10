@@ -14,7 +14,15 @@
 	min-height: 62px;
 	}
 	
-	
+
+/* Couleur message d'erreur*/
+.shiny-output-error-validation {
+	color: green;
+	size: 225px ;
+	padding-left: 25;
+	}
+
+
 /* Couleur du fond
 body	 {
 	background-image: url( http://papillondamour.p.a.pic.centerblog.net/fb850229.jpg );
