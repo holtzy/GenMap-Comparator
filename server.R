@@ -92,24 +92,32 @@ output$load_ex_format3 <- downloadHandler(
 			mistake_presence=FALSE
 			output$error_message<- renderUI({ helpText("") })
 			
-			for(i in c(input$file1$datapath)) {
+			# I need at least 2 files
+			if( length(input$file1$datapath)<2 ){
+	  			mistake_presence=TRUE
+				output$error_message<- renderUI({ helpText("Please select at least 2 maps" , style="color:red ; font-family: 'times'; font-size:11pt") })
+											
+			# If I have at least 2 maps, I check them one by one:
+			}else{
+				for(i in c(input$file1$datapath)) {
 				
-				# I try to read the file
-				a=try(read.table(i, header=T , dec="." ,na.strings="NA"))
+					# I try to read the file
+					a=try(read.table(i, header=T , dec="." ,na.strings="NA"))
 				
-				# if the file is NOT readable by R
-				if(class(a)=="try-error"){
-					mistake_presence=TRUE
-	  				output$error_message<- renderUI({ helpText("File input is not readable by R. Is it a genetic map?" , style="color:red ; font-family: 'times'; font-size:11pt") })
-					break				
-				}else{
-				
-					# if the file does not have 2 or 3 columns
-					if( !ncol(a)%in%c(2,3) ){
+					# if the file is NOT readable by R
+					if(class(a)=="try-error"){
 						mistake_presence=TRUE
-	  					output$error_message<- renderUI({ helpText("One of your file does not have 2 nor 3 columns" , style="color:red ; font-family: 'times'; font-size:11pt") })
-						break						
-					}}
+	  					output$error_message<- renderUI({ helpText("File input is not readable by R. Is it a genetic map?" , style="color:red ; font-family: 'times'; font-size:11pt") })
+						break				
+				
+						# if the file does not have 2 or 3 columns
+					}else{
+						if( !ncol(a)%in%c(1,2,3) & nrow(a)!=0 ){
+							print(ncol(a))
+							mistake_presence=TRUE
+	  						output$error_message<- renderUI({ helpText("One of your file does not have 2 nor 3 columns" , style="color:red ; font-family: 'times'; font-size:11pt") })
+							break						
+						}}}
 					
 				
 			}
@@ -126,7 +134,7 @@ output$load_ex_format3 <- downloadHandler(
 	})
 		
 	# Check if it worked properly
-	observe({ print("Mon inFile") ; print ( inFile() ) ; print("--") 	})
+	#observe({ print("Mon inFile") ; print ( inFile() ) ; print("--") 	})
 
 
 
@@ -143,7 +151,7 @@ output$load_ex_format3 <- downloadHandler(
 		})
 
 	# Check if it worked properly
-	observe({ print("mes maps selectionnées") ; print ( MY_map_files()) ; print("test widget selection") ; selected=c(MY_map_files()[1],MY_map_files()[2]) ; print(selected) 	})
+	#observe({ print("mes maps selectionnées") ; print ( MY_map_files()) ; print("test widget selection") ; selected=c(MY_map_files()[1],MY_map_files()[2]) ; print(selected) 	})
 
 		
 
@@ -236,7 +244,7 @@ output$load_ex_format3 <- downloadHandler(
 	})
 		
 	# Check everything worked properly
-	observe({ print("summary de la carte 1:") ;	print ( head(MY_maps()[[1]])  ) 	})
+	#observe({ print("summary de la carte 1:") ;	print ( head(MY_maps()[[1]])  ) 	})
 	
 
 
@@ -268,7 +276,7 @@ output$load_ex_format3 <- downloadHandler(
 	})
 		
 	# Check everything worked properly
-	observe({ print("summary du fichier mergé data:") ; print ( head( MY_data() )  )  })
+	#observe({ print("summary du fichier mergé data:") ; print ( head( MY_data() )  )  })
 
 
 
@@ -291,7 +299,7 @@ output$load_ex_format3 <- downloadHandler(
 		})
 
 	# Did it work ?
-	observe({ print("Liste des chromosomes:") ; print ( head( MY_chromosome_list() )  ) })
+	#observe({ print("Liste des chromosomes:") ; print ( head( MY_chromosome_list() )  ) })
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------#
 		
@@ -416,7 +424,6 @@ output$load_ex_format3 <- downloadHandler(
 
 
 
-print("---- ok on commence la sheeet2 ----")
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------#
 
@@ -430,15 +437,17 @@ print("---- ok on commence la sheeet2 ----")
 		# Get the needed reactive objects:
 		print("ok1")
 		summary_stat=MY_summary_stat()
-		map_files=unlist(MY_map_files())
-				
+		my_map_files=unlist(MY_map_files())
+		print("map files")
+		print(my_map_files)
+			
  		# Selected variable ?
 		print("ok2")
 		selected_var=which(c("# markers","map size","average gap size","biggest gap size","# unique positions")%in%input$var_for_barplot)
 		
 		# Selected Maps ?
 		print("ok3")
-		selected_maps=which(map_files%in%input$selected_maps_sheet2)
+		selected_maps=which(my_map_files%in%input$selected_maps_sheet2)
 		nb_selected_maps=length(selected_maps)
 		
 		# Create a table which gives this selected_variable for every selected maps and every chromosomes.
@@ -535,8 +544,12 @@ print("---- ok on commence la sheeet2 ----")
 			# Selected Map ?
 			selected_map=which(MY_map_files()%in%input$selected_maps_sheet2_bis)
 			
+			# bug if no map (loading)
+  			if ( length(selected_map)==0 ) {return(NULL)}
+
   			# Avoid bug when loading
   			if (is.null(input$selected_maps_sheet2_bis) ) {return(NULL)}
+
 
 			# Get the desired summary stat
 			toprint=MY_summary_stat()[[selected_map]]
@@ -744,8 +757,6 @@ print("---- ok on commence la sheeet2 ----")
 		selected_col=c(1,selected_col+rep(c(0,1) , length(selected_col)/2))
 		dat=data[ , selected_col ]
 		nb_selected_maps=length(selected_maps)
-		print("---dat---")
-		print(head(dat))
 
 		# --- Subset of the dataset with only the good chromosome (Could be easier I think)
 		don=dat[dat[,2]==input$chromo & !is.na(dat[,2]) , ]
@@ -755,7 +766,6 @@ print("---- ok on commence la sheeet2 ----")
 				don=rbind(don,temp)
 			}}
 		don=unique(don)
-		
 		
 		
 		
@@ -771,7 +781,15 @@ print("---- ok on commence la sheeet2 ----")
 
 		
 		
+
+
 		# ========== PART 5 : COMPARISON PLOT IF I HAVE AT LEAST 2 MAPS SELECTED
+	
+	
+		# --- PART 5.0: FIND PROBLEMATIC MARKERS 
+		#M1=don$marker[order(don[,3], don[,5])]
+		#good=LCS(as.character(M1),as.character(M2))
+		#print(good)
 		
 
 		# --- PART 5.1: CREATE THE Y AXIS OF LINK BETWEEN MAPS
@@ -915,11 +933,11 @@ print("---- ok on commence la sheeet2 ----")
 		
 		#Prepare 2 layouts !
 		if(input$chromo_sheet4=="all"){
-			lay_x=list(title = name1, tickmode="array", tickvals=map1max[,2] , ticktext="" , showticklabels = F , zeroline="TRUE" , zerolinewidth=1.5)
-			lay_y=list(title = name2, tickmode="array", tickvals=map2max[,2] , ticktext="" , showticklabels = F , zeroline="TRUE" , zerolinewidth=2)
+			lay_x=list(title = name1, tickmode="array", tickvals=apply(cbind(map1max[,2],map1min[,2]) , 1 , mean) , ticktext=map1max[,1] , showticklabels = T , tickfont=list(color="orange"), zeroline="TRUE" , showgrid=FALSE, zerolinewidth=1.5)
+			lay_y=list(title = name2, tickmode="array", tickvals=apply(cbind(map2max[,2],map2min[,2]) , 1 , mean) , ticktext=map2max[,1] , showticklabels = T , tickfont=list(color="orange"), zeroline="TRUE" , showgrid=FALSE, zerolinewidth=2)
 		}else{
-			lay_x=list(title = name1 )
-			lay_y=list(title = name2 )	
+			lay_x=list(title = name1 , showgrid=FALSE , zeroline="TRUE", zerolinewidth=1.5, range=c(0,max(don[,4],na.rm=T)), tickfont=list(color="orange")  )
+			lay_y=list(title = name2 , showgrid=FALSE , zeroline="TRUE", zerolinewidth=2, range=c(0,max(don[,7],na.rm=T)), tickfont=list(color="orange") )	
 		}
 		
 		# Prepare 2 vectors in case user select all chromosomes:
@@ -932,7 +950,19 @@ print("---- ok on commence la sheeet2 ----")
         		L1=list(type = "rect", fillcolor = "blue", line = list(color = "blue"), opacity = 0.1, x0 = map1min[i,2], x1 = map1max[i,2], xref = "x", y0 = map2min[i,2], y1 = map2max[i,2], yref = "y" )
 				my_list_rect[[ length(my_list_rect)+1]] = L1 
 				}}
-		
+				
+		# Prepare lines to make a grid
+        my_list_lines=list()
+        if(input$chromo_sheet4=="all"){
+			for (i in map1max[,2]) {
+				L1 <- list( type="line", line=list(color = "grey", width=0.4), xref="x", yref="y", x0=i, x1=i, y0=0, y1=max(map2max[,2],na.rm=T)  )
+				my_list_lines[[ length(my_list_lines)+1]] = L1 
+ 				}
+			for (i in map2max[,2]) {
+				L1 <- list( type="line", line=list(color = "grey", width=0.4), xref="x", yref="y", x0=0, x1=max(map1max[,2],na.rm=T), y0=i, y1=i  )
+				my_list_lines[[ length(my_list_lines)+1]] = L1 
+ 				}}
+ 					
 					
 		# --- Make the plot !
 		p <- plot_ly() %>%
@@ -941,10 +971,10 @@ print("---- ok on commence la sheeet2 ----")
 			add_trace( x=don[,4] , y=don[,7] , type="scatter", mode="markers"  , text=don$text , hoverinfo="text"  , marker=list( size=15 , opacity=0.5, color=ifelse( don$group.x==don$group.y , "grey" , "red")), showlegend=F  ) %>%
 			
 			# xaxis: chromosome names
-			add_trace( x=apply(cbind(map1max[,2],map1min[,2]) , 1 , mean) , y=rep(retrait,nrow(map1max))  , type="scatter", mode="text", text=map1max[,1] , mode="text" , textfont=list(size=13 , color="orange") , showlegend=F) %>%	
+			#add_trace( x=apply(cbind(map1max[,2],map1min[,2]) , 1 , mean) , y=rep(retrait,nrow(map1max))  , type="scatter", mode="text", text=map1max[,1] , mode="text" , textfont=list(size=13 , color="orange") , showlegend=F) %>%	
 
 			# yaxis: chromosome names
-			add_trace( x=rep(retrait,nrow(map2max)) , y=apply(cbind(map2max[,2],map2min[,2]) , 1 , mean), type="scatter", mode="text", text=map1max[,1] , mode="text" , textfont=list(size=13 , color="orange"), showlegend=F ) %>%
+			#add_trace( x=rep(retrait,nrow(map2max)) , y=apply(cbind(map2max[,2],map2min[,2]) , 1 , mean), type="scatter", mode="text", text=map1max[,1] , mode="text" , textfont=list(size=13 , color="orange"), showlegend=F ) %>%
 		
 			# Layout
 			layout( 
@@ -953,9 +983,9 @@ print("---- ok on commence la sheeet2 ----")
 				yaxis=lay_y
 				) %>%
 					
-			# Add rectangles
+			# Add rectangles and lines
 			layout( title = "",
-             shapes = my_list_rect
+             shapes =  c(my_list_rect, my_list_lines)
              )
                     
 			#plot it!
@@ -1001,7 +1031,7 @@ print("---- ok on commence la sheeet2 ----")
 		par(bg="transparent" , mar=c(0,0,0,0) )
 		plot(1,1,xaxt="n", yaxt="n",bty="n",xlab="",ylab="", col="transparent", xlim=c(0,4) , ylim=c(0.5,4.5) )
  		text(rep(1  ,4) , c(4,3,2,1) , c(nb_mark_map1, nb_mark_map2, nb_common_mark, coeff_cor),  col="orange" , cex=3 , adj=1 , font=2 )
-		text(rep(1.2,4) , c(4,3,2,1) , c(paste("markers in\n",name1,sep=""), paste("markers in\n",name2,sep=""), "common\nmarkers","Spearman\ncorrelation") ,  col="grey" , cex=1.3 , font=2 , adj=0 )
+		text(rep(1.2,4) , c(4,3,2,1) , c(paste("markers in\n",name1, " map",sep=""), paste("markers in\n",name2," map",sep=""), "common\nmarkers","Spearman\ncorrelation") ,  col="grey" , cex=1.3 , font=2 , adj=0 )
 
  	#Je ferme le output avec un fond transparent
   	}, bg="transparent")

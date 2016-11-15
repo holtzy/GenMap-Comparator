@@ -8,6 +8,8 @@
 8@
 9@
 10@ - Contact - 
-11@
-12@
-13@
+11@ - Run the app locally -
+12@The genetic map comparator is an R shiny application available online, but it is also possible and easy to run it locally following these steps:
+13@    - 1/ Install R on your computer and open it.
+14@    - 2/ Install the shiny library:
+15@    - 3/ Call the application from its github repository as follow:

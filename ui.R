@@ -580,6 +580,32 @@ shinyUI(navbarPage(
 
 
 
+		# ==== Use the app locally
+		fluidRow(align="center",
+			style="opacity: 1;background-color:white; margin-top: 0px;width: 100%;",
+			column(6,offset=3,
+				# Set the style of this page
+				br(),
+				helpText(strong(legend6[11] , style="color:orange ; font-family: 'times'; font-size:30pt ; font-type:bold" ) ) ,
+				hr()
+			)),
+		fluidRow(align="justify",
+			style="opacity:0.9; background-color: white ;margin-top: 0px; width: 100%;",
+			column(6,offset=3,
+				br(),
+				legend6[12],br(),br(),
+				legend6[13],br(),br(),
+				legend6[14],br(),
+				code("install.packages(shiny)"),br(),
+				code("library(shiny)"),br(),br(),
+				legend6[15],br(),
+				code("runGitHub(\"GenMap-Comparator\",\"holtzy\")"),br(),
+				br(),br()
+				)
+			),
+
+
+
 
 
 		# ==== Contact
