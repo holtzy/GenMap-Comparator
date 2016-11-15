@@ -4,9 +4,8 @@ The Genetic Map Comparator
 The Genetic Map Comparator is a R Shiny application made to compare genetic maps.
 You can use it trough the online version [**here**](www.r-graph-gallery.com)
 Please find the related publication in [**bioinformatics**](www.r-graph-gallery.com)
-
+Here is a screenshot of the main sheets of the app:
 ![fig1](REDACTION/FIGURE/Figure1.png)
-![](http://www.r-graph-gallery.com/wp-content/uploads/2015/10/logo3-300x225.jpg)
 
 
 Overview
