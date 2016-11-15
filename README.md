@@ -7,6 +7,7 @@ Please find the related publication in [**bioinformatics**](www.r-graph-gallery.
 
 ![]("GenMap-Comparator/REDACTION/FIGURE/Figure1.tiff")
 ![]("http://www.r-graph-gallery.com/wp-content/uploads/2015/10/logo3-300x225.jpg")
+![stack Overflow](http://lmsotfy.com/so.png)
 Overview
 --------
 Several **pages** are proposed to compare genetic maps
