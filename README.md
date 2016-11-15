@@ -18,7 +18,7 @@ The Genetic map comparator is able to import map files produced by most commonly
 
 Local use
 --------
-If you don't want to use the online version, you can use the tool locally.
+For large datasets or privacy concerns, you can use the tool locally.
 You need R to be installed on your computer & several libraries to be installed.
 See the code below:
 ```
@@ -39,7 +39,7 @@ Yan Holtz: [homepage](https://holtzyan.wordpress.com/)
 Jacques David: [homepage](https://www.researchgate.net/profile/Jacques_David4)  
 Vincent Ranwez: [homepage](https://sites.google.com/site/ranwez/)  
   
-We would like to thank **Cédric Goby** for his help during the shiny server deployment and **François Lechevallier** for developing and maintaining the website of the application.  
+We would like to thank **Cédric Goby** for his help during the shiny server deployment and **François Lechevallier** for developing and maintaining the [website](http://bioweb.supagro.inra.fr/geneticMapComparator/) hosting this tool.  
 
 
 
