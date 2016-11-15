@@ -1,13 +1,13 @@
 1@Summary Statistics
-2@ - Key statistics (several maps) - 
-3@Here you can compare various maps throught five key statistics:
-4@ 1. their number of genetic markers, 2. their overall size (in cM), 3. the average gap size between 2 of their markers (cM), 4. the size of their biggest gap (cM) and the number of unique positions. 
-5@ - Key statistics (1 map) - 
-6@This table provides five key statistics for the chromosomes of the selected map (1. their number of genetic markers, 2. their overall size (in cM), 3. the average gap size between 2 of their markers (cM), 4. the size of their biggest gap (cM) and the number of unique positions). It is the usual table you provide when doing a publication involving genetic maps.
-7@ - Marker density - 
-8@Here is a description of marker density along chromosomes. This figure allows to visualize chromosome lengths variation among maps, and to identified regions with unusualy low/high genetic marker density.
+2@ - Key Statistics (several maps) - 
+3@Here you can compare various maps through five key statistics:
+4@ 1. Number of genetic markers, 2. Overall size (in cM), 3. Average gap size between 2 of their markers (cM), 4. Size of their biggest gap (cM) and the number of unique positions. 
+5@ - Key Statistics (1 map) - 
+6@This table provides five key statistics for the chromosomes of the selected map: 1. their number of genetic markers, 2. their overall size (in cM), 3. the average gap size between 2 of their markers (cM), 4. the size of their biggest gap (cM) and the number of unique positions. This is the usual table you provide when doing a publication involving genetic maps.
+7@ - Marker Density - 
+8@Here is a description of marker density along chromosomes. This figure allows to visualize chromosome length variation among maps, and to identify regions with unusually high/low genetic marker density.
 9@Select some maps:
 10@Select some chromosomes:
 11@Select one map:
-12@The donut plot (on the left) summarizes the selected statistic comparison for the whole maps, whereas the barplot provides details for every chromosome.
+12@The donut plot (on the left) summarizes the selected statistic comparison, whereas the bar-plot provides details for every chromosome separately.
 13@Select one feature

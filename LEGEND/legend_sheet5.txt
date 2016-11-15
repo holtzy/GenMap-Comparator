@@ -1,9 +1,9 @@
-1@Raw data
-2@This table shows the raw marker data (as read from your input file) for the selected map. You can sort rows (i.e. markers) acording to i) their chromosome/group location, ii) their name or iii) their position.
+1@Raw Data
+2@This table shows the raw marker data (as read from your input file) for the selected map. You can sort rows (i.e. markers) according to i) chromosome/group location, ii) name or iii) position.
 3@Select the reference map:
 4@Select chromosome(s):
 5@You can also search for a specific marker based on its name.
-6@Raw marker information
+6@Raw Marker Information
 7@
 8@
 9@

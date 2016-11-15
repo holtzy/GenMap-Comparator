@@ -294,7 +294,7 @@ shinyUI(navbarPage(
 		fluidRow(align="justify",
 			style="opacity:0.9; background-color: white ;margin-top: 0px; width: 100%;",
 			column(6,offset=3,
-				br(),legend3[3],br(),br(),legend3[6],br(),br(),legend3[7],a(em("color.") , style="color:blue", href = "http://www.color-hex.com/" , target="_blank")
+				br(),legend3[3],br(),br(),legend3[6],br(),br(),legend3[7],a(em("colour.") , style="color:blue", href = "http://www.color-hex.com/" , target="_blank")
 				)
 			),br(),br(),
 
@@ -318,7 +318,7 @@ shinyUI(navbarPage(
 				wellPanel( sliderInput("thickness", "Line thickness:", min=0.1, max=12, value=2.0) )
 				),
 			column(3,offset=0,
-				wellPanel( textInput("my_color", "Line color:" ,  value="purple" ) )
+				wellPanel( textInput("my_color", "Line colour:" ,  value="purple" ) )
 				)
 			),
 
@@ -556,21 +556,21 @@ shinyUI(navbarPage(
 			style="opacity:0.9; background-color: white ;margin-top: 0px; width: 100%;",
 			column(3,offset=1,align="center",
 				br(),br(),
-				"OneMap [1] format: 3 columns: linkage group, marker name and position in the map",
+				"OneMap [1] format: 3 columns: linkage group, marker name and position in the map.",
 				downloadLink("load_ex_format1", label = "Download"),br(),
 				dataTableOutput('doc_ex1' , width="100px"),
 				br()
 				),
 			column(3,offset=1,align="center",
 				br(),
-				"MapChart [2] format: composed of a sequence of linkage groups, each with a header line specifying the linkage group title, followed by a sequence of lines with locus names and map positions.",
+				"MapChart [2] format: composed of a sequence of linkage groups, each with a header specifying the linkage group title, followed by a sequence of lines with locus names and map positions.",
 				downloadLink("load_ex_format2", label = "Download"),
 				dataTableOutput('doc_ex2' , width="100px"),
 				br()
 				),
 			column(3,offset=1,align="center",
 				br(),
-				"Carthagène [3] format: 1 line only. LG are separated with {}. Then markers name and positions are provided successively. Output created with the \'mapget\' command",
+				"Carthagène [3] format: 1 line only. Linkage groups are separated with {}. Then marker names and positions are provided successively. Output created with the \'mapget\' command.",
 				downloadLink("load_ex_format3", label = "Download"),br(),
 				dataTableOutput('doc_ex3' , width="300px"),
 				br()

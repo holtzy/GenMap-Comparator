@@ -1,6 +1,6 @@
-1@Interchromosomal Analysis
-2@ - Interchromosomal Analysis - 
-3@Comparison of markers positions observed in two maps. Selecting a single chromosome allows to visualize recombination rates between maps. Selecting all chromosomes allows to visualize interchromosomal recombinations (i.e. markers not attributed to the same chromosome in the two maps)
+1@Interchromosome Analysis
+2@ - Interchromosome Analysis - 
+3@The comparison of marker positions can be observed for two maps. Selecting a single chromosome allows to visualize recombination rates between maps. Selecting all chromosomes allows to visualize interchromosome recombinations (i.e. markers not attributed to the same chromosome in the two maps)
 4@Select the first map:
 5@Select the second map:
 6@Select chromosome(s):
