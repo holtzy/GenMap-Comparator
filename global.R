@@ -21,7 +21,7 @@ if(compareVersion(R_version, R_min_version) < 0){
 # ----- PART2: Install basic required packages if not available/installed.
 install_missing_packages = function(pkg, version = NULL, verbose = TRUE){
   availpacks = .packages(all.available = TRUE)
-  #source("http://bioconductor.org/biocLite.R")
+  source("http://bioconductor.org/biocLite.R")
   missingPackage = FALSE
   if(!any(pkg %in% availpacks)){
     if(verbose){
