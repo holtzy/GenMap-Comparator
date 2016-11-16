@@ -1,2 +1,0 @@
-for i in ROUGH/* ; do a=$(echo $i | sed 's/ROUGH\///') ; echo $a ; cat $i | sed 's/-[0-9.]*$//' | sed 's/ //g' | sed 's/(I)//' | sed 's/8(1)/8/' > CLEAN/$a  ; done
-
