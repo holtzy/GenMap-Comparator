@@ -16,7 +16,8 @@ library(DT)
 library(RColorBrewer)
 library(shinyAce) 
 library(shinythemes) 
-
+library(qualV)
+		
 # == Colors for the App :
 my_colors=brewer.pal( 12 , "Set3")[-2]
 

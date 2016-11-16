@@ -556,21 +556,21 @@ shinyUI(navbarPage(
 			style="opacity:0.9; background-color: white ;margin-top: 0px; width: 100%;",
 			column(3,offset=1,align="center",
 				br(),br(),
-				"OneMap [1] format: 3 columns: linkage group, marker name and position in the map.",
+				a("OneMap",href="https://cran.r-project.org/web/packages/onemap/onemap.pdf", target="_blank")," [1] format: 3 columns: linkage group, marker name and position in the map.",
 				downloadLink("load_ex_format1", label = "Download"),br(),
 				dataTableOutput('doc_ex1' , width="100px"),
 				br()
 				),
 			column(3,offset=1,align="center",
 				br(),
-				"MapChart [2] format: composed of a sequence of linkage groups, each with a header specifying the linkage group title, followed by a sequence of lines with locus names and map positions.",
+				a("MapChart",href="http://jhered.oxfordjournals.org/content/93/1/77.full", target="_blank")," [2] format: composed of a sequence of linkage groups, each with a header specifying the linkage group title, followed by a sequence of lines with locus names and map positions.",
 				downloadLink("load_ex_format2", label = "Download"),
 				dataTableOutput('doc_ex2' , width="100px"),
 				br()
 				),
 			column(3,offset=1,align="center",
 				br(),
-				"Carthagène [3] format: 1 line only. Linkage groups are separated with {}. Then marker names and positions are provided successively. Output created with the \'mapget\' command.",
+				a("Carthagène",href="http://www7.inra.fr/mia/T/CarthaGene/", target="_blank"), " [3] format: 1 line only. Linkage groups are separated with {}. Then marker names and positions are provided successively. Output created with the \'mapget\' command.",
 				downloadLink("load_ex_format3", label = "Download"),br(),
 				dataTableOutput('doc_ex3' , width="300px"),
 				br()
@@ -594,7 +594,7 @@ shinyUI(navbarPage(
 			column(6,offset=3,
 				br(),
 				legend6[12],br(),br(),
-				legend6[13],br(),br(),
+				legend6[13],a("Install R",href="https://www.r-project.org/", target="_blank"),legend6[16],br(),br(),
 				legend6[14],br(),
 				code("install.packages(shiny)"),br(),
 				code("library(shiny)"),br(),br(),
@@ -620,7 +620,6 @@ shinyUI(navbarPage(
 		fluidRow( align="center",
 			style="opacity: 1;background-color:white; margin-top: 0px;width: 100%;",
 			column(3,offset=3,
-				#img(src="https://holtzyan.files.wordpress.com/2015/07/montpellier.png" ,  height = 300, width = 500),
 				img(src="map_montpellier.png" ,  width = 500),
 				br()
 				),
@@ -659,7 +658,7 @@ shinyUI(navbarPage(
 				br(),
 				"1. Margarido GRA, Souza AP, Garcia AAF. OneMap: software for genetic mapping in outcrossing species. Hereditas. Wiley Online Library; 2007;144: 78–79.", br(),
 				"2. Lander ES, Green P, Abrahamson J, Barlow A, Daly MJ, Lincoln SE, et al. MAPMAKER: an interactive computer package for constructing primary genetic linkage maps of experimental and natural populations. Genomics. Elsevier; 1987;1: 174–181.", br(),
-				"3. de Givry S, Bouchez M, Chabrier P, Milan D, Schiex T. CARTHAGENE: Multipopulation integrated genetic and radiation hybrid mapping. Bioinformatics. 2005;21: 1703–1704. doi:10.1093/bioinformatics/bti222.", br(),
+				"3. de Givry S, Bouchez M, Chabrier P, Milan D, Schiex T. CARTHAGENE: Multipopulation integrated genetic and radiation hybrid mapping. Bioinformatics. 2005;21: 1703–1704.", br(),
 				br(), br()
 			)),
 

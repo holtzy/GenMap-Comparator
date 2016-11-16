@@ -787,53 +787,114 @@ output$load_ex_format3 <- downloadHandler(
 	
 	
 		# --- PART 5.0: FIND PROBLEMATIC MARKERS 
-		#M1=don$marker[order(don[,3], don[,5])]
-		#good=LCS(as.character(M1),as.character(M2))
-		#print(good)
+		# I do a function that return markers that are not problematic
+		give_not_problematic_markers=function(x,y){
+			M1=pos$marker[order(pos[,x], pos[,y])]
+			M2=pos$marker[order(pos[,y], pos[,x])]
+			good=LCS(as.character(M1),as.character(M2))$LCS
+			return(good)
+			}
 		
 
 		# --- PART 5.1: CREATE THE Y AXIS OF LINK BETWEEN MAPS
-		#Je fais une fonction qui me fait mon vecteur de position pour 2 cartes données : AXE des Y
+		# Je fais une fonction qui me fait 2 vecteurs de positions pour 2 cartes données : AXE des Y
+		# There is one vector for the problematic vectors, and one for the not problematic markers.
 		function_pos=function(x,y){
+
 			#Récupération de 2 carte seulement:
-			pos=as.matrix(na.omit(don[,c(x,y)]))
+			pos=na.omit(don[,c(1,x,y)])
+			print("longueur de pos")
+			print(nrow(pos))
 			
-			#Il faut que je fasse un vecteur avec les valeur en cM dans l'ordre
-			my_vect=as.vector(t(pos))
+			# Find the non-problematic markers and count them
+			M1=pos$marker[order(pos[,2], pos[,3])]
+			M2=pos$marker[order(pos[,3], pos[,2])]
+			my_notprobmarkers=LCS(as.character(M1),as.character(M2))$LCS
+
+			pos_not_prob=pos[which(pos$marker%in%my_notprobmarkers) , ]
+			pos_prob=pos[-which(pos$marker%in%my_notprobmarkers) , ]
+
+			nb_not_prob=nrow(pos_not_prob)
+			nb_prob=nrow(pos_prob)
+			print("longueur no prob / prob")
+			print(nb_not_prob)
+			print(nb_prob)
+			
+			#Il faut que je fasse 2 vecteurs avec les valeur en cM dans l'ordre
+
+			# --> NOT PROBLEMATIC MARKERS
+			my_vect=as.vector(t(as.matrix(pos_not_prob[,c(2,3)])))
 			correctif=seq(1:length(my_vect)) + rep(c(0,0,1,-1) , length.out=length(my_vect) )  
-			my_vect=my_vect[correctif]
-			
+			my_vect=my_vect[correctif]			
 			#Mais attention probleme! si je fini sur la carte de gauche, il faut que je revienne a la carte de droite avant de passer a la paire de carte suivante!
 			if(length(my_vect)%%4 == 0){ my_vect=c(my_vect , my_vect[length(my_vect)] , my_vect[length(my_vect)-1]) } 
-
-			return(my_vect)
+			my_vect_not_prob=my_vect
+			
+			# --> PROBLEMATIC MARKERS
+			my_vect=as.vector(t(as.matrix(pos_prob[,c(2,3)])))
+			correctif=seq(1:length(my_vect)) + rep(c(0,0,1,-1) , length.out=length(my_vect) )  
+			my_vect=my_vect[correctif]			
+			#Mais attention probleme! si je fini sur la carte de gauche, il faut que je revienne a la carte de droite avant de passer a la paire de carte suivante!
+			if(length(my_vect)%%4 == 0){ my_vect=c(my_vect , my_vect[length(my_vect)] , my_vect[length(my_vect)-1]) } 
+			my_vect_prob=my_vect			
+			
+			# Return what I need
+			return( list(my_vect_not_prob, my_vect_prob, nb_not_prob, nb_prob) )
 			}
 			
-		#  Apply te function to the selected maps.
-		pos_final=c()
+		#  Apply the function to the selected maps.
+		pos_final_not_prob=c()
+		pos_final_prob=c()
+		nb_of_not_prob=c()
+		nb_of_prob=c()
 		for(v in c(1:(nb_selected_maps-1))){
 			col_x=v*2+1
 			col_y=v*2+3
 			a=function_pos( col_x , col_y)
-			pos_final=c(pos_final,a)
+			pos_final_not_prob=c(pos_final_not_prob,a[[1]])
+			pos_final_prob=c(pos_final_prob,a[[2]])
+			nb_of_not_prob=c(nb_of_not_prob,a[[3]])
+			nb_of_prob=c(nb_of_prob,a[[4]])
 			}
-				
+		print("bilan Y")
+		print(pos_final_not_prob)		
+		print(pos_final_prob)		
+		print(nb_of_not_prob)		
+		print(nb_of_prob)		
 
 
 		# --- PART 5.2: CREATE THE X AXIS OF LINK BETWEEN MAPS
-		xaxis=c()
+		# Once more I do 2 vectors: one for the good markers, one for the problematic ones
+		xaxis_not_prob=c()
+		xaxis_prob=c()
 		num=0
 		for(i in c(1:(nb_selected_maps-1))){
 			num=num+1
-			my_nb=nrow(na.omit(don[,c(i*2+1,i*2+3)]))
+			
+			# not problematic markers
+			my_nb=nb_of_not_prob[num]
 			to_add=rep(c(num,num+1,num+1,num),my_nb/2)
 			if(length(to_add)%%4 == 0){ to_add=c(to_add , to_add[length(to_add)] , to_add[length(to_add)-1]) } 
-			xaxis=c(xaxis,to_add)
+			xaxis_not_prob=c(xaxis_not_prob,to_add)
+
+			# problematic markers
+			my_nb=nb_of_prob[num]
+			to_add=rep(c(num,num+1,num+1,num),my_nb/2)
+			if(length(to_add)%%4 == 0){ to_add=c(to_add , to_add[length(to_add)] , to_add[length(to_add)-1]) } 
+			xaxis_prob=c(xaxis_prob,to_add)
+
 			}
+
+		print("bilan X")
+		print(xaxis_not_prob)		
+		print(xaxis_prob)		
 
 
 		# --- PART 5.3: MAKE THE GRAPH WITH PLOTLY
-		p=plot_ly(x=xaxis , y=pos_final , hoverinfo="none" , type="scatter", mode="lines",  line=list(width=input$thickness, color=input$my_color , opacity=0.1) , showlegend=F)%>%   
+		p=plot_ly(x=xaxis_not_prob , y=pos_final_not_prob , hoverinfo="none" , type="scatter", mode="lines",  line=list(width=input$thickness, color=input$my_color , opacity=0.1) , showlegend=F)%>%   
+
+		# Add problematic markers
+		add_trace(x=xaxis_prob , y=pos_final_prob , hoverinfo="none" , type="scatter", mode="lines",  line=list(width=input$thickness, color="grey" , opacity=0.1) , showlegend=F)%>%   
 
 		# Custom the layout
 		layout( 
@@ -847,7 +908,7 @@ output$load_ex_format3 <- downloadHandler(
 		# Add vertical lines to represent chromosomes.
 		for(m in c(1:nb_selected_maps)){
 			p=add_trace(p, x=c(m,m), y=c(0, max(don[,m*2+1],na.rm=T)) , type="scatter", mode="lines" , line=list(width=4, color="black"),showlegend=F )%>%
-			layout( yaxis=list(range=c(0,max(pos_final))) )
+			layout( yaxis=list(range=c(0,max(don[,m*2+1],na.rm=T))) )
 			}
 		
 		# Add markers
@@ -855,7 +916,7 @@ output$load_ex_format3 <- downloadHandler(
 			obj2=don[,c(1,m*2+1)]
 			obj2$text=paste(obj2[,1],"\npos: ",obj2[,2],sep="")
 			p=add_trace(p, x=rep(m,nrow(obj2) ) , y=obj2[,2] , type="scatter", mode="markers+lines", marker=list(color="black" , size=10 , opacity=0.5,symbol=24) , text=obj2$text , hoverinfo="text", showlegend=F)%>%
-			layout( yaxis=list(range=c(0,max(pos_final))) )
+			layout( yaxis=list(range=c(0,max(pos_final_not_prob))) )
 			}
 
 		# Add maps names			
