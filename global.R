@@ -47,8 +47,9 @@ install_missing_packages = function(pkg, version = NULL, verbose = TRUE){
   }
   if(missingPackage){
     #biocLite(i, suppressUpdates = TRUE)
-    print(paste("---- installing a more recent version of"),pckg,sep="")
-	install.packages(i, repos = "http://cran.r-project.org")  }
+    #print(pkg)
+    print(paste("---- installing a more recent version of",pkg,sep=""))
+	install.packages(pkg, repos = "http://cran.r-project.org")  }
 }
 
 
