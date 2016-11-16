@@ -767,6 +767,12 @@ output$load_ex_format3 <- downloadHandler(
 			}}
 		don=unique(don)
 		
+		# --- If the "normalize box" is choosen, I normalize length
+		if(input$ask_for_normalize==TRUE){
+			for(i in seq(3,ncol(don),2)){
+				don[,i]=don[,i]*100/max(don[,i],na.rm=T)
+			}}
+		print(head(don))
 		
 		
 		# ========== PART 4 : IF ONE MAP IS SELECTED ONLY, I GIVE A CERTAIN TYPE OF PLOT
@@ -785,17 +791,6 @@ output$load_ex_format3 <- downloadHandler(
 
 		# ========== PART 5 : COMPARISON PLOT IF I HAVE AT LEAST 2 MAPS SELECTED
 	
-	
-		# --- PART 5.0: FIND PROBLEMATIC MARKERS 
-		# I do a function that return markers that are not problematic
-		give_not_problematic_markers=function(x,y){
-			M1=pos$marker[order(pos[,x], pos[,y])]
-			M2=pos$marker[order(pos[,y], pos[,x])]
-			good=LCS(as.character(M1),as.character(M2))$LCS
-			return(good)
-			}
-		
-
 		# --- PART 5.1: CREATE THE Y AXIS OF LINK BETWEEN MAPS
 		# Je fais une fonction qui me fait 2 vecteurs de positions pour 2 cartes données : AXE des Y
 		# There is one vector for the problematic vectors, and one for the not problematic markers.
@@ -803,22 +798,15 @@ output$load_ex_format3 <- downloadHandler(
 
 			#Récupération de 2 carte seulement:
 			pos=na.omit(don[,c(1,x,y)])
-			print("longueur de pos")
-			print(nrow(pos))
-			
+						
 			# Find the non-problematic markers and count them
 			M1=pos$marker[order(pos[,2], pos[,3])]
 			M2=pos$marker[order(pos[,3], pos[,2])]
 			my_notprobmarkers=LCS(as.character(M1),as.character(M2))$LCS
-
 			pos_not_prob=pos[which(pos$marker%in%my_notprobmarkers) , ]
 			pos_prob=pos[-which(pos$marker%in%my_notprobmarkers) , ]
-
 			nb_not_prob=nrow(pos_not_prob)
 			nb_prob=nrow(pos_prob)
-			print("longueur no prob / prob")
-			print(nb_not_prob)
-			print(nb_prob)
 			
 			#Il faut que je fasse 2 vecteurs avec les valeur en cM dans l'ordre
 
@@ -838,7 +826,7 @@ output$load_ex_format3 <- downloadHandler(
 			if(length(my_vect)%%4 == 0){ my_vect=c(my_vect , my_vect[length(my_vect)] , my_vect[length(my_vect)-1]) } 
 			my_vect_prob=my_vect			
 			
-			# Return what I need
+			# Return the non problematic and problematic marker vectors
 			return( list(my_vect_not_prob, my_vect_prob, nb_not_prob, nb_prob) )
 			}
 			
@@ -856,11 +844,6 @@ output$load_ex_format3 <- downloadHandler(
 			nb_of_not_prob=c(nb_of_not_prob,a[[3]])
 			nb_of_prob=c(nb_of_prob,a[[4]])
 			}
-		print("bilan Y")
-		print(pos_final_not_prob)		
-		print(pos_final_prob)		
-		print(nb_of_not_prob)		
-		print(nb_of_prob)		
 
 
 		# --- PART 5.2: CREATE THE X AXIS OF LINK BETWEEN MAPS
@@ -873,26 +856,22 @@ output$load_ex_format3 <- downloadHandler(
 			
 			# not problematic markers
 			my_nb=nb_of_not_prob[num]
-			to_add=rep(c(num,num+1,num+1,num),my_nb/2)
+			if(my_nb==1){ to_add=c(num,num+1) }else{ to_add=rep(c(num,num+1,num+1,num),my_nb/2) }
 			if(length(to_add)%%4 == 0){ to_add=c(to_add , to_add[length(to_add)] , to_add[length(to_add)-1]) } 
 			xaxis_not_prob=c(xaxis_not_prob,to_add)
 
 			# problematic markers
 			my_nb=nb_of_prob[num]
-			to_add=rep(c(num,num+1,num+1,num),my_nb/2)
+			if(my_nb==1){ to_add=c(num,num+1) }else{ to_add=rep(c(num,num+1,num+1,num),my_nb/2) }
 			if(length(to_add)%%4 == 0){ to_add=c(to_add , to_add[length(to_add)] , to_add[length(to_add)-1]) } 
 			xaxis_prob=c(xaxis_prob,to_add)
 
 			}
-
-		print("bilan X")
-		print(xaxis_not_prob)		
-		print(xaxis_prob)		
-
-
+		
+		
 		# --- PART 5.3: MAKE THE GRAPH WITH PLOTLY
-		p=plot_ly(x=xaxis_not_prob , y=pos_final_not_prob , hoverinfo="none" , type="scatter", mode="lines",  line=list(width=input$thickness, color=input$my_color , opacity=0.1) , showlegend=F)%>%   
-
+		p=plot_ly(x=xaxis_not_prob , y=pos_final_not_prob, hoverinfo="none" , type="scatter", mode="lines", line=list(width=input$thickness, color=input$my_color , opacity=0.1), showlegend=FALSE )%>%   
+		
 		# Add problematic markers
 		add_trace(x=xaxis_prob , y=pos_final_prob , hoverinfo="none" , type="scatter", mode="lines",  line=list(width=input$thickness, color="grey" , opacity=0.1) , showlegend=F)%>%   
 
@@ -921,8 +900,30 @@ output$load_ex_format3 <- downloadHandler(
 
 		# Add maps names			
 		p=add_trace(p, x=seq(1:nb_selected_maps) , y=rep(-10,nb_selected_maps) , text=unlist(liste_of_map_to_compare) , type="scatter" , mode="lines+text" , textfont=list(size=20 , color="orange"), line=list(color="transparent"), showlegend=F )
+		
+
+
+		# --- PART 5.4: IF THE USER NEED THE PROBLEMATIC MARKERS
+		list_prob_print=c()
+		for(i in seq(3,(ncol(don)-2),2 ) ){
+			for(v in seq(5,ncol(don),2)){
+				if(v>i){
+					print(paste(i,v,sep="----"))
+					pos=na.omit(don[,c(1,i,v)])
+					M1=pos$marker[order(pos[,2], pos[,3])]
+					M2=pos$marker[order(pos[,3], pos[,2])]
+					my_notprobmarkers=LCS(as.character(M1),as.character(M2))$LCS
+					my_probmarkers=pos$marker[-which(pos$marker%in%my_notprobmarkers)]
+					list_prob_print=c(list_prob_print, as.character(my_probmarkers))
+				}}}
+		list_prob_print=data.frame(problematic_markers=unique(list_prob_print))
+		output$downloadID <- downloadHandler(
+			filename = function() { paste('Prob_markers_GenMapComp', Sys.Date(), '.csv', sep='') },
+			content = function(file) { write.table(list_prob_print, file, row.names=FALSE)}
+			)
+
+		#print plotly graph
 		p
-	
 	})
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------#

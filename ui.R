@@ -299,27 +299,21 @@ shinyUI(navbarPage(
 			),br(),br(),
 
 
-		# === Two widgets to select maps and variables for pie and barplot:
+		# === Two widgets to select maps and chromo
 		fluidRow( align="center",
 			style="opacity:0.9; background-color: white ;margin-top: 0px; width: 100%;",
-			column(3,offset=3,
-				wellPanel(uiOutput("choose_chromo_sheet3"))
-				),
-			column(3,offset=0,
-				wellPanel(uiOutput("choose_maps3"))
-				)
+			column(3,offset=1, wellPanel(uiOutput("choose_chromo_sheet3"))),
+			column(3,offset=0, wellPanel(uiOutput("choose_maps3"))),
+			column(3,offset=0, wellPanel(checkboxInput("ask_for_normalize", "normalize map lenghts?", value = FALSE, width = NULL)))
 			),
 
 
 		# === Two widgets to select maps and variables for pie and barplot:
 		fluidRow( align="center",
 			style="opacity:0.9; background-color: white ;margin-top: 0px; width: 100%;",
-			column(3,offset=3,
-				wellPanel( sliderInput("thickness", "Line thickness:", min=0.1, max=12, value=2.0) )
-				),
-			column(3,offset=0,
-				wellPanel( textInput("my_color", "Line colour:" ,  value="purple" ) )
-				)
+			column(3,offset=1, wellPanel( sliderInput("thickness", "Line thickness:", min=0.1, max=12, value=2.0) ) ),
+			column(3,offset=0, wellPanel( textInput("my_color", "Line colour:" ,  value="purple" ))),
+			column(3,offset=0, wellPanel(downloadButton("downloadID", label = "Download problematic markers")))
 			),
 
 		# === Separation

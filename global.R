@@ -9,7 +9,17 @@
 # In this file, I add all functions / file / parameters that are NOT reactive and that are common to ui.R and server.R
 # It is my global environment !
 
-# == Libraries
+
+# == Check if libraries are available. install it if not.
+getPckg <- function(pckg) install.packages(pckg, repos = "http://cran.r-project.org")
+for(i in c("shiny","plotly","DT","RColorBrewer","shinyAce","shinythemes","qualV")){
+	pckg = try(require(i, character.only = TRUE))
+	if(!pckg) {
+		getPckg(i)
+}}
+
+
+# == load Libraries
 library(shiny)
 library(plotly)
 library(DT)
