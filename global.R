@@ -54,7 +54,7 @@ install_missing_packages = function(pkg, version = NULL, verbose = TRUE){
 
 
 # PART3: ---  Define list of package names and required versions.
-deppkgs = c(shiny="0.14.2", plotly = "4.5.6", ggplot2 = "2.2.0", DT="0.2", shinythemes="1.1", shinyAce="0.2.1", RColorBrewer="1.1.2", qualV="0.3.2")
+deppkgs = c(shiny="0.14.2", plotly = "4.5.6", ggplot2 = "2.2.0", DT="0.2", shinythemes="1.1", shinyAce="0.2.1", RColorBrewer="1.1.2", qualV="0.3.2", colourpicker="0.2")
 
 # Loop on package check, install, update
 pkg1 = mapply(install_missing_packages,

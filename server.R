@@ -95,7 +95,7 @@ output$load_ex_format3 <- downloadHandler(
 			# I need at least 2 files
 			if( length(input$file1$datapath)<2 ){
 	  			mistake_presence=TRUE
-				output$error_message<- renderUI({ helpText("Please select at least 2 maps" , style="color:red ; font-family: 'times'; font-size:11pt") })
+				output$error_message<- renderUI({ helpText("Please select at least 2 maps" , style="color:red ; font-family: 'times'; font-size:13pt") })
 											
 			# If I have at least 2 maps, I check them one by one:
 			}else{
@@ -107,15 +107,14 @@ output$load_ex_format3 <- downloadHandler(
 					# if the file is NOT readable by R
 					if(class(a)=="try-error"){
 						mistake_presence=TRUE
-	  					output$error_message<- renderUI({ helpText("File input is not readable by R. Is it a genetic map?" , style="color:red ; font-family: 'times'; font-size:11pt") })
+	  					output$error_message<- renderUI({ helpText("File input is not readable by R. Is it a genetic map?" , style="color:red ; font-family: 'times'; font-size:13pt") })
 						break				
 				
 						# if the file does not have 2 or 3 columns
 					}else{
 						if( !ncol(a)%in%c(1,2,3) & nrow(a)!=0 ){
-							print(ncol(a))
 							mistake_presence=TRUE
-	  						output$error_message<- renderUI({ helpText("One of your file does not have 2 nor 3 columns" , style="color:red ; font-family: 'times'; font-size:11pt") })
+	  						output$error_message<- renderUI({ helpText("One of your file does not have 2 nor 3 columns" , style="color:red ; font-family: 'times'; font-size:13pt") })
 							break						
 						}}}
 					
@@ -233,6 +232,13 @@ output$load_ex_format3 <- downloadHandler(
 			
 			# And ordered
 			map_tmp=map_tmp[order(map_tmp$group , map_tmp$position ) , ]
+			
+			# I remove markers if the user choosed to remove markers in the raw data sheet!
+			list_mark_remove=unlist(strsplit(input$text_mark_remove, ","))
+			list_mark_remove=paste("^",list_mark_remove,"$",sep="")
+			for(i in list_mark_remove){
+				map_tmp=map_tmp[!grepl(i,map_tmp$marker) , ]
+				}
 			
 			# Add it to the list
 			my_maps[[length(my_maps)+1]]=map_tmp
@@ -435,23 +441,17 @@ output$load_ex_format3 <- downloadHandler(
 	output$my_barplot=renderPlot({ 
 	
 		# Get the needed reactive objects:
-		print("ok1")
 		summary_stat=MY_summary_stat()
 		my_map_files=unlist(MY_map_files())
-		print("map files")
-		print(my_map_files)
 			
  		# Selected variable ?
-		print("ok2")
 		selected_var=which(c("# markers","map size","average gap size","biggest gap size","# unique positions")%in%input$var_for_barplot)
 		
 		# Selected Maps ?
-		print("ok3")
 		selected_maps=which(my_map_files%in%input$selected_maps_sheet2)
 		nb_selected_maps=length(selected_maps)
 		
 		# Create a table which gives this selected_variable for every selected maps and every chromosomes.
-		print("ok4")
 		barplot_table=summary_stat[[selected_maps[1]]] [,c(1,selected_var+1)]
 		for(i in selected_maps[-1]){
 			barplot_table=merge(barplot_table , summary_stat[[i]] [,c(1,selected_var+1)] , by.x=1 , by.y=1 , all=T)
@@ -461,12 +461,10 @@ output$load_ex_format3 <- downloadHandler(
 		barplot_table=t(as.matrix(barplot_table[,-1]))
 		
 		# Make the barplot !
-		print("ok5")
 		par(mar=c(3,3,3,8))
 		barplot(barplot_table , beside=T , col=my_colors[1:length(selected_maps)]) 
 		#mtext(legend[23] , col="#3C3C3C" , line=-3 , at=ncol(barplot_table)*nb_selected_maps+8)
 
-		print("--- barplot finit --- ")
 		
 	#Close the render-barplot 
 	})
@@ -494,7 +492,6 @@ output$load_ex_format3 <- downloadHandler(
   		if (is.null(input$var_for_barplot) | is.null(input$selected_maps_sheet2) ) {return(NULL)}
 
 		# Selected variable ?
-		#all_var=c("nb. marker","size","average gap","biggest gap","Nb. uniq pos.")
 		all_var=c("# markers","map size","average gap size","biggest gap size","# unique positions")
 		selected_var=which(all_var%in%input$var_for_barplot)
 
@@ -515,9 +512,7 @@ output$load_ex_format3 <- downloadHandler(
 		par(mar=c(3,3,3,10))
 		my_labels=paste(map_files[selected_maps],"\n",all_var[selected_var]," : ",barplot_table,sep="")
 		doughnut(barplot_table, col=my_colors , border="white" , inner.radius=0.5, labels=my_labels )
-		#mtext(expression(italic(legend[24])) , col="#3C3C3C" , line=-5)
 	
-		print("--- donut plot finit --- ")
 
 	#Close the render-barplot 
 	})
@@ -558,7 +553,6 @@ output$load_ex_format3 <- downloadHandler(
 					DT::datatable( toprint , rownames = FALSE , options = list(pageLength = 40, dom = 't' ))
 			)
 		
-			print("--- summary table finit --- ")
 		
 		# Close observer
 		})
@@ -649,8 +643,6 @@ output$load_ex_format3 <- downloadHandler(
  		#Ajout des labels de l'axe des x?
 		mtext( levels(as.factor(my_data$group)) , at=(vecSep[-1]+vecSep[-length(vecSep)]) /2 , col="orange" , cex=2 , line=5, side=1 )
 
-		print("--- densityplot finit --- ")
-			
 		})
 	
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------#
@@ -772,7 +764,6 @@ output$load_ex_format3 <- downloadHandler(
 			for(i in seq(3,ncol(don),2)){
 				don[,i]=don[,i]*100/max(don[,i],na.rm=T)
 			}}
-		print(head(don))
 		
 		
 		# ========== PART 4 : IF ONE MAP IS SELECTED ONLY, I GIVE A CERTAIN TYPE OF PLOT
@@ -870,7 +861,8 @@ output$load_ex_format3 <- downloadHandler(
 		
 		
 		# --- PART 5.3: MAKE THE GRAPH WITH PLOTLY
-		p=plot_ly(x=xaxis_not_prob , y=pos_final_not_prob, hoverinfo="none" , type="scatter", mode="lines", line=list(width=input$thickness, color=input$my_color , opacity=0.1), showlegend=FALSE )%>%   
+		p=plot_ly()%>%
+		add_trace(x=xaxis_not_prob , y=pos_final_not_prob, hoverinfo="none" , type="scatter", mode="lines", line=list(width=input$thickness, color=input$my_color , opacity=0.1), showlegend=FALSE )%>%   
 		
 		# Add problematic markers
 		add_trace(x=xaxis_prob , y=pos_final_prob , hoverinfo="none" , type="scatter", mode="lines",  line=list(width=input$thickness, color="grey" , opacity=0.1) , showlegend=F)%>%   
@@ -886,7 +878,7 @@ output$load_ex_format3 <- downloadHandler(
 
 		# Add vertical lines to represent chromosomes.
 		for(m in c(1:nb_selected_maps)){
-			p=add_trace(p, x=c(m,m), y=c(0, max(don[,m*2+1],na.rm=T)) , type="scatter", mode="lines" , line=list(width=4, color="black"),showlegend=F )%>%
+			p=add_trace(p, x=c(m,m), y=c(0, max(don[,m*2+1],na.rm=T)) , type="scatter", mode="lines" , line=list(width=7, color="black", opacity=1),showlegend=F )%>%
 			layout( yaxis=list(range=c(0,max(don[,m*2+1],na.rm=T))) )
 			}
 		
@@ -894,7 +886,7 @@ output$load_ex_format3 <- downloadHandler(
 		for(m in c(1:nb_selected_maps)){
 			obj2=don[,c(1,m*2+1)]
 			obj2$text=paste(obj2[,1],"\npos: ",obj2[,2],sep="")
-			p=add_trace(p, x=rep(m,nrow(obj2) ) , y=obj2[,2] , type="scatter", mode="markers+lines", marker=list(color="black" , size=10 , opacity=0.5,symbol=24) , text=obj2$text , hoverinfo="text", showlegend=F)%>%
+			p=add_trace(p, x=rep(m,nrow(obj2) ) , y=obj2[,2] , type="scatter", mode="markers+lines", line=list(color="black", width=8), marker=list(color="black" , size=12 , opacity=0.5,symbol=24) , text=obj2$text , hoverinfo="text", showlegend=F)%>%
 			layout( yaxis=list(range=c(0,max(pos_final_not_prob))) )
 			}
 
@@ -908,7 +900,6 @@ output$load_ex_format3 <- downloadHandler(
 		for(i in seq(3,(ncol(don)-2),2 ) ){
 			for(v in seq(5,ncol(don),2)){
 				if(v>i){
-					print(paste(i,v,sep="----"))
 					pos=na.omit(don[,c(1,i,v)])
 					M1=pos$marker[order(pos[,2], pos[,3])]
 					M2=pos$marker[order(pos[,3], pos[,2])]
@@ -1009,7 +1000,7 @@ output$load_ex_format3 <- downloadHandler(
         my_list_rect=list()
         if(input$chromo_sheet4=="all"){
         	for(i in c(1:nrow(map1max))){
-        		L1=list(type = "rect", fillcolor = "blue", line = list(color = "blue"), opacity = 0.1, x0 = map1min[i,2], x1 = map1max[i,2], xref = "x", y0 = map2min[i,2], y1 = map2max[i,2], yref = "y" )
+        		L1=list(type = "rect",  fillcolor=input$col_s4_1 , line = list(color=input$col_s4_1), opacity = 0.2, x0 = map1min[i,2], x1 = map1max[i,2], xref = "x", y0 = map2min[i,2], y1 = map2max[i,2], yref = "y" )
 				my_list_rect[[ length(my_list_rect)+1]] = L1 
 				}}
 				
@@ -1030,14 +1021,8 @@ output$load_ex_format3 <- downloadHandler(
 		p <- plot_ly() %>%
 			
 			# markers
-			add_trace( x=don[,4] , y=don[,7] , type="scatter", mode="markers"  , text=don$text , hoverinfo="text"  , marker=list( size=15 , opacity=0.5, color=ifelse( don$group.x==don$group.y , "grey" , "red")), showlegend=F  ) %>%
+			add_trace( x=don[,4] , y=don[,7] , type="scatter", mode="markers"  , text=don$text , hoverinfo="text"  , marker=list( size=15 , opacity=0.5, color=ifelse( don$group.x==don$group.y , input$col_s4_2 , input$col_s4_3)), showlegend=F  ) %>%
 			
-			# xaxis: chromosome names
-			#add_trace( x=apply(cbind(map1max[,2],map1min[,2]) , 1 , mean) , y=rep(retrait,nrow(map1max))  , type="scatter", mode="text", text=map1max[,1] , mode="text" , textfont=list(size=13 , color="orange") , showlegend=F) %>%	
-
-			# yaxis: chromosome names
-			#add_trace( x=rep(retrait,nrow(map2max)) , y=apply(cbind(map2max[,2],map2min[,2]) , 1 , mean), type="scatter", mode="text", text=map1max[,1] , mode="text" , textfont=list(size=13 , color="orange"), showlegend=F ) %>%
-		
 			# Layout
 			layout( 
 				hovermode="closest" , 

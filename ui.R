@@ -294,12 +294,13 @@ shinyUI(navbarPage(
 		fluidRow(align="justify",
 			style="opacity:0.9; background-color: white ;margin-top: 0px; width: 100%;",
 			column(6,offset=3,
-				br(),legend3[3],br(),br(),legend3[6],br(),br(),legend3[7],a(em("colour.") , style="color:blue", href = "http://www.color-hex.com/" , target="_blank")
+				br(),legend3[3],legend3[6],br(),br(),legend3[7],a(em("colour.") , style="color:blue", href = "http://www.color-hex.com/" , target="_blank"),
+				br(),br(),legend3[8]
 				)
 			),br(),br(),
 
 
-		# === Two widgets to select maps and chromo
+		# === 3 first widgets
 		fluidRow( align="center",
 			style="opacity:0.9; background-color: white ;margin-top: 0px; width: 100%;",
 			column(3,offset=1, wellPanel(uiOutput("choose_chromo_sheet3"))),
@@ -308,11 +309,11 @@ shinyUI(navbarPage(
 			),
 
 
-		# === Two widgets to select maps and variables for pie and barplot:
+		# === 3 next widgets
 		fluidRow( align="center",
 			style="opacity:0.9; background-color: white ;margin-top: 0px; width: 100%;",
 			column(3,offset=1, wellPanel( sliderInput("thickness", "Line thickness:", min=0.1, max=12, value=2.0) ) ),
-			column(3,offset=0, wellPanel( textInput("my_color", "Line colour:" ,  value="purple" ))),
+			column(3,offset=0, wellPanel( colourInput("my_color", "Line colour", "#BDA3CC", allowTransparent = TRUE))),
 			column(3,offset=0, wellPanel(downloadButton("downloadID", label = "Download problematic markers")))
 			),
 
@@ -344,7 +345,7 @@ shinyUI(navbarPage(
 # --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	
 	# ----------------------
-	# SHEET 4 : INTERCHROMOSOMAL ANALYSIS
+	# SHEET 4 : INTERCHROMOSOM3 ANALYSIS
 	# ----------------------
 	tabPanel(
 		
@@ -371,7 +372,7 @@ shinyUI(navbarPage(
 
 
 		# === Left column to choose input
-		column(2, 
+		fluidRow(column(2, 
 			
 			# Make som space
 			br(""), br(""),
@@ -390,19 +391,36 @@ shinyUI(navbarPage(
 			#Close column
 			),
 		
-		# === On the space left, I add the plot
+		# === On the space left, I add the plot and color widget:
 		column(8, 
 			
 			br(),
-			plotlyOutput("plot2" ,  height = "700px" ,  width = "900px")			
+			plotlyOutput("plot2" ,  height = "700px" ,  width = "900px"),
 			
+			br(),br()
+					
 			#Close column
 			),
 
 		# === Key numbers
 		column(2, 
        		br(), plotOutput("key_numbers_sheet_3", height = "500px" ,  width = "350px"), br(),br()
-			)
+			)),
+		
+
+		# === Last line to choose colors
+		fluidRow(column(4,offset=2, style="opacity:0.9; color:grey","Custom colors" )),
+		fluidRow(column(4,offset=2, style="opacity:0.9; color:grey", hr() )),
+		fluidRow(column( 9, offset=2,
+			column(3, colourInput("col_s4_1", "Background Squares", "#BDA3CC", allowTransparent = TRUE)),
+			column(3, colourInput("col_s4_2", "Markers", "#48444A", allowTransparent = TRUE)),
+			column(3, colourInput("col_s4_3", "Markers (Interchromosome)", "#DB0913", allowTransparent = TRUE))
+			)),
+		br(),br(),br(),br(),"",br(),br(),br(),"",br(),br(),br()
+
+			
+
+
 
 		#Close the tabPanel
 		),
@@ -416,7 +434,7 @@ shinyUI(navbarPage(
 
 
 	# ----------------------
-	# SHEET 5 : ROUGH MAP
+	# SHEET 5 : RAW MAP
 	# ----------------------
 	tabPanel(
 		
@@ -436,7 +454,8 @@ shinyUI(navbarPage(
 		fluidRow(align="justify",
 			style="opacity:0.9; background-color: white ;margin-top: 0px; width: 100%;",
 			column(6,offset=3,
-				br(),legend5[2],br(),br(),legend5[5]
+				br(),legend5[2],legend5[5],br(),br(),legend5[7],br(),
+				textInput("text_mark_remove", label = "", value = "Type marker name or pattern...")
 				)
 			),br(),br(),
 
