@@ -1,6 +1,11 @@
 ![fig2](RESSOURCES/Logo_GenMap_Small.png)    The Genetic Map Comparator
 ===================
 
+<p align="center">
+   < img src=RESSOURCES/Logo_GenMap_Small.png >
+</p>
+
+
 Overview
 --------
 The Genetic Map Comparator is an R Shiny application made to compare genetic maps.  
