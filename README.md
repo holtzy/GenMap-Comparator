@@ -19,11 +19,12 @@ The Genetic map comparator is able to import map files produced by most commonly
 Local use
 --------
 For large datasets or privacy concerns, you can use the tool locally.
-You need R to be installed on your computer & several libraries to be installed.
-See the code below:
+You need R to be installed on your computer.
+Open R and use the code below:
 ```
+install.packages(shiny)
 library(shiny)
-runApp()
+runGitHub("GenMap-Comparator","holtzy")
 ```
 
 Citing 
