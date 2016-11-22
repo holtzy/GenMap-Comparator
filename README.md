@@ -1,4 +1,4 @@
-![fig2](RESSOURCES/LOGO_genmapcomp.png)The Genetic Map Comparator
+![fig2](RESSOURCES/Logo_GenMap_Small.png)The Genetic Map Comparator
 ===================
 
 Overview
