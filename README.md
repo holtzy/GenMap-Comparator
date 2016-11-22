@@ -9,7 +9,7 @@ You can use it trough the [**online version**](www.agap-sunshine.inra.fr/genmapc
 Once your dataset is uploaded you can explore it using the various sheets accessible via links at the top of the window. Each sheet helps you to study some specific features of your maps, they allow you to compare your maps via standard statistics (number of markers, average gap size between markers etc.) as well as to obtain a visual representation of your map congruences by plotting marker positions along chromosomes.  
   
 Here is a screenshot of the main sheets of the app:
-![fig1](RESSOURCES/Figure1.png)
+![fig1](RESSOURCES/Figure1.jpg)
 
 
 Input Format
