@@ -3,6 +3,7 @@
 
 <p align="center">
    < img src=RESSOURCES/Logo_GenMap_Small.png >
+    <img src="http://s.4cdn.org/image/title/105.gif">
 </p>
 
 
