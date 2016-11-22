@@ -234,10 +234,21 @@ output$load_ex_format3 <- downloadHandler(
 			map_tmp=map_tmp[order(map_tmp$group , map_tmp$position ) , ]
 			
 			# I remove markers if the user choosed to remove markers in the raw data sheet!
-			list_mark_remove=unlist(strsplit(input$text_mark_remove, ","))
-			list_mark_remove=paste("^",list_mark_remove,"$",sep="")
-			for(i in list_mark_remove){
-				map_tmp=map_tmp[!grepl(i,map_tmp$marker) , ]
+			if(input$keep_or_remove=="remove"){
+				list_mark_remove=unlist(strsplit(input$text_mark_remove, ","))
+				list_mark_remove=paste("^",list_mark_remove,"$",sep="")
+				for(i in list_mark_remove){
+					map_tmp=map_tmp[!grepl(i,map_tmp$marker) , ]
+					}
+				}
+
+			# I keep only some markers if the user choosed to keep markers in the raw data sheet!
+			if(input$keep_or_remove=="keep"){
+				list_mark_keep=unlist(strsplit(input$text_mark_remove, ","))
+				list_mark_keep=paste("^",list_mark_keep,"$",sep="")
+				for(i in list_mark_keep){
+					map_tmp=map_tmp[grepl(i,map_tmp$marker) , ]
+					}
 				}
 			
 			# Add it to the list
@@ -749,15 +760,17 @@ output$load_ex_format3 <- downloadHandler(
 		selected_col=c(1,selected_col+rep(c(0,1) , length(selected_col)/2))
 		dat=data[ , selected_col ]
 		nb_selected_maps=length(selected_maps)
-
-		# --- Subset of the dataset with only the good chromosome (Could be easier I think)
-		don=dat[ which(dat[,2]==input$chromo) , ]
-		if(nb_selected_maps>1){
-			for(j in c(2:nb_selected_maps)){
-				temp=dat[dat[,c((j-1)*2+2)]==input$chromo & !is.na(dat[,c((j-1)*2+2)]) , ]
-				don=rbind(don,temp)
+		
+		# --- Subset of the dataset with only the good chromosome
+		my_fun=function(x){ a=length(which(x==input$chromo))  ; return( a ) }
+		nb_good_chromo=apply(dat , 1 , my_fun)
+		don=dat[ which(nb_good_chromo>0 ) , ]
+		# Put NA when a marker is attributed to another chromosome		
+		if(length(selected_maps)>1){for(i in seq(2,100,2)[1:nb_selected_maps] ){
+			tmp=don[,i]
+			tmp=which( tmp!=input$chromo )
+			don[tmp, c(i,i+1)]=NA
 			}}
-		don=unique(don)
 		
 		# --- If the "normalize box" is choosen, I normalize length
 		if(input$ask_for_normalize==TRUE){
@@ -954,9 +967,11 @@ output$load_ex_format3 <- downloadHandler(
 		selected=which(map_files%in%input$map2)
 		map2=my_maps[[selected]]
 		name2=map_files[selected]
-
+		
 		# Select the choosen chromosome, the user can choose "all" !
 		if(input$chromo_sheet4=="all"){map1=map1}else{map1=map1[map1[,1]==input$chromo_sheet4 , ]  ;  map2=map2[map2[,1]==input$chromo_sheet4 , ]}
+
+		
 				
 		# a little function: I remake the x axis to add chromosomes beside each others.
 		my_fun=function(a){
@@ -974,6 +989,12 @@ output$load_ex_format3 <- downloadHandler(
 		map1$pos_cum_map1=my_fun(map1[,3])
 		map2$pos_cum_map2=my_fun(map2[,3])
 		don=merge(map1,map2,by.x=2,by.y=2)
+				
+		# error message if no common marker:
+  		 validate(
+     		 need(nrow(don)!=0, "Sorry, no common marker between your 2 maps! ")
+     		 )
+
 				
 		#Calculation of max and min of every chromosome
 		map1max=aggregate(map1$pos_cum_map1 , by=list(map1$group) , max)
@@ -1015,13 +1036,15 @@ output$load_ex_format3 <- downloadHandler(
 				L1 <- list( type="line", line=list(color = "grey", width=0.4), xref="x", yref="y", x0=0, x1=max(map1max[,2],na.rm=T), y0=i, y1=i  )
 				my_list_lines[[ length(my_list_lines)+1]] = L1 
  				}}
- 					
+ 		print("ok")
+ 		#print(don$group.x==don$group.y)
+					
 					
 		# --- Make the plot !
 		p <- plot_ly() %>%
 			
 			# markers
-			add_trace( x=don[,4] , y=don[,7] , type="scatter", mode="markers"  , text=don$text , hoverinfo="text"  , marker=list( size=15 , opacity=0.5, color=ifelse( don$group.x==don$group.y , input$col_s4_2 , input$col_s4_3)), showlegend=F  ) %>%
+			add_trace( x=don[,4] , y=don[,7] , type="scatter", mode="markers"  , text=don$text , hoverinfo="text"  , marker=list( size=15 , opacity=0.5, color=ifelse( as.character(don$group.x)==as.character(don$group.y) , input$col_s4_2 , input$col_s4_3)), showlegend=F  ) %>%
 			
 			# Layout
 			layout( 
@@ -1096,7 +1119,7 @@ output$load_ex_format3 <- downloadHandler(
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------#
 
 #-----------------------------------------------------------------------------
-# --- SHEET 5 : ROUGH MAP VIZUALIZATION
+# --- SHEET 5 : RAW MAP VIZUALIZATION
 #-----------------------------------------------------------------------------
 
 

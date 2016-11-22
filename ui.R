@@ -349,7 +349,7 @@ shinyUI(navbarPage(
 # --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	
 	# ----------------------
-	# SHEET 4 : INTERCHROMOSOM3 ANALYSIS
+	# SHEET 4 : INTERCHROMOSOME ANALYSIS
 	# ----------------------
 	tabPanel(
 		
@@ -459,7 +459,8 @@ shinyUI(navbarPage(
 			style="opacity:0.9; background-color: white ;margin-top: 0px; width: 100%;",
 			column(6,offset=3,
 				br(),legend5[2],legend5[5],br(),br(),legend5[7],br(),
-				textInput("text_mark_remove", label = "", value = "Type marker name or pattern...")
+				column(5,textInput("text_mark_remove", label = "", value = "Type marker name or pattern...")),
+				column(5,radioButtons("keep_or_remove", "", choices = c("keep","remove"), selected =c("remove") , inline = T ))
 				)
 			),br(),br(),
 
