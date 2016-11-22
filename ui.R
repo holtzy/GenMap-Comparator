@@ -14,7 +14,7 @@
 #		cd /Users/holtz/Dropbox
 #		scp -r  GenMap-Comparator/ holtz@147.100.164.72://srv/shiny-server/holtz-apps
 #  Pour accéder a l'appli en ligne
-#		http://www.agap-sunshine.inra.fr/holtz-apps/GenMap-Comparator/
+#		www.agap-sunshine.inra.fr/holtz-apps/GenMap-Comparator/
 #  Pour lancer l'appli
 #		cd /Users/holtz/Dropbox ; R ; library(shiny) ; runApp("GenMap-Comparator")
 #  Faire un touch restart si l'appli ne s'actualise pas bien sur le serveur.
@@ -295,43 +295,47 @@ shinyUI(navbarPage(
 			style="opacity:0.9; background-color: white ;margin-top: 0px; width: 100%;",
 			column(6,offset=3,
 				br(),legend3[3],legend3[6],br(),br(),legend3[7],a(em("colour.") , style="color:blue", href = "http://www.color-hex.com/" , target="_blank"),
-				br(),br(),legend3[8]
-				)
-			),br(),br(),
+				br(),br(),legend3[8],br()
+			)),br(),br(),
 
 
-		# === 3 first widgets
+		# === 2 first widgets
 		fluidRow( align="center",
-			style="opacity:0.9; background-color: white ;margin-top: 0px; width: 100%;",
-			column(3,offset=1, wellPanel(uiOutput("choose_chromo_sheet3"))),
-			column(3,offset=0, wellPanel(uiOutput("choose_maps3"))),
-			column(3,offset=0, wellPanel(checkboxInput("ask_for_normalize", "normalize map lenghts?", value = FALSE, width = NULL)))
-			),
+			column(6,offset=3,
+				style="opacity:0.9; background-color: white ;margin-top: 0px; width: 100%;",
+				column(3,offset=0, wellPanel(uiOutput("choose_chromo_sheet3"))),
+				column(3,offset=0, wellPanel(uiOutput("choose_maps3")))
+			)),
 
-
-		# === 3 next widgets
+		# === 2 Next widgets
 		fluidRow( align="center",
-			style="opacity:0.9; background-color: white ;margin-top: 0px; width: 100%;",
-			column(3,offset=1, wellPanel( sliderInput("thickness", "Line thickness:", min=0.1, max=12, value=2.0) ) ),
-			column(3,offset=0, wellPanel( colourInput("my_color", "Line colour", "#BDA3CC", allowTransparent = TRUE))),
-			column(3,offset=0, wellPanel(downloadButton("downloadID", label = "Download problematic markers")))
-			),
+			column(6,offset=3,
+				style="opacity:0.9; background-color: white ;margin-top: 0px; width: 100%;",
+				column(3,offset=0, wellPanel(checkboxInput("ask_for_normalize", "normalize map lenghts?", value = FALSE, width = NULL))),
+				br(),column(3,offset=0, downloadButton("downloadID", label = "Download problematic markers"))
+			)),
 
 		# === Separation
 		fluidRow( column( 6,offset=3, hr())),
-
 			
 		# === Comparison graph
 		column(11, offset=1, 
        		br(""), plotlyOutput("plot1" ,  height = "800px")
 			),
 
+	
+		# === 3 next widgets
+		fluidRow(column(4,offset=2, style="opacity:0.9; color:grey","Custom colors / font" )),
+		fluidRow(column(4,offset=2, style="opacity:0.9; color:grey", hr() )),
+		fluidRow(column( 12, offset=0,
+			style="opacity:0.9; background-color: white ;margin-top: 0px; width: 100%;",
+			column(3,offset=0, wellPanel( colourInput("my_color", "Line colour", "#BDA3CC", allowTransparent = TRUE))),
+			column(3,offset=0, wellPanel( colourInput("my_color_bad", "Line colour (suspect marker)", "#9B9AA6", allowTransparent = TRUE))),
+			column(3,offset=0, wellPanel( colourInput("my_color_name", "Map names colour", "#ED880C", allowTransparent = TRUE))),
+			column(3,offset=0, wellPanel( sliderInput("thickness", "Line thickness:", min=0.1, max=12, value=2.0)))
+			)),
+		br(),br(),br(),br(),br(),br()		
 
-		# === Separation
-		br(),fluidRow( column( 6,offset=3, hr())), br(), br()
-
-
-		
 		#Close the tabPanel
 		),
 

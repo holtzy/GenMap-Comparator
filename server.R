@@ -742,7 +742,7 @@ output$load_ex_format3 <- downloadHandler(
 
 
 
-		# ========== PART 3 : CREATE A TABLE WITH MAPS FEATURES, IN THE GOOD ORDER. ex:for mapB and mapA i keep column: 1, 4,5, 2,3:
+		# ========== PART 3 : CREATE A TABLE WITH MAPS FEATURES, IN THE GOOD ORDER. ex:for mapB and mapA i keep column: 1,4,5, 2,3:
 		# --- Make an input table with columns in the corresponding order: 
 		selected_maps=match(liste_of_map_to_compare , map_files)  
 		selected_col=rep(selected_maps , each=2)*2
@@ -751,7 +751,7 @@ output$load_ex_format3 <- downloadHandler(
 		nb_selected_maps=length(selected_maps)
 
 		# --- Subset of the dataset with only the good chromosome (Could be easier I think)
-		don=dat[dat[,2]==input$chromo & !is.na(dat[,2]) , ]
+		don=dat[ which(dat[,2]==input$chromo) , ]
 		if(nb_selected_maps>1){
 			for(j in c(2:nb_selected_maps)){
 				temp=dat[dat[,c((j-1)*2+2)]==input$chromo & !is.na(dat[,c((j-1)*2+2)]) , ]
@@ -865,7 +865,7 @@ output$load_ex_format3 <- downloadHandler(
 		add_trace(x=xaxis_not_prob , y=pos_final_not_prob, hoverinfo="none" , type="scatter", mode="lines", line=list(width=input$thickness, color=input$my_color , opacity=0.1), showlegend=FALSE )%>%   
 		
 		# Add problematic markers
-		add_trace(x=xaxis_prob , y=pos_final_prob , hoverinfo="none" , type="scatter", mode="lines",  line=list(width=input$thickness, color="grey" , opacity=0.1) , showlegend=F)%>%   
+		add_trace(x=xaxis_prob , y=pos_final_prob , hoverinfo="none" , type="scatter", mode="lines",  line=list(width=input$thickness, color=input$my_color_bad , opacity=0.1) , showlegend=F)%>%   
 
 		# Custom the layout
 		layout( 
@@ -891,7 +891,7 @@ output$load_ex_format3 <- downloadHandler(
 			}
 
 		# Add maps names			
-		p=add_trace(p, x=seq(1:nb_selected_maps) , y=rep(-10,nb_selected_maps) , text=unlist(liste_of_map_to_compare) , type="scatter" , mode="lines+text" , textfont=list(size=20 , color="orange"), line=list(color="transparent"), showlegend=F )
+		p=add_trace(p, x=seq(1:nb_selected_maps) , y=rep(-10,nb_selected_maps) , text=unlist(liste_of_map_to_compare) , type="scatter" , mode="lines+text" , textfont=list(size=20 , color=input$my_color_name), line=list(color="transparent"), showlegend=F )
 		
 
 

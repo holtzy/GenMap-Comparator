@@ -3,7 +3,7 @@
 3@Select the reference map:
 4@Select chromosome(s):
 5@You can also search for a specific marker based on its name.
-6@Raw Marker Information
+6@Marker Information and Filtering
 7@It is also possible to remove markers from the analysis. If you want to do so, please type the name of a marker to remove (e.g: ’sPb-601’) or a pattern to remove using regular expressions (e.g. typing ’sPb.*’ will remove all markers starting by sPb). If you want to remove several markers/patterns, separate them with a coma (e.g: ’sPb-601,xbarc-213’)
 8@
 9@
