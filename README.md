@@ -1,11 +1,7 @@
 ![fig2](RESSOURCES/Logo_GenMap_Small.png)    The Genetic Map Comparator
 ===================
 
-<p align="center">
-  ![fig2](RESSOURCES/Logo_GenMap_Small.png) 
-</p>
-
-<img style="float: right;" src="RESSOURCES/Logo_GenMap_Small.png">
+<img style="float: center;" src="RESSOURCES/Logo_GenMap_Small.png">
 
 Overview
 --------
