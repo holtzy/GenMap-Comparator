@@ -2,7 +2,7 @@
 ===================
 
 <p align="center">
-   < img src="https://raw.githubusercontent.com/holtzy/GenMap-Comparator/master/RESSOURCES/Logo_GenMap_Small.png" >
+   < img src="http://raw.githubusercontent.com/holtzy/GenMap-Comparator/master/RESSOURCES/Logo_GenMap_Small.png" >
 </p>
 
 
