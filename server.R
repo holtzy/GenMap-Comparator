@@ -372,6 +372,10 @@ output$load_ex_format3 <- downloadHandler(
 			bilan=my_fun(map , bilan , "all")
 			#Correct map size
 			bilan[nrow(bilan) , 3] = sum(bilan[ -nrow(bilan) ,3])
+			#Correctaverage gap size
+			bilan[nrow(bilan) , 4] = round(mean(bilan[ -nrow(bilan) ,4], na.rm=T),2)
+			#Correct biggest gap
+			bilan[nrow(bilan) , 5] = max(bilan[ -nrow(bilan) ,5], na.rm=T)
 			#Add the result to the list containing all the map summaries
 			summary_stat[[length(summary_stat)+1]]=bilan
 			}
@@ -1007,11 +1011,11 @@ output$load_ex_format3 <- downloadHandler(
 		
 		#Prepare 2 layouts !
 		if(input$chromo_sheet4=="all"){
-			lay_x=list(title = name1, tickmode="array", tickvals=apply(cbind(map1max[,2],map1min[,2]) , 1 , mean) , ticktext=map1max[,1] , showticklabels = T , tickfont=list(color="orange"), zeroline="TRUE" , showgrid=FALSE, zerolinewidth=1.5)
-			lay_y=list(title = name2, tickmode="array", tickvals=apply(cbind(map2max[,2],map2min[,2]) , 1 , mean) , ticktext=map2max[,1] , showticklabels = T , tickfont=list(color="orange"), zeroline="TRUE" , showgrid=FALSE, zerolinewidth=2)
+			lay_x=list(title = name1, tickmode="array", tickvals=apply(cbind(map1max[,2],map1min[,2]) , 1 , mean) , ticktext=map1max[,1] , showticklabels = T , tickfont=list(color=input$col_s4_4), zeroline="TRUE" , showgrid=FALSE, zerolinewidth=1.5)
+			lay_y=list(title = name2, tickmode="array", tickvals=apply(cbind(map2max[,2],map2min[,2]) , 1 , mean) , ticktext=map2max[,1] , showticklabels = T , tickfont=list(color=input$col_s4_4), zeroline="TRUE" , showgrid=FALSE, zerolinewidth=2)
 		}else{
-			lay_x=list(title = name1 , showgrid=FALSE , zeroline="TRUE", zerolinewidth=1.5, range=c(0,max(don[,4],na.rm=T)), tickfont=list(color="orange")  )
-			lay_y=list(title = name2 , showgrid=FALSE , zeroline="TRUE", zerolinewidth=2, range=c(0,max(don[,7],na.rm=T)), tickfont=list(color="orange") )	
+			lay_x=list(title = name1 , showgrid=FALSE , zeroline="TRUE", zerolinewidth=1.5, range=c(0,max(don[,4],na.rm=T)), tickfont=list(color=input$col_s4_4)  )
+			lay_y=list(title = name2 , showgrid=FALSE , zeroline="TRUE", zerolinewidth=2, range=c(0,max(don[,7],na.rm=T)), tickfont=list(color=input$col_s4_4) )	
 		}
 		
 		# Prepare 2 vectors in case user select all chromosomes:
@@ -1036,8 +1040,6 @@ output$load_ex_format3 <- downloadHandler(
 				L1 <- list( type="line", line=list(color = "grey", width=0.4), xref="x", yref="y", x0=0, x1=max(map1max[,2],na.rm=T), y0=i, y1=i  )
 				my_list_lines[[ length(my_list_lines)+1]] = L1 
  				}}
- 		print("ok")
- 		#print(don$group.x==don$group.y)
 					
 					
 		# --- Make the plot !
@@ -1153,7 +1155,7 @@ output$load_ex_format3 <- downloadHandler(
 				output$my_rough_map_viz <- renderDataTable(
 
 					#See https://rstudio.github.io/DT/options.html for options in printing table
-					data_for_map_table , escape = F , rownames = FALSE , options = list(pageLength = 40)
+					data_for_map_table ,  escape = F , rownames = FALSE , options = list(pageLength = 40, bFilter=F)
 			
 					#Close the output
 					)

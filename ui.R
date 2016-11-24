@@ -418,7 +418,8 @@ shinyUI(navbarPage(
 		fluidRow(column( 9, offset=2,
 			column(3, colourInput("col_s4_1", "Background Squares", "#BDA3CC", allowTransparent = TRUE)),
 			column(3, colourInput("col_s4_2", "Markers", "#48444A", allowTransparent = TRUE)),
-			column(3, colourInput("col_s4_3", "Markers (Interchromosome)", "#DB0913", allowTransparent = TRUE))
+			column(3, colourInput("col_s4_3", "Markers (Interchromosome)", "#DB0913", allowTransparent = TRUE)),
+			column(3, colourInput("col_s4_4", "Chromosome name", "#FFA500", allowTransparent = TRUE))
 			)),
 		br(),br(),br(),br(),"",br(),br(),br(),"",br(),br(),br()
 
@@ -461,15 +462,16 @@ shinyUI(navbarPage(
 				br(),legend5[2],legend5[5],br(),br(),legend5[7],br(),
 				column(5,textInput("text_mark_remove", label = "", value = "Type marker name or pattern...")),
 				column(5,radioButtons("keep_or_remove", "", choices = c("keep","remove"), selected =c("remove") , inline = T ))
-				)
-			),br(),br(),
+				),
+			column(6,offset=3,helpText("e.g. '.*25.*' ", style="color:Grey") )
+			),br(),
 
 
 		# Left column to choose input
 		column(2, 
 			
 			# Make som space
-			br(""),	br(""),	br(""),
+			br(""),
 			
 			# Choix de la map
 			wellPanel(uiOutput("choose_maps5")),
