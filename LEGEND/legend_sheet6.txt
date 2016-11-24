@@ -1,6 +1,6 @@
 1@Help
 2@ - About - 
-3@The Genetic Map Comparator allows to easily compare several genetic maps. The first step is to upload your maps through the ‘Home’ sheet. Three example datasets (from sorghum and wheat) are provided to easily explore the Genetic map comparator features.
+3@The Genetic Map Comparator allows to easily compare several linear maps (genetic, physical, radiated hybrids). The first step is to upload your maps through the ‘Home’ sheet. Three example datasets (from sorghum and wheat) are provided to easily explore the Genetic map comparator features. For a more in depth analysis of your genotyping data (He, FIS, MAF, ..), you may find 
 4@Once a dataset is uploaded you can explore it using the various sheets accessible via links at the top of the window. Each sheet helps you to study some specific features of your maps, they allow you to compare your maps via standard statistics (number of markers, average gap size between markers etc.) as well as to obtain a visual representation of your map congruences by plotting marker positions along chromosomes.
 5@ - Input Files - 
 6@The Genetic map comparator is able to import map files produced by most commonly used software for linkage analysis (e.g. Carthagene and JoinMap). Each map must be stored in its own file and all data files stored together in one specific folder. Use the upload facility of the home page to browse your local folders and select desired maps using multiple file selection. The column name has no impact but must be ordered correctly (see details and example below) and be separated by either ‘;’ or tabulation (‘\t’). Three formats are accepted:
@@ -9,8 +9,12 @@
 9@
 10@ - Contact - 
 11@ - Run the Application Locally -
-12@The Genetic Map Comparator is an R shiny application available online, but it is also easy to run it locally following these steps:
+12@The Genetic Map Comparator is an R shiny application available online. Uploaded data are NOT kept on the Webserver. However, for confidentiality or better reactivity, it is also easy to run it locally following these steps:
 13@    - 1/  
-14@    - 2/ Install the requested libraries. In the R console type the following commands:
-15@    - 3/ Call the application from its Github repository as follows:
+14@    - 2/ Install the R Shiny library. In the R console type the following commands:
+15@    - 3/ Call the application from its Github repository typing this command in the R console:
 16@ on your computer and open it.
+17@Sharing published maps
+18@Uploaded data are NOT kept on the Webserver, but if you want to share your published data with the community via this Genetic Map Comparator website, please do not hesitate to contact us. We will be glad to add your maps on the list of proposed maps displayed on the home page.
+19@
+20@

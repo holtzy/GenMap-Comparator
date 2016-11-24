@@ -12,7 +12,7 @@
 #		?LOF@L~$QPt=diTIhXg5u<EA3
 #  Pour mettre l'appli sur le webserveur de Agap (disponible sur le web: http://147.100.164.72/) :
 #		cd /Users/holtz/Dropbox
-#		scp -r  GenMap-Comparator/ holtz@147.100.164.72://srv/shiny-server/holtz-apps
+#		scp -r  GenMap-Comparator/ holtz@147.100.164.72://srv/shiny-server/genmapcomp
 #  Pour accéder a l'appli en ligne
 #		www.agap-sunshine.inra.fr/holtz-apps/GenMap-Comparator/
 #  Pour lancer l'appli
@@ -543,7 +543,7 @@ shinyUI(navbarPage(
 			style="opacity:0.9; background-color: white ;margin-top: 0px; width: 100%;",
 			column(3,offset=3, align="justify",
 				br(),
-				legend6[3],
+				legend6[3],a("SNiPlay",href="http://sniplay.southgreen.fr/", target="_blank"),"[1] useful.",
 				br()
 				),
 			column(3,offset=0, align="justify",
@@ -576,21 +576,21 @@ shinyUI(navbarPage(
 			style="opacity:0.9; background-color: white ;margin-top: 0px; width: 100%;",
 			column(3,offset=1,align="center",
 				br(),br(),
-				a("OneMap",href="https://cran.r-project.org/web/packages/onemap/onemap.pdf", target="_blank")," [1] format: 3 columns: linkage group, marker name and position in the map.",
+				a("OneMap",href="https://cran.r-project.org/web/packages/onemap/onemap.pdf", target="_blank")," [2] format: 3 columns: linkage group, marker name and position in the map.",
 				downloadLink("load_ex_format1", label = "Download"),br(),
 				dataTableOutput('doc_ex1' , width="100px"),
 				br()
 				),
 			column(3,offset=1,align="center",
 				br(),
-				a("MapChart",href="http://jhered.oxfordjournals.org/content/93/1/77.full", target="_blank")," [2] format: composed of a sequence of linkage groups, each with a header specifying the linkage group title, followed by a sequence of lines with locus names and map positions.",
+				a("MapChart",href="http://jhered.oxfordjournals.org/content/93/1/77.full", target="_blank")," [3] format: composed of a sequence of linkage groups, each with a header specifying the linkage group title, followed by a sequence of lines with locus names and map positions.",
 				downloadLink("load_ex_format2", label = "Download"),
 				dataTableOutput('doc_ex2' , width="100px"),
 				br()
 				),
 			column(3,offset=1,align="center",
 				br(),
-				a("Carthagène",href="http://www7.inra.fr/mia/T/CarthaGene/", target="_blank"), " [3] format: 1 line only. Linkage groups are separated with {}. Then marker names and positions are provided successively. Output created with the \'mapget\' command.",
+				a("Carthagène",href="http://www7.inra.fr/mia/T/CarthaGene/", target="_blank"), " [4] format: 1 line only. Linkage groups are separated with {}. Then marker names and positions are provided successively. Output created with the \'mapget\' command.",
 				downloadLink("load_ex_format3", label = "Download"),br(),
 				dataTableOutput('doc_ex3' , width="300px"),
 				br()
@@ -625,6 +625,24 @@ shinyUI(navbarPage(
 			),
 
 
+
+		# ==== Sharing maps
+		fluidRow(align="center",
+			style="opacity: 1;background-color:white; margin-top: 0px;width: 100%;",
+			column(6,offset=3,
+				# Set the style of this page
+				br(),
+				helpText(strong(legend6[17] , style="color:orange ; font-family: 'times'; font-size:30pt ; font-type:bold" ) ) ,
+				hr()
+			)),
+		fluidRow(align="justify",
+			style="opacity:0.9; background-color: white ;margin-top: 0px; width: 100%;",
+			column(6,offset=3,
+				br(),
+				legend6[18],br(),br(),
+				br(),br()
+				)
+			),
 
 
 
@@ -676,9 +694,10 @@ shinyUI(navbarPage(
 			style="opacity:0.9; background-color: white ;margin-top: 0px; width: 100%;",
 			column(6,offset=3,
 				br(),
-				"1. Margarido GRA, Souza AP, Garcia AAF. OneMap: software for genetic mapping in outcrossing species. Hereditas. Wiley Online Library; 2007;144: 78–79.", br(),
-				"2. Lander ES, Green P, Abrahamson J, Barlow A, Daly MJ, Lincoln SE, et al. MAPMAKER: an interactive computer package for constructing primary genetic linkage maps of experimental and natural populations. Genomics. Elsevier; 1987;1: 174–181.", br(),
-				"3. de Givry S, Bouchez M, Chabrier P, Milan D, Schiex T. CARTHAGENE: Multipopulation integrated genetic and radiation hybrid mapping. Bioinformatics. 2005;21: 1703–1704.", br(),
+				"1. Dereeper A., Nicolas S., Lecunff L., Bacilieri R., Doligez A., Peros JP., Ruiz M., This P. SNiPlay: a web-based tool for detection, management and analysis of SNPs. Application to grapevine diversity projects.. BMC Bioinformatics. 2011. May 5;12(1):134. ", br(),
+				"2. Margarido GRA, Souza AP, Garcia AAF. OneMap: software for genetic mapping in outcrossing species. Hereditas. Wiley Online Library; 2007;144: 78–79.", br(),
+				"3. Lander ES, Green P, Abrahamson J, Barlow A, Daly MJ, Lincoln SE, et al. MAPMAKER: an interactive computer package for constructing primary genetic linkage maps of experimental and natural populations. Genomics. Elsevier; 1987;1: 174–181.", br(),
+				"4. de Givry S, Bouchez M, Chabrier P, Milan D, Schiex T. CARTHAGENE: Multipopulation integrated genetic and radiation hybrid mapping. Bioinformatics. 2005;21: 1703–1704.", br(),
 				br(), br()
 			)),
 
