@@ -6,7 +6,7 @@
 Overview
 --------
 The Genetic Map Comparator is an R Shiny application made to compare genetic maps.  
-You can use it trough the [**online version**](http://www.agap-sunshine.inra.fr/genmapcomp/) and read the related publication in [**bioinformatics**](https://www.r-graph-gallery.com).  
+You can use it trough the [**online version**](http://www.agap-sunshine.inra.fr/genmapcomp/) and read the related publication in [**bioinformatics**](https://academic.oup.com/bioinformatics/article-abstract/33/9/1387/2908431/The-genetic-map-comparator-a-user-friendly?redirectedFrom=fulltext).  
   
 Once your dataset is uploaded you can explore it using the various sheets accessible via links at the top of the window. Each sheet helps you to study some specific features of your maps, they allow you to compare your maps via standard statistics (number of markers, average gap size between markers etc.) as well as to obtain a visual representation of your map congruences by plotting marker positions along chromosomes.  
   
