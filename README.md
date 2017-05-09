@@ -53,11 +53,11 @@ If you miss a library, remember you can install it with:
 ```
 
 **3.**
-Then, tell R which is the repository containing the GitHub files you just downloaded and run the App:
+Then, set the working directory and run the App:
 ```
-setwd("my/path")
+setwd("my/path/to/the/github/folder/you/downloaded")
 runApp()
-``
+```
 
 Citing 
 --------
