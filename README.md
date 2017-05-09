@@ -29,6 +29,36 @@ library(shiny)
 runGitHub("GenMap-Comparator","holtzy")
 ```
 
+Local installation
+--------
+Since local use shows problems for microsoft users, you can install the Genetic Map Comparator on your machine.
+
+**1.** Download the whole repository
+
+**2.** Open R and make sure these library are installed:
+```
+library(shiny)
+library(plotly)
+library(ggplot2)
+library(DT)
+library(shinythemes)
+library(shinyAce)
+library(RColorBrewer)
+library(qualV)
+library(colourpicker)
+```
+If you miss a library, remember you can install it with:
+```
+ìnstall.packages("shiny")
+```
+
+**3.**
+Then, tell R which is the repository containing the GitHub files you just downloaded and run the App:
+```
+setwd("my/path")
+runApp()
+``
+
 Citing 
 --------
 If you find The Genetic Map Comparator useful, please cite:  
