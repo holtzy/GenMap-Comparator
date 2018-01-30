@@ -310,7 +310,7 @@ output$load_ex_format3 <- downloadHandler(
 		# --- Get a list with the existing chromosomes:
 		chromosome_list=unlist(data[ , seq(2,ncol(data),2) ])
 		chromosome_list=as.character(unique(sort( chromosome_list[!is.na(chromosome_list)] )))
-		
+
 		# Return the chromosome liste
 		return(chromosome_list)
 		})
@@ -563,7 +563,7 @@ output$load_ex_format3 <- downloadHandler(
 
 			# Get the desired summary stat
 			toprint=MY_summary_stat()[[selected_map]]
-	
+			
 			output$sum_table <- DT::renderDataTable(
 					DT::datatable( toprint , rownames = FALSE , options = list(pageLength = 40, dom = 't' ))
 			)
