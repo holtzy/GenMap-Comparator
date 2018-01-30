@@ -7,20 +7,6 @@
 		###############################################
 
 
-# Pour se connecter au server Shiny de AGAP:
-#		ssh holtz@147.100.164.72
-#		?LOF@L~$QPt=diTIhXg5u<EA3
-#  Pour mettre l'appli sur le webserveur de Agap (disponible sur le web: http://147.100.164.72/) :
-#		cd /Users/holtz/Dropbox
-#		scp -r  GenMap-Comparator/ holtz@147.100.164.72://srv/shiny-server/genmapcomp
-#  Pour accéder a l'appli en ligne
-#		www.agap-sunshine.inra.fr/holtz-apps/GenMap-Comparator/
-#  Pour lancer l'appli
-#		cd /Users/holtz/Dropbox ; R ; library(shiny) ; runApp("GenMap-Comparator")
-#  Faire un touch restart si l'appli ne s'actualise pas bien sur le serveur.
-
-
-# Let's start the UI file --> it codes for the design of the app!
 shinyUI(navbarPage(
 
 	# Choose a theme !
@@ -29,8 +15,6 @@ shinyUI(navbarPage(
 	# And I custom it with additionnal CSS
 	includeCSS("www/genComp.css") ,
 
-	# Title of the app (appears nowhere)
-	("The Gen Map Comparator") ,
 	
   		
 # --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

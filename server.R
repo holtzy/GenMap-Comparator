@@ -7,10 +7,10 @@
 		###############################################
 
 
-# OPEN THE SHINY SERVER
+
+
 shinyServer(function(input, output, session) {
 
-####session$allowReconnect("force")
 
 
 
