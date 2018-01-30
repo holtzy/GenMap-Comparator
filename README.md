@@ -2,6 +2,9 @@
 ===================
 
 
+[**Tool working online here**](http://www.agap-sunshine.inra.fr/genmapcomp/)
+
+
 Overview
 --------
 The Genetic Map Comparator is an R Shiny application made to compare genetic maps.  
