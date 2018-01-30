@@ -1,7 +1,6 @@
    The Genetic Map Comparator
 ===================
 
-<img style="float: justify;" align="center" src="RESSOURCES/Logo_GenMap_Small.png">
 
 Overview
 --------
@@ -63,7 +62,7 @@ Citing
 --------
 If you find The Genetic Map Comparator useful, please cite:  
 The Genetic Map Comparator: a user-friendly application to display and compare genetic maps.  
-*Yan Holtz, Jacques David, Vincent Ranwez*, **Bioinformatics 2016** (in press)
+*Yan Holtz, Jacques David, Vincent Ranwez*, **[Bioinformatics 2016](https://www.ncbi.nlm.nih.gov/pubmed/28453680)** 
 
 Members
 --------
