@@ -26,7 +26,7 @@ For large datasets or privacy concerns, you can use the tool locally.
 You need R to be installed on your computer.
 Open R and use the code below:
 ```
-install.packages(shiny)
+install.packages("shiny")
 library(shiny)
 runGitHub("GenMap-Comparator","holtzy")
 ```
