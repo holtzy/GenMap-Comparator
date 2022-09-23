@@ -2,10 +2,10 @@
 
 
 
-/* Couleur du bandeau */
+/* Couleur du bandeau #463F32 */
 .navbar-static-top {
-    background-color: #463F32;
-    border-color: #463F32;
+    background-color: #000000;
+    border-color: #000000;
 }
 
 
@@ -13,8 +13,9 @@
 .navbar {
 	min-height: 62px;
 	}
-	
 
+/* mettre le titre de la page au dessus du menu de navigation */
+  .navbar-header { width:100%; background-color: #000000}.navbar-brand { width: 100%; text-align: center; font-family:times; font-size:28pt ; font-type:bold }
 /* Couleur message d'erreur*/
 .shiny-output-error-validation {
 	color: green;
@@ -29,7 +30,7 @@ body	 {
 	background-color : white;
 	background-attachment:fixed;
 	background-repeat:repeat;
-} 
+}
 */
 
 
@@ -37,7 +38,7 @@ body	 {
 /* Couleur du fond */
 body	 {
 	background-color : white;
-} 
+}
 
 
 /* Juste pour le padding de la home-page */
@@ -59,5 +60,5 @@ hr {
     border: 0;
     border-top: 1px solid black;
     margin: 1em 0;
-    padding: 0; 
+    padding: 0;
 }

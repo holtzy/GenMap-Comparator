@@ -9,14 +9,15 @@
 
 shinyUI(navbarPage(
 
+	"The Genetic Map Comparator",
+
 	# Choose a theme !
 	theme = shinytheme("united"),
-	
-	# And I custom it with additionnal CSS
-	includeCSS("www/genComp.css") ,
 
-	
-  		
+	# And I custom it with additionnal CSS
+	header=includeCSS("www/genComp.css") ,
+
+
 # --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
@@ -29,59 +30,60 @@ shinyUI(navbarPage(
 	# ----------------------
 	# SHEET 1 : HOME PAGE
 	# ----------------------
-	
-	tabPanel( 
+
+	tabPanel(
 
 		# Name
 		h4(legend1[1]) ,
 
 		# Only one zone for the home page
 		column(12, offset=0, align="center" ,
-			
+
 			# Set the style of this page
 			style="
 				background-image: url(my_image.png);
-				opacity: 0.8;
+				opacity: 1;
 				background-color: black;
 				margin-top: -20px;
 				width: 100%;
+				color: white;
+				font-size:14pt;
+
 				",
 
 			# And write the welcome message
-			br(""),br(""),br(""),
-			helpText(strong(legend1[2] , style="color:white ; font-family: 'times'; font-size:50pt ; font-type:bold" ) ) ,
 			br(""),
+			#helpText(strong(legend1[2] , style="color:white ; font-family: 'times'; font-size:50pt ; font-type:bold" ) ) ,
+			#br(""),
 			helpText(strong(p(legend1[3] , style="color:white ; font-family: 'times'; font-size:18pt"))) ,
-			br(""),
-			
+			#br(""),
+
 			# widget to choose several files:
 			fileInput("file1", strong(p(legend1[4] , style="color:orange ; font-family: 'times'; font-size:18pt")) , multiple = TRUE, accept=NULL),
 			uiOutput("error_message"),
-				
+
 			# widget to propose 3 exemples
 			radioButtons("file2", strong(p(legend1[5] , style="color:orange ; font-family: 'times'; font-size:18pt")), choices = c("sorghum (Mace et al. 2009)","wheat (Maccaferri et al. 2015)", "wheat (Holtz et al. 2016)"), selected =c("sorghum (Mace et al. 2009)") , inline = FALSE ),
-			br(),
+
+			#br(),
 			helpText(strong(p(legend1[6] , style="color:orange ; font-family: 'times'; font-size:18pt"))) ,
-			legend1[7],	
-			
+			#legend1[7],
+
 			# Last part with our names. Not in the legend file..
 			br(""),br(""),br(""),
 			p(
-				legend1[8], 
+				legend1[8],
 				a(em("Yan Holtz") , style="color:white ; font-family:'times'; font-size:15pt", href = "https://holtzyan.wordpress.com/" , target="_blank"),
-				style="color:white ; font-family: 'times'; font-size:15pt"
-				),
-			p(
-				legend1[9], 
+				" & ",
 				a(em("Vincent Ranwez") , style="color:white ; font-family:'times'; font-size:15pt", href = "https://sites.google.com/site/ranwez/" , target="_blank"),
 				" & ",
 				a(em("Jacques David") , style="color:white ; font-family:'times'; font-size:15pt", href = "https://www.researchgate.net/profile/Jacques_David4" , target="_blank"),
 				style="color:white ; font-family: 'times'; font-size:15pt"
 				),
-			
+
 			br(""),br(""),br(""),br(""),br(""),br(""),br(""),br(""),br(""),br("")
 
-					
+
 			#Close column
 			)
 
@@ -106,11 +108,11 @@ shinyUI(navbarPage(
 	# SHEET 2 : SUMMARY STATISTICS
 	# ----------------------
 	tabPanel(
-		
+
 		#Name
 		h4(legend2[1]),
-		
-		# ==== Title 2 in Orange 
+
+		# ==== Title 2 in Orange
 		fluidRow(align="center",
 			style="opacity:0.9; background-color: white ;margin-top: 0px; width: 100%;",
 			column(6,offset=3,
@@ -171,14 +173,14 @@ shinyUI(navbarPage(
 			column(3,offset=0,
 				#wellPanel(radioButtons( "var_for_barplot", legend2[41], choices = c("nb. marker","size","average gap","biggest gap","Nb. uniq pos."), selected =c("nb. marker") , inline = FALSE ))
 				wellPanel(radioButtons( "var_for_barplot", legend2[13], choices = c("# markers","map size","average gap size","biggest gap size","# unique positions"), selected =c("# markers") , inline = FALSE ))
-				
+
 				)
 			),
-		
-		
+
+
 		# === Bar and pieplot whit corresponding widget
 		fluidRow(
-		
+
 			# PiePlot
 			column(3, offset=1,  plotOutput("my_pieplot", height = "500px" ,  width = "500px" ) ),
 
@@ -186,18 +188,18 @@ shinyUI(navbarPage(
 			column(7 , plotOutput("my_barplot" , height = "500px" ,  width = "1000px")   )
 
 		),br(),
-		
+
 		# === Separation
 		#fluidRow( column( 6,offset=3, hr())),
-		
 
 
 
 
 
 
-		
-		
+
+
+
 		# ==== Title 3 in Orange
 		fluidRow(align="center",
 			style="opacity:0.9; background-color: white ;margin-top: 0px; width: 100%;",
@@ -233,21 +235,21 @@ shinyUI(navbarPage(
 		),br(),br()
 
 
-		
 
 
 
 
 
-		
+
+
 		#Close the tabPanel
 		),
-		
-		
+
+
 # --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-	
-	
-	
+
+
+
 
 
 
@@ -258,12 +260,12 @@ shinyUI(navbarPage(
 	# ----------------------
 	# SHEET 3 : COMPARISON OF MAPS
 	# ----------------------
-	
+
 	tabPanel( class = "two",
-	
+
 		#Name
 		h4(legend3[1]) ,
-		
+
 		# ==== Title in Orange
 		fluidRow(align="center",
 			style="opacity:0.9; background-color: white ;margin-top: 0px; width: 100%;",
@@ -301,13 +303,13 @@ shinyUI(navbarPage(
 
 		# === Separation
 		fluidRow( column( 6,offset=3, hr())),
-			
+
 		# === Comparison graph
-		column(11, offset=1, 
+		column(11, offset=1,
        		br(""), plotlyOutput("plot1" ,  height = "800px")
 			),
 
-	
+
 		# === 3 next widgets
 		fluidRow(column(4,offset=2, style="opacity:0.9; color:grey","Custom colors / font" )),
 		fluidRow(column(4,offset=2, style="opacity:0.9; color:grey", hr() )),
@@ -318,7 +320,7 @@ shinyUI(navbarPage(
 			column(3,offset=0, wellPanel( colourInput("my_color_name", "Map names colour", "#ED880C", allowTransparent = TRUE))),
 			column(3,offset=0, wellPanel( sliderInput("thickness", "Line thickness:", min=0.1, max=12, value=2.0)))
 			)),
-		br(),br(),br(),br(),br(),br()		
+		br(),br(),br(),br(),br(),br()
 
 		#Close the tabPanel
 		),
@@ -331,15 +333,15 @@ shinyUI(navbarPage(
 
 
 # --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-	
+
 	# ----------------------
 	# SHEET 4 : INTERCHROMOSOME ANALYSIS
 	# ----------------------
 	tabPanel(
-		
+
 		#Name
 		h4(legend4[1]),
-		
+
 		# ==== Title in Orange
 		fluidRow(align="center",
 			style="opacity:0.9; background-color: white ;margin-top: 0px; width: 100%;",
@@ -360,15 +362,15 @@ shinyUI(navbarPage(
 
 
 		# === Left column to choose input
-		fluidRow(column(2, 
-			
+		fluidRow(column(2,
+
 			# Make som space
 			br(""), br(""),
-			
+
 			# Choose the chromosome
 			wellPanel(uiOutput("choose_chromo_sheet4")),
 			br(),
-    
+
 			# Choix de la map1
 			wellPanel(uiOutput("map1")),
 
@@ -378,23 +380,23 @@ shinyUI(navbarPage(
 
 			#Close column
 			),
-		
+
 		# === On the space left, I add the plot and color widget:
-		column(8, 
-			
+		column(8,
+
 			br(),
 			plotlyOutput("plot2" ,  height = "700px" ,  width = "900px"),
-			
+
 			br(),br()
-					
+
 			#Close column
 			),
 
 		# === Key numbers
-		column(2, 
+		column(2,
        		br(), plotOutput("key_numbers_sheet_3", height = "500px" ,  width = "350px"), br(),br()
 			)),
-		
+
 
 		# === Last line to choose colors
 		fluidRow(column(4,offset=2, style="opacity:0.9; color:grey","Custom colors" )),
@@ -407,13 +409,13 @@ shinyUI(navbarPage(
 			)),
 		br(),br(),br(),br(),"",br(),br(),br(),"",br(),br(),br()
 
-			
+
 
 
 
 		#Close the tabPanel
 		),
-		
+
 
 
 
@@ -426,7 +428,7 @@ shinyUI(navbarPage(
 	# SHEET 5 : RAW MAP
 	# ----------------------
 	tabPanel(
-		
+
 		#Name
 		h4(legend5[1]),
 
@@ -452,32 +454,32 @@ shinyUI(navbarPage(
 
 
 		# Left column to choose input
-		column(2, 
-			
+		column(2,
+
 			# Make som space
 			br(""),
-			
+
 			# Choix de la map
 			wellPanel(uiOutput("choose_maps5")),
-			
+
 			# Choose chromosome
 			br(""),
 			wellPanel(uiOutput("choose_chromo_sheet5"))
 
 			#Close column
 			),
-		
+
 		# On the space left, I add the plot
 		column(6, offset=2,
-       		
+
        		br(""),
 			dataTableOutput('my_rough_map_viz' , width="500px")
-			
+
 			#Close column
 			),br(),br(),br(),
-			
+
 		# Legend of the plot
-		column(2, 
+		column(2,
        		br(),br(),br(),br(),br(),br()
 			#,helpText(strong(p(legend5[2] , style="color:grey ; font-family: 'times'; font-size:12pt"))),br(),br(),
 			#helpText(strong(p(legend5[5] , style="color:grey ; font-family: 'times'; font-size:12pt")))
@@ -485,36 +487,36 @@ shinyUI(navbarPage(
 			)
 
 
-		
+
 		#Close the tabPanel
-		), 
-		
-		
-
-
-# --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-
-
-
-
-
+		),
 
 
 
 
 # --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-		
+
+
+
+
+
+
+
+
+
+# --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
 	# ----------------------
 	# SHEET 6: DOCUMENTATION
 	# ----------------------
 	tabPanel(
-		
+
 		#Name
 		h4(legend6[1]),
-		
-			
+
+
 		# ==== About section
 		fluidRow(align="center",
 			style="opacity:0.9; background-color: white ;margin-top: 0px; width: 100%;",
@@ -554,9 +556,9 @@ shinyUI(navbarPage(
 				br(),
 				legend6[6],
 				br()
-				)), 
+				)),
 		br(),
-		fluidRow( 
+		fluidRow(
 			style="opacity:0.9; background-color: white ;margin-top: 0px; width: 100%;",
 			column(3,offset=1,align="center",
 				br(),br(),
@@ -579,7 +581,7 @@ shinyUI(navbarPage(
 				dataTableOutput('doc_ex3' , width="300px"),
 				br()
 				)
-		
+
 		), br(),
 
 
@@ -658,13 +660,13 @@ shinyUI(navbarPage(
 				br()
 				)
 			),
-		fluidRow(column(6,offset=3,hr())) , br() ,	
-		
+		fluidRow(column(6,offset=3,hr())) , br() ,
+
 		#Black line?
 		fluidRow( style=" opacity: 0.8 ; background-color: white ; margin-top: 0px ; width: 100%; "  ), br(),
-		
-		
-		
+
+
+
 		# ==== References
 		fluidRow(align="center",
 			style="opacity: 1;background-color:white; margin-top: 0px;width: 100%;",
@@ -686,19 +688,19 @@ shinyUI(navbarPage(
 			)),
 
 
-		
+
 		# === Last bandeau for the logos
 		fluidRow(
-			
+
 			# Set the style of this page
 			style=" opacity: 0.8 ; background-color: black ; margin-top: 0px ; width: 100%; ",
-		
+
 			# put the logos
 			br(),
 			column(2, offset=2, img(src="logo_INRA.png" ,  height = 70*grand, width = 120*grand) , br(),br() ),
 			column(2, offset=1, img(src="logo_SUPAGRO.jpg" ,  height = 70*grand, width = 120*grand) ),
 			column(2, offset=1, img(src="logo_arvalis.png" ,  height = 70*grand, width = 110*grand) )
-			
+
 			)
 
 		#Close the tabPanel
@@ -712,5 +714,3 @@ shinyUI(navbarPage(
 
 #Close the shinyUI
 ))
-
-
