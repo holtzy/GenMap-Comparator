@@ -606,7 +606,8 @@ shinyUI(navbarPage(
 				code("library(shiny)"),br(),br(),
 				legend6[15],br(),
 				code("runGitHub(\"GenMap-Comparator\",\"holtzy\")"),br(),
-				br(),br()
+				br(),
+				"see also the ", a("geneticMapComparator github repository", href="https://github.com/holtzy/GenMap-Comparator", target="_blank"),br()
 				)
 			),
 
@@ -643,28 +644,22 @@ shinyUI(navbarPage(
 			)),
 		fluidRow( align="center",
 			style="opacity: 1;background-color:white; margin-top: 0px;width: 100%;",
-			column(3,offset=3,
-				img(src="map_montpellier.png" ,  width = 500),
+			column(6,offset=3,
+				img(src="map_montpellier.png" ,  width = 400),
 				br()
 				),
-			column(3,offset=1,
+			column(6,offset=3,
 				br(),
-				helpText("Yan Holtz: holtz@supagro.fr"),
-				helpText("Vincent Ranwez: ranwez@supagro.fr"),
-				br(),br(),br(),
-				"Ge2pop Team, Bâtiment 21",br(),
-				"Montpellier SupAgro,",br(),
-				"2 place Pierre Viala",br(),
-				"34060 MONTPELLIER Cedex 1",br(),
-				"FRANCE",
-				br()
+				"Vincent Ranwez: ranwez@supagro.fr",br(),
+				"Ge2pop Team, Bâtiment Arcad",br(),
+				"10 rue Arthur Young",br(),
+				"34090 MONTPELLIER, FRANCE",br()
 				)
 			),
-		fluidRow(column(6,offset=3,hr())) , br() ,
+	#	fluidRow(column(6,offset=3,hr())) , br() ,
 
 		#Black line?
-		fluidRow( style=" opacity: 0.8 ; background-color: white ; margin-top: 0px ; width: 100%; "  ), br(),
-
+		#fluidRow( style=" opacity: 0.8 ; background-color: white ; margin-top: 0px ; width: 100%; "  ), br(),
 
 
 		# ==== References
@@ -697,9 +692,10 @@ shinyUI(navbarPage(
 
 			# put the logos
 			br(),
-			column(2, offset=2, img(src="logo_INRA.png" ,  height = 70*grand, width = 120*grand) , br(),br() ),
-			column(2, offset=1, img(src="logo_SUPAGRO.jpg" ,  height = 70*grand, width = 120*grand) ),
-			column(2, offset=1, img(src="logo_arvalis.png" ,  height = 70*grand, width = 110*grand) )
+			column(2, offset=2, img(src="logo_INRAE.png",  height = 40 ) , br(),br() ),
+		  column(2, offset=1, img(src="logo-institut-agro-montpellier.png",  height = 40 ) ),
+		  column(2, offset=1, img(src="logo_arvalis.png",  height = 40)  )
+			#column(2, offset=1, img(src="logo_arvalis.png" ,  height = 70*grand, width = 110*grand) )
 
 			)
 
